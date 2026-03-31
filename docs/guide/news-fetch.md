@@ -18,7 +18,7 @@ claude plugin add juserch/juserch-skills
 Fetch and follow https://raw.githubusercontent.com/juserch/juserch-skills/main/skills/news-fetch/SKILL.md
 ```
 
-> **零依赖** — News Fetch 不需要 API Key，利用 WebSearch 和公开新闻源获取数据。
+> **零依赖** — News Fetch 不依赖任何外部服务或 API。安装即用。
 
 ---
 

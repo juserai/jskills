@@ -18,7 +18,7 @@ claude plugin add juserch/juserch-skills
 Fetch and follow https://raw.githubusercontent.com/juserch/juserch-skills/main/skills/skill-lint/SKILL.md
 ```
 
-> **零依赖** — Skill Lint 是完全独立的校验工具，不依赖任何外部服务。安装即用。
+> **零依赖** — Skill Lint 不依赖任何外部服务或 API。安装即用。
 
 ---
 
