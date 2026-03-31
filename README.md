@@ -16,7 +16,6 @@ claude plugin add juserch/jskills
 
 ```bash
 git clone https://github.com/juserch/jskills.git
-# 将平台适配 SKILL.md + 共享 references/scripts 组装到 workspace
 cp -r jskills/platforms/openclaw/* ~/.openclaw/skills/
 ```
 
@@ -88,23 +87,18 @@ cp -r jskills/platforms/openclaw/* ~/.openclaw/skills/
 
 ```text
 jskills/
-├── shared/                        # 通用内容（所有平台共享）
-│   └── <skill>/
-│       ├── references/            # 方法论、检查清单等
-│       ├── scripts/               # 辅助脚本
-│       └── agents/                # Sub-agent 定义
-├── skills/                        # Claude Code 平台（SKILL.md + symlink → shared/）
+├── skills/                        # Claude Code 平台
 │   └── <skill>/
 │       ├── SKILL.md               # Claude Code 适配版
-│       ├── references/ → symlink  # 指向 shared/<skill>/references/
-│       ├── scripts/ → symlink
-│       └── agents/ → symlink
+│       ├── references/            # 按需加载的详细内容
+│       ├── scripts/               # 辅助脚本
+│       └── agents/                # Sub-agent 定义
 ├── platforms/                     # 其他平台适配层
 │   └── openclaw/
 │       └── <skill>/
 │           ├── SKILL.md           # OpenClaw 适配版
-│           ├── references/ → symlink
-│           └── scripts/ → symlink
+│           ├── references/        # 该平台的详细内容
+│           └── scripts/           # 该平台的辅助脚本
 ├── .claude-plugin/                # Claude Code marketplace 元数据
 ├── hooks/                         # Claude Code 平台 hooks
 ├── evals/                         # 跨平台评估场景
@@ -112,20 +106,13 @@ jskills/
 └── plugin.json                    # 集合级元数据
 ```
 
-**设计原则**：
-- **通用内容写一次**：references/scripts/agents 放 `shared/`，各平台通过 symlink 引用
-- **平台并列不互相依赖**：`skills/`（Claude Code）与 `platforms/openclaw/` 各自独立
-- **Skill 相互独立**：每个 skill 的变更不影响其他 skill
-- **可扩展**：新增 skill = `shared/` + 各平台 SKILL.md；新增平台 = `platforms/<name>/` + symlink
-
 ## 贡献新 Skill
 
-1. `shared/<name>/references/` — 通用内容（方法论、规则等）
-2. `skills/<name>/SKILL.md` — Claude Code 适配版 + symlink 到 shared
-3. `platforms/openclaw/<name>/SKILL.md` — OpenClaw 适配版 + symlink 到 shared
-4. `evals/<name>/scenarios.md` + `run-trigger-test.sh` — 评估场景
-5. `.claude-plugin/marketplace.json` — `skills` 数组追加
-6. 如需 hooks，在根 `hooks/hooks.json` 中添加
+1. `skills/<name>/SKILL.md` — Claude Code 适配版 + references/scripts
+2. `platforms/openclaw/<name>/SKILL.md` — OpenClaw 适配版 + references/scripts
+3. `evals/<name>/scenarios.md` + `run-trigger-test.sh` — 评估场景
+4. `.claude-plugin/marketplace.json` — `skills` 数组追加
+5. 如需 hooks，在根 `hooks/hooks.json` 中添加
 
 详见 [CLAUDE.md](CLAUDE.md) 开发规范。
 
