@@ -7,14 +7,14 @@ J Skills 是一组 [Claude Code](https://docs.anthropic.com/en/docs/claude-code)
 ## 安装
 
 ```bash
-claude plugin add juserch/juserch-skills
+claude plugin add juserch/jskills
 ```
 
 ## Skills
 
 ### Block Break — 高能动性行为约束引擎
 
-被阻塞时突破它。强制 AI 穷尽一切方案，不轻言放弃。参考 [PUA](https://github.com/tanweai/pua) 设计。
+被阻塞时突破它。强制 AI 穷尽一切方案，不轻言放弃。
 
 | 机制 | 说明 |
 |------|------|
