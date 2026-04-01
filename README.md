@@ -81,6 +81,27 @@ cp -r jskills/platforms/openclaw/* ~/.openclaw/skills/
 /news-fetch climate 2026-03-01~2026-03-31  # 指定时间段
 ```
 
+### Ralph Boost — 自主开发循环引擎
+
+复刻 ralph-claude-code 的自主循环能力，内建 Block Break 收敛保证。解决自主循环"停而不转"的无保证收敛问题。
+
+| 特性 | 说明 |
+|------|------|
+| **自主循环** | `claude -p` 驱动的自动开发循环，每轮执行一个任务 |
+| **增强断路器** | L0-L4 压力升级原生内建，从"3 轮放弃"到"6-7 轮渐进自救" |
+| **状态追踪** | 统一 state.json 持久化断路器 + 压力 + 策略 + 会话 |
+| **优雅交接** | L4 后生成结构化交接报告，而非裸停机 |
+| **与 Ralph 独立** | 使用 `.ralph-boost/` 目录，不依赖不修改 ralph-claude-code |
+
+**使用**：
+
+```text
+/ralph-boost setup        # 初始化项目
+/ralph-boost run          # 获取启动命令
+/ralph-boost status       # 查看当前状态
+/ralph-boost clean        # 清理
+```
+
 *更多 skill 持续添加中...*
 
 ## 项目结构

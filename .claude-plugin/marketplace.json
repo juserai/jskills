@@ -44,6 +44,19 @@
             "skills": [
                 "./skills/news-fetch"
             ]
+        },
+        {
+            "name": "ralph-boost",
+            "description": "Ralph Boost — 自主开发循环引擎。复刻 ralph-claude-code 核心能力，内建 Block Break 收敛保证。L0-L4 压力升级 + 优雅交接。零依赖。",
+            "version": "1.0.0",
+            "source": "./",
+            "author": {
+                "name": "juserch",
+                "url": "https://github.com/juserch"
+            },
+            "skills": [
+                "./skills/ralph-boost"
+            ]
         }
     ]
 }
