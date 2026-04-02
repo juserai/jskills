@@ -8,7 +8,7 @@
 set -euo pipefail
 
 KEYWORD="${1:?Usage: news-fallback.sh <keyword>}"
-ENCODED_KEYWORD=$(python3 -c "import urllib.parse; print(urllib.parse.quote('$KEYWORD'))")
+ENCODED_KEYWORD=$(python -c "import urllib.parse; print(urllib.parse.quote('$KEYWORD'))")
 TIMEOUT=10
 
 SOURCES=(

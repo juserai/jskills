@@ -43,9 +43,9 @@ if [ ! -d "$SKILLS_DIR" ]; then
     add_error "S03: skills/ directory not found"
     # Output and exit early
     printf '{"errors": %s, "warnings": %s, "passed": %s}\n' \
-        "$(printf '%s\n' "${ERRORS[@]}" | python3 -c 'import sys,json; print(json.dumps([l.strip() for l in sys.stdin]))')" \
-        "$(printf '%s\n' "${WARNINGS[@]:-}" | python3 -c 'import sys,json; print(json.dumps([l.strip() for l in sys.stdin if l.strip()]))')" \
-        "$(printf '%s\n' "${PASSED[@]:-}" | python3 -c 'import sys,json; print(json.dumps([l.strip() for l in sys.stdin if l.strip()]))')"
+        "$(printf '%s\n' "${ERRORS[@]}" | python -c 'import sys,json; print(json.dumps([l.strip() for l in sys.stdin]))')" \
+        "$(printf '%s\n' "${WARNINGS[@]:-}" | python -c 'import sys,json; print(json.dumps([l.strip() for l in sys.stdin if l.strip()]))')" \
+        "$(printf '%s\n' "${PASSED[@]:-}" | python -c 'import sys,json; print(json.dumps([l.strip() for l in sys.stdin if l.strip()]))')"
     exit 0
 fi
 
@@ -91,7 +91,7 @@ for skill_name in "${SKILL_NAMES[@]}"; do
     # --- S06: marketplace.json entry ---
     # Check both formats: per-plugin name entries OR skills array paths
     if [ -f "$PLUGIN_ROOT/.claude-plugin/marketplace.json" ]; then
-        if python3 -c "
+        if python -c "
 import json, sys
 with open('$PLUGIN_ROOT/.claude-plugin/marketplace.json') as f:
     data = json.load(f)
@@ -143,7 +143,7 @@ json_array() {
         echo "[]"
         return
     fi
-    printf '%s\n' "${arr[@]}" | python3 -c 'import sys,json; print(json.dumps([l.strip() for l in sys.stdin if l.strip()]))'
+    printf '%s\n' "${arr[@]}" | python -c 'import sys,json; print(json.dumps([l.strip() for l in sys.stdin if l.strip()]))'
 }
 
 printf '{"errors": %s, "warnings": %s, "passed": %s}\n' \

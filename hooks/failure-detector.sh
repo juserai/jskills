@@ -20,7 +20,7 @@ INPUT=$(cat)
 # Detect failure patterns in Bash output
 if echo "$INPUT" | grep -qiE '(error|failed|fatal|exception|traceback|command not found|permission denied|no such file|exit code [1-9])'; then
     # Read current state
-    FAILURES=$(python3 -c "import json; d=json.load(open('$STATE_FILE')); print(d.get('failure_count',0))" 2>/dev/null || echo "0")
+    FAILURES=$(python -c "import json; d=json.load(open('$STATE_FILE')); print(d.get('failure_count',0))" 2>/dev/null || echo "0")
     NEW_FAILURES=$((FAILURES + 1))
 
     # Calculate pressure level
@@ -37,7 +37,7 @@ if echo "$INPUT" | grep -qiE '(error|failed|fatal|exception|traceback|command no
     fi
 
     # Update state
-    python3 -c "
+    python -c "
 import json, datetime
 d = json.load(open('$STATE_FILE'))
 d['failure_count'] = $NEW_FAILURES

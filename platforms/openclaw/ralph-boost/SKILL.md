@@ -13,9 +13,9 @@ argument-hint: "[setup|run|status|clean]"
 
 ## 平台适配说明
 
-此版本适配无 Agent 工具的平台（如 OpenClaw）。循环通过 bash 脚本 `boost-loop.sh` 驱动，脚本自动检测 jq 或 python3 作为 JSON 引擎。
+此版本适配无 Agent 工具的平台（如 OpenClaw）。循环通过 bash 脚本 `boost-loop.sh` 驱动，脚本自动检测 jq 或 python 作为 JSON 引擎。
 
-依赖：`bash 4+`、`jq` 或 `python3`、`claude` CLI。
+依赖：`bash 4+`、`jq` 或 `python`、`claude` CLI。
 
 ## 子命令
 
@@ -27,7 +27,7 @@ argument-hint: "[setup|run|status|clean]"
 
 **执行步骤**：
 
-1. **检查前提**：确认 `jq` 或 `python3` 已安装，`claude` CLI 已安装
+1. **检查前提**：确认 `jq` 或 `python` 已安装，`claude` CLI 已安装
 2. **创建目录**：`.ralph-boost/`、`.ralph-boost/logs/`
 3. **生成 PROMPT.md**：
    - 读取 `references/prompt-template.md`
@@ -122,7 +122,7 @@ To run in background:
   nohup bash <skill-path>/scripts/boost-loop.sh --project-dir $(pwd) > /dev/null 2>&1 &
 ```
 
-脚本自动检测 JSON 引擎（优先 jq，fallback python3）。
+脚本自动检测 JSON 引擎（优先 jq，fallback python）。
 
 ### `/ralph-boost status`
 
@@ -171,7 +171,7 @@ This will delete .ralph-boost/ and all state. Continue? [y/N]
 | 断路器 | 被动（3 轮放弃） | 主动（L0-L4，6-7 轮自救） |
 | 状态 | 5+ 个文件 | 统一 state.json |
 | 目录 | `.ralph/` | `.ralph-boost/` |
-| JSON 引擎 | jq（必须） | jq 或 python3（自动检测） |
+| JSON 引擎 | jq（必须） | jq 或 python（自动检测） |
 
 ### vs block-break
 

@@ -9,7 +9,7 @@ if [ ! -f "$STATE_FILE" ]; then
 fi
 
 # Check if state is fresh enough (within 2 hours)
-LAST_UPDATED=$(python3 -c "
+LAST_UPDATED=$(python -c "
 import json, datetime
 try:
     d = json.load(open('$STATE_FILE'))
@@ -29,8 +29,8 @@ if [ "$LAST_UPDATED" -gt 7200 ]; then
     exit 0
 fi
 
-FAILURES=$(python3 -c "import json; print(json.load(open('$STATE_FILE')).get('failure_count',0))" 2>/dev/null || echo "0")
-LEVEL=$(python3 -c "import json; print(json.load(open('$STATE_FILE')).get('pressure_level',0))" 2>/dev/null || echo "0")
+FAILURES=$(python -c "import json; print(json.load(open('$STATE_FILE')).get('failure_count',0))" 2>/dev/null || echo "0")
+LEVEL=$(python -c "import json; print(json.load(open('$STATE_FILE')).get('pressure_level',0))" 2>/dev/null || echo "0")
 
 if [ "$FAILURES" -gt 0 ]; then
     cat << EOF

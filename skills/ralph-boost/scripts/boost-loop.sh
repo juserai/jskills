@@ -2,7 +2,7 @@
 # Ralph Boost — Autonomous Development Loop Engine
 # Usage: bash boost-loop.sh [--project-dir <path>]
 #
-# Prerequisites: bash 4+, jq OR python3, claude (Claude Code CLI)
+# Prerequisites: bash 4+, jq OR python, claude (Claude Code CLI)
 
 set -euo pipefail
 
@@ -45,7 +45,7 @@ die() {
 }
 
 # ============================================================
-# JSON Engine (jq / python3 dual support)
+# JSON Engine (jq / python dual support)
 # ============================================================
 
 JSON_ENGINE=""
@@ -53,12 +53,10 @@ JSON_ENGINE=""
 detect_json_engine() {
     if command -v jq >/dev/null 2>&1; then
         JSON_ENGINE="jq"
-    elif command -v python3 >/dev/null 2>&1; then
-        JSON_ENGINE="python3"
     elif command -v python >/dev/null 2>&1; then
         JSON_ENGINE="python"
     else
-        die "Requires jq or python3, neither found"
+        die "Requires jq or python, neither found"
     fi
     log "JSON engine: $JSON_ENGINE"
 }
@@ -70,7 +68,7 @@ json_get_str() {
         jq)
             jq -r "${jq_path} // \"${default}\""
             ;;
-        python3|python)
+        python)
             $JSON_ENGINE -c "
 import json, sys
 d = json.load(sys.stdin)
@@ -107,7 +105,7 @@ json_set_field() {
         jq)
             jq "${dotpath} = ${value}"
             ;;
-        python3|python)
+        python)
             $JSON_ENGINE -c "
 import json, sys
 d = json.load(sys.stdin)
@@ -129,7 +127,7 @@ json_format() {
         jq)
             jq '.'
             ;;
-        python3|python)
+        python)
             $JSON_ENGINE -c "import json,sys; print(json.dumps(json.load(sys.stdin),indent=2))"
             ;;
     esac
@@ -142,7 +140,7 @@ json_array_length() {
         jq)
             jq "${jq_path} | length"
             ;;
-        python3|python)
+        python)
             $JSON_ENGINE -c "
 import json, sys
 d = json.load(sys.stdin)
@@ -177,7 +175,7 @@ json_build() {
             done
             jq -n "${args[@]}" '$ARGS.named'
             ;;
-        python3|python)
+        python)
             local pairs="{"
             local first=true
             while [[ $# -ge 2 ]]; do
@@ -212,7 +210,7 @@ json_extract_claude_text() {
                 cat "$output_file"
             fi
             ;;
-        python3|python)
+        python)
             $JSON_ENGINE -c "
 import json
 with open('''${output_file}''') as f:
@@ -244,7 +242,7 @@ json_extract_session_id() {
         jq)
             jq -r '.session_id // .sessionId // empty' "$output_file" 2>/dev/null || true
             ;;
-        python3|python)
+        python)
             $JSON_ENGINE -c "
 import json
 with open('''${output_file}''') as f:
@@ -290,7 +288,7 @@ load_config() {
             jq)
                 mapfile -t ALLOWED_TOOLS < <(cat "$CONFIG_FILE" | jq -r '.allowed_tools[]')
                 ;;
-            python3|python)
+            python)
                 mapfile -t ALLOWED_TOOLS < <($JSON_ENGINE -c "
 import json
 with open('${CONFIG_FILE}') as f: d = json.load(f)
