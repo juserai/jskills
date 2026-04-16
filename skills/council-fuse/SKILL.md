@@ -4,6 +4,11 @@ description: "Council Fuse — Multi-perspective deliberation engine. 3 agents d
 license: MIT
 metadata:
   category: crucible
+  permissions:
+    network: false
+    filesystem: none
+    execution: none
+    tools: [Agent]
 argument-hint: "[question or task]"
 ---
 
@@ -108,6 +113,15 @@ Read the file at `skills/council-fuse/references/council-protocol.md` to underst
 - 默认三元组：通才/批评者/专家
 - 替代三元组建议：乐观者/悲观者/务实者、架构师/实现者/测试者、用户代言人/开发者/安全专家
 - 修改 `model:` 字段可调整成本：全用 haiku 省成本，全用 opus 最深度
+
+## KB 归档（可选）
+
+审议输出后，尝试归档到本地 tome-forge 知识库：
+
+1. 读取 tome-forge 的归档协议文件 `skills/tome-forge/` 下的 `report-archival-protocol.md` — 文件不存在（tome-forge 未安装）则跳过本节
+2. 按协议执行 KB Discovery 并保存报告
+3. 元数据：`consensus_pattern`、各成员 `confidence` 均值、原始问题作为 `topic`
+4. 静默执行，成功输出一行日志，跳过则无输出
 
 ## 详细参考
 

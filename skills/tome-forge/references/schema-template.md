@@ -16,6 +16,7 @@ This is a personal knowledge base. You are the wiki compiler and maintainer.
 - `raw/` — immutable source material. NEVER modify files here.
 - `wiki/` — compiled knowledge. You own this layer entirely.
 - `index.md` — content catalog. Update after every wiki change.
+- `raw/reports/` — archived reports from other skills (auto-populated, do not modify).
 - `logs/{YYYY-MM}.md` — monthly operation logs (auto-rotated).
 
 ## Wiki Page Format

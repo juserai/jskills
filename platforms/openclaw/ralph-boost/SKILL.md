@@ -3,6 +3,13 @@ name: ralph-boost
 description: "Ralph Boost — Autonomous dev loop engine with convergence guarantee. Built-in Block Break integration. setup → run → status → clean."
 license: MIT
 argument-hint: "[setup|run|status|clean]"
+metadata:
+  category: hammer
+  permissions:
+    network: false
+    filesystem: read-write
+    execution: sandboxed
+    tools: [Read, Write, Bash]
 ---
 
 # Ralph Boost — 自主开发循环引擎

@@ -1,9 +1,9 @@
 # Forge
 
-> Trabaja más duro, luego tómate un descanso. 5 skills para un mejor ritmo de programación con Claude Code.
+> Trabaja más duro, luego tómate un descanso. 7 skills para un mejor ritmo de programación con Claude Code.
 
 [![MIT License](https://img.shields.io/badge/license-MIT-green.svg)](../../LICENSE)
-[![Skills](https://img.shields.io/badge/skills-5-blue.svg)]()
+[![Skills](https://img.shields.io/badge/skills-7-blue.svg)]()
 [![Zero Dependencies](https://img.shields.io/badge/dependencies-0-brightgreen.svg)]()
 [![Claude Code](https://img.shields.io/badge/platform-Claude%20Code-purple.svg)]()
 [![OpenClaw](https://img.shields.io/badge/platform-OpenClaw-orange.svg)]()
@@ -55,6 +55,7 @@ cp -r forge/platforms/openclaw/* ~/.openclaw/skills/
 | Skill | Qué hace | Pruébalo |
 |-------|----------|----------|
 | **council-fuse** | Deliberación multiperspectiva para mejores respuestas | `/council-fuse <question>` |
+| **insight-fuse** | Investigación sistemática multifuente con informes profesionales | `/insight-fuse <topic>` |
 | **tome-forge** | Base de conocimiento personal con wiki compilada por LLM | `/tome-forge init` |
 
 ### Anvil
@@ -140,7 +141,7 @@ Comprueba la integridad estructural y la calidad semántica de los archivos de s
 
 ¿Agotado de depurar? `/news-fetch` — tu descanso mental de 2 minutos.
 
-Los otros tres skills te empujan a trabajar más duro. Este te recuerda respirar. Obtén las últimas noticias sobre cualquier tema directamente desde tu terminal — sin cambiar de contexto, sin caer en agujeros de conejo del navegador. Solo un vistazo rápido y de vuelta al trabajo, renovado.
+Los otros skills te empujan a trabajar más duro. Este te recuerda respirar. Obtén las últimas noticias sobre cualquier tema directamente desde tu terminal — sin cambiar de contexto, sin caer en agujeros de conejo del navegador. Solo un vistazo rápido y de vuelta al trabajo, renovado.
 
 | Característica | Descripción |
 |----------------|-------------|
@@ -155,6 +156,67 @@ Los otros tres skills te empujan a trabajar más duro. Este te recuerda respirar
 /news-fetch robotics month        # Noticias de robótica de este mes
 /news-fetch climate 2026-03-01~2026-03-31  # Rango de fechas personalizado
 ```
+
+## Council Fuse — Motor de Deliberación Multiperspectiva
+
+Mejores respuestas a través del debate estructurado. `/council-fuse` genera 3 perspectivas independientes, las evalúa anónimamente y sintetiza la mejor respuesta.
+
+Inspirado en [LLM Council de Karpathy](https://github.com/karpathy/llm-council) — destilado en un solo comando.
+
+| Mecanismo | Descripción |
+|-----------|-------------|
+| **3 Perspectivas** | Generalista (equilibrado) / Crítico (adversarial) / Especialista (técnico profundo) |
+| **Evaluación Anónima** | Evaluación en 4 dimensiones: Corrección, Completitud, Practicidad, Claridad |
+| **Síntesis** | Respuesta mejor puntuada como esqueleto, enriquecida con insights únicos |
+| **Opinión Minoritaria** | Las opiniones disidentes válidas se preservan, no se silencian |
+
+```text
+/council-fuse ¿Deberíamos usar microservicios?
+/council-fuse Revisa este patrón de manejo de errores
+/council-fuse Redis vs PostgreSQL para colas de trabajo
+```
+
+## Insight Fuse — Motor de Investigación Multifuente
+
+Del tema al informe de investigación profesional. `/insight-fuse` ejecuta un pipeline progresivo de 5 etapas: escaneo → alineación → investigación → revisión → análisis profundo.
+
+Análisis multiperspectiva integrado (Generalista/Crítico/Especialista), plantillas de informes extensibles y profundidad configurable. El hermano de la serie fuse de council-fuse — mientras council-fuse delibera sobre información conocida, insight-fuse recopila y sintetiza activamente nueva información.
+
+| Mecanismo | Descripción |
+|-----------|-------------|
+| **Pipeline de 5 Etapas** | Escaneo → Alineación → Investigación → Revisión → Análisis Profundo |
+| **Profundidad Configurable** | quick (solo escaneo) / standard (investigación automática) / deep (+ multiperspectiva) / full (+ puntos de control humanos) |
+| **3 Perspectivas** | Generalista (amplitud) / Crítico (verificación) / Especialista (precisión) |
+| **Plantillas de Informes** | technology / market / competitive / personalizado — o estructura autogenerada |
+| **Estándares de Calidad** | Multifuente obligatorio, integridad de citas, verificación de diversidad de fuentes |
+
+```text
+/insight-fuse AI Agent riesgos de seguridad
+/insight-fuse --depth quick --template technology WebAssembly
+/insight-fuse --depth deep --perspectives optimist,pessimist,pragmatist comercialización de computación cuántica
+```
+
+## Tome Forge — Motor de Base de Conocimiento Personal
+
+Construye una base de conocimiento personal que un LLM compila y mantiene. Basado en el [patrón LLM Wiki de Karpathy](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) — Markdown sin procesar compilado en un wiki estructurado, sin RAG ni base de datos vectorial.
+
+| Característica | Descripción |
+|----------------|-------------|
+| **Arquitectura de Tres Capas** | Fuentes sin procesar (inmutables) / Wiki (compilado por LLM) / Schema (CLAUDE.md) |
+| **6 Operaciones** | init, capture, ingest, query, lint, compile |
+| **My Understanding Delta** | Sección sagrada para insights humanos — LLM nunca sobreescribe |
+| **Zero Infra** | Markdown puro + Git. Sin bases de datos, embeddings ni servidores |
+
+```text
+/tome-forge init              # Inicializar KB en el directorio actual
+/tome-forge capture "idea"    # Captura rápida de una nota
+/tome-forge ingest raw/paper  # Compilar material crudo al wiki
+/tome-forge query "question"  # Buscar y sintetizar
+/tome-forge lint              # Verificación de salud de la estructura wiki
+/tome-forge compile           # Compilar por lotes todos los nuevos materiales
+```
+
+> Inspirado en [LLM Wiki de Karpathy](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f), construido como skill sin dependencias.
 
 ## Calidad
 
@@ -185,9 +247,9 @@ forge/
 ├── docs/
 │   ├── guide/                     # Guías de usuario (inglés)
 │   ├── plans/                     # Documentos de diseño
-│   └── i18n/                      # Traducciones (zh-CN, ja, ko, es, pt-BR, ...)
+│   └── i18n/                      # Traducciones (11 languages)
 │       ├── README.*.md            # READMEs traducidos
-│       └── guide/{zh-CN,ja,ko}/   # Guías traducidas
+│       └── guide/*-guide.*.md     # Guías traducidas
 └── plugin.json                    # Metadatos de la colección
 ```
 

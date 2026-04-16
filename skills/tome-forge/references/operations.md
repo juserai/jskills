@@ -14,6 +14,26 @@ Given raw content and the current `index.md`, determine which wiki pages need up
 - One raw file may route to multiple wiki pages
 - Prefer updating existing pages over creating new ones (consolidation > fragmentation)
 
+**Report routing (for files in `raw/reports/`):**
+- If the raw file has `source_skill` in frontmatter → use `topic` + `tags` for routing instead of content analysis
+- Prefer routing to existing wiki pages whose `domain` matches the report's `tags`
+- insight-fuse reports: typically route to 1-3 wiki pages (split by sub-topics within the report)
+- council-fuse reports: typically route to 1 wiki page matching the deliberation question
+- news-fetch digests: route to `wiki/{domain}/` pages grouped by topic; individual news items may split across pages
+- When creating new pages from reports, set initial `confidence` based on metadata:
+  - council-fuse: consensus "strong" → high, "majority-dissent" → medium, "three-way-split" → low
+  - insight-fuse: depth "deep"/"full" → high, "standard" → medium, "quick" → low
+  - news-fetch: always `low` (news is ephemeral, needs corroboration)
+
+**Multi-version reports (same topic, different dates):**
+- When a raw report has `version > 1` and `prior_versions`, it is a newer version of an existing topic
+- Routing: use `topic` to find wiki pages already created from prior versions (check wiki page `source_refs` for paths in `prior_versions`)
+- Ingest the latest version as the primary source; prior versions provide historical context
+- Merge strategy follows standard Step 2, with additional rules:
+  - Wiki page `source_refs` should list ALL version paths (latest first)
+  - After multi-version merge, wiki page `maturity` must be at least `growing` (multiple rounds of evidence)
+  - If prior versions contradict the latest, prefer latest content in Core Concept; note evolution in Open Questions
+
 **Naming convention for new pages:**
 - Path: `wiki/{domain}/{topic-name}.md`
 - Use kebab-case for filenames

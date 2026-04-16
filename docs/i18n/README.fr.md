@@ -1,9 +1,9 @@
 # Forge
 
-> Travaillez plus dur, puis faites une pause. 5 skills pour un meilleur rythme de développement avec Claude Code.
+> Travaillez plus dur, puis faites une pause. 7 skills pour un meilleur rythme de développement avec Claude Code.
 
 [![MIT License](https://img.shields.io/badge/license-MIT-green.svg)](../../LICENSE)
-[![Skills](https://img.shields.io/badge/skills-5-blue.svg)]()
+[![Skills](https://img.shields.io/badge/skills-7-blue.svg)]()
 [![Zero Dependencies](https://img.shields.io/badge/dependencies-0-brightgreen.svg)]()
 [![Claude Code](https://img.shields.io/badge/platform-Claude%20Code-purple.svg)]()
 [![OpenClaw](https://img.shields.io/badge/platform-OpenClaw-orange.svg)]()
@@ -55,6 +55,7 @@ cp -r forge/platforms/openclaw/* ~/.openclaw/skills/
 | Skill | Ce qu'il fait | Essayez-le |
 |-------|--------------|------------|
 | **council-fuse** | Délibération multi-perspectives pour de meilleures réponses | `/council-fuse <question>` |
+| **insight-fuse** | Recherche systématique multi-sources avec rapports professionnels | `/insight-fuse <topic>` |
 | **tome-forge** | Base de connaissances personnelle avec wiki compilée par LLM | `/tome-forge init` |
 
 ### Anvil
@@ -140,7 +141,7 @@ Vérifie l'intégrité structurelle et la qualité sémantique des fichiers skil
 
 Épuisé par le débogage ? `/news-fetch` — votre pause mentale de 2 minutes.
 
-Les trois autres skills vous poussent à travailler plus dur. Celui-ci vous rappelle de souffler un peu. Récupérez les dernières actualités sur n'importe quel sujet, directement depuis votre terminal — pas de changement de contexte, pas de spirale dans le navigateur. Juste un rapide coup d'œil et retour au travail, rafraîchi.
+Les autres skills vous poussent à travailler plus dur. Celui-ci vous rappelle de souffler un peu. Récupérez les dernières actualités sur n'importe quel sujet, directement depuis votre terminal — pas de changement de contexte, pas de spirale dans le navigateur. Juste un rapide coup d'œil et retour au travail, rafraîchi.
 
 | Fonctionnalité | Description |
 |----------------|-------------|
@@ -155,6 +156,67 @@ Les trois autres skills vous poussent à travailler plus dur. Celui-ci vous rapp
 /news-fetch robotics month        # Actualités robotique du mois
 /news-fetch climate 2026-03-01~2026-03-31  # Plage de dates personnalisée
 ```
+
+## Council Fuse — Moteur de délibération multi-perspectives
+
+De meilleures réponses grâce au débat structuré. `/council-fuse` génère 3 perspectives indépendantes, les évalue anonymement et synthétise la meilleure réponse.
+
+Inspiré par le [LLM Council de Karpathy](https://github.com/karpathy/llm-council) — distillé en une seule commande.
+
+| Mécanisme | Description |
+|-----------|-------------|
+| **3 Perspectives** | Généraliste (équilibré) / Critique (adversarial) / Spécialiste (technique approfondi) |
+| **Évaluation Anonyme** | Évaluation en 4 dimensions : Exactitude, Complétude, Praticité, Clarté |
+| **Synthèse** | Réponse la mieux notée comme ossature, enrichie d'insights uniques |
+| **Opinion Minoritaire** | Les opinions dissidentes valides sont préservées, pas supprimées |
+
+```text
+/council-fuse Devrions-nous utiliser des microservices ?
+/council-fuse Examine ce patron de gestion des erreurs
+/council-fuse Redis vs PostgreSQL pour les files de tâches
+```
+
+## Insight Fuse — Moteur de recherche multi-sources
+
+Du sujet au rapport de recherche professionnel. `/insight-fuse` exécute un pipeline progressif en 5 étapes : scan → alignement → recherche → revue → analyse approfondie.
+
+Analyse multi-perspectives intégrée (Généraliste/Critique/Spécialiste), modèles de rapports extensibles et profondeur configurable. Le frère de la série fuse de council-fuse — tandis que council-fuse délibère sur les informations connues, insight-fuse collecte et synthétise activement de nouvelles informations.
+
+| Mécanisme | Description |
+|-----------|-------------|
+| **Pipeline en 5 Étapes** | Scan → Alignement → Recherche → Revue → Analyse Approfondie |
+| **Profondeur Configurable** | quick (scan uniquement) / standard (recherche automatique) / deep (+ multi-perspectives) / full (+ points de contrôle humains) |
+| **3 Perspectives** | Généraliste (largeur) / Critique (vérification) / Spécialiste (précision) |
+| **Modèles de Rapports** | technology / market / competitive / personnalisé — ou structure auto-générée |
+| **Standards de Qualité** | Multi-sources obligatoire, intégrité des citations, vérification de la diversité des sources |
+
+```text
+/insight-fuse AI Agent risques de sécurité
+/insight-fuse --depth quick --template technology WebAssembly
+/insight-fuse --depth deep --perspectives optimist,pessimist,pragmatist commercialisation de l'informatique quantique
+```
+
+## Tome Forge — Moteur de base de connaissances personnelle
+
+Construisez une base de connaissances personnelle qu'un LLM compile et maintient. Basé sur le [patron LLM Wiki de Karpathy](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) — du Markdown brut compilé en un wiki structuré, sans RAG ni base de données vectorielle.
+
+| Fonctionnalité | Description |
+|----------------|-------------|
+| **Architecture à Trois Couches** | Sources brutes (immuables) / Wiki (compilé par LLM) / Schéma (CLAUDE.md) |
+| **6 Opérations** | init, capture, ingest, query, lint, compile |
+| **My Understanding Delta** | Section sacrée pour les insights humains — le LLM ne l'écrase jamais |
+| **Zero Infra** | Markdown pur + Git. Pas de bases de données, d'embeddings ni de serveurs |
+
+```text
+/tome-forge init              # Initialiser la KB dans le répertoire courant
+/tome-forge capture "idea"    # Capture rapide d'une note
+/tome-forge ingest raw/paper  # Compiler le matériel brut dans le wiki
+/tome-forge query "question"  # Rechercher et synthétiser
+/tome-forge lint              # Vérification de santé de la structure wiki
+/tome-forge compile           # Compiler par lots tous les nouveaux matériaux
+```
+
+> Inspiré par le [LLM Wiki de Karpathy](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f), construit comme un skill sans dépendance.
 
 ## Qualité
 
@@ -185,9 +247,9 @@ forge/
 ├── docs/
 │   ├── guide/                     # Guides d'utilisation (anglais)
 │   ├── plans/                     # Documents de conception
-│   └── i18n/                      # Traductions (zh-CN, ja, ko, fr, de, ...)
+│   └── i18n/                      # Traductions (11 languages)
 │       ├── README.*.md            # README traduits
-│       └── guide/{zh-CN,ja,ko}/   # Guides traduits
+│       └── guide/*-guide.*.md     # Guides traduits
 └── plugin.json                    # Métadonnées de la collection
 ```
 

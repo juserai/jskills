@@ -1,9 +1,9 @@
 # Forge
 
-> Làm việc chăm chỉ hơn, rồi nghỉ ngơi một chút. 5 skill giúp bạn có nhịp code tốt hơn với Claude Code.
+> Làm việc chăm chỉ hơn, rồi nghỉ ngơi một chút. 7 skill giúp bạn có nhịp code tốt hơn với Claude Code.
 
 [![MIT License](https://img.shields.io/badge/license-MIT-green.svg)](../../LICENSE)
-[![Skills](https://img.shields.io/badge/skills-5-blue.svg)]()
+[![Skills](https://img.shields.io/badge/skills-7-blue.svg)]()
 [![Zero Dependencies](https://img.shields.io/badge/dependencies-0-brightgreen.svg)]()
 [![Claude Code](https://img.shields.io/badge/platform-Claude%20Code-purple.svg)]()
 [![OpenClaw](https://img.shields.io/badge/platform-OpenClaw-orange.svg)]()
@@ -55,6 +55,7 @@ cp -r forge/platforms/openclaw/* ~/.openclaw/skills/
 | Skill | Chức năng | Thử ngay |
 |-------|-----------|----------|
 | **council-fuse** | Thảo luận đa góc nhìn để có câu trả lời tốt hơn | `/council-fuse <question>` |
+| **insight-fuse** | Nghiên cứu đa nguồn có hệ thống với báo cáo chuyên nghiệp | `/insight-fuse <topic>` |
 | **tome-forge** | Cơ sở tri thức cá nhân với wiki biên soạn bởi LLM | `/tome-forge init` |
 
 ### Anvil
@@ -140,7 +141,7 @@ Kiểm tra tính toàn vẹn cấu trúc và chất lượng ngữ nghĩa của 
 
 Kiệt sức vì debug? `/news-fetch` — 2 phút giải lao tinh thần cho bạn.
 
-Ba skill kia đẩy bạn làm việc chăm chỉ hơn. Skill này nhắc bạn hít thở. Lấy tin tức mới nhất về bất kỳ chủ đề nào, ngay từ terminal — không cần chuyển ngữ cảnh, không lạc vào hố thỏ trình duyệt. Lướt nhanh rồi quay lại công việc, tinh thần sảng khoái.
+Các skill khác đẩy bạn làm việc chăm chỉ hơn. Skill này nhắc bạn hít thở. Lấy tin tức mới nhất về bất kỳ chủ đề nào, ngay từ terminal — không cần chuyển ngữ cảnh, không lạc vào hố thỏ trình duyệt. Lướt nhanh rồi quay lại công việc, tinh thần sảng khoái.
 
 | Tính năng | Mô tả |
 |-----------|-------|
@@ -155,6 +156,67 @@ Ba skill kia đẩy bạn làm việc chăm chỉ hơn. Skill này nhắc bạn 
 /news-fetch robotics month        # Tin robotics tháng này
 /news-fetch climate 2026-03-01~2026-03-31  # Khoảng thời gian tùy chọn
 ```
+
+## Council Fuse — Công cụ Thảo luận Đa Góc nhìn
+
+Câu trả lời tốt hơn thông qua tranh luận có cấu trúc. `/council-fuse` tạo 3 góc nhìn độc lập, đánh giá ẩn danh và tổng hợp câu trả lời tốt nhất.
+
+Lấy cảm hứng từ [LLM Council của Karpathy](https://github.com/karpathy/llm-council) — cô đọng trong một lệnh duy nhất.
+
+| Cơ chế | Mô tả |
+|--------|-------|
+| **3 Góc nhìn** | Generalist (cân bằng) / Critic (phản biện) / Specialist (kỹ thuật chuyên sâu) |
+| **Đánh giá Ẩn danh** | Đánh giá 4 chiều: Chính xác, Đầy đủ, Thực tiễn, Rõ ràng |
+| **Tổng hợp** | Câu trả lời điểm cao nhất làm khung, bổ sung những hiểu biết độc đáo |
+| **Ý kiến Thiểu số** | Phản đối hợp lý được giữ lại, không bị đè nén |
+
+```text
+/council-fuse Có nên dùng microservices không?
+/council-fuse Xem lại pattern xử lý lỗi này
+/council-fuse Redis vs PostgreSQL cho hàng đợi công việc
+```
+
+## Insight Fuse — Công cụ Nghiên cứu Đa Nguồn
+
+Từ chủ đề đến báo cáo nghiên cứu chuyên nghiệp. `/insight-fuse` chạy pipeline tiến triển 5 giai đoạn: quét → căn chỉnh → nghiên cứu → đánh giá → phân tích sâu.
+
+Tích hợp sẵn phân tích đa góc nhìn (Generalist/Critic/Specialist), mẫu báo cáo mở rộng được, và độ sâu cấu hình được. Skill anh em của council-fuse — trong khi council-fuse thảo luận thông tin đã biết, insight-fuse chủ động thu thập và tổng hợp thông tin mới.
+
+| Cơ chế | Mô tả |
+|--------|-------|
+| **Pipeline 5 Giai đoạn** | Quét → Căn chỉnh → Nghiên cứu → Đánh giá → Phân tích Sâu |
+| **Độ sâu Cấu hình** | quick (chỉ quét) / standard (nghiên cứu tự động) / deep (+ đa góc nhìn) / full (+ điểm kiểm tra thủ công) |
+| **3 Góc nhìn** | Generalist (bao quát) / Critic (xác minh) / Specialist (chính xác) |
+| **Mẫu Báo cáo** | technology / market / competitive / tùy chỉnh — hoặc tự động tạo cấu trúc |
+| **Tiêu chuẩn Chất lượng** | Bắt buộc đa nguồn, toàn vẹn trích dẫn, kiểm tra đa dạng nguồn |
+
+```text
+/insight-fuse AI Agent rủi ro bảo mật
+/insight-fuse --depth quick --template technology WebAssembly
+/insight-fuse --depth deep --perspectives optimist,pessimist,pragmatist thương mại hóa điện toán lượng tử
+```
+
+## Tome Forge — Công cụ Cơ sở Tri thức Cá nhân
+
+Tạo cơ sở tri thức cá nhân được LLM biên soạn và duy trì. Dựa trên [mẫu LLM Wiki của Karpathy](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) — biên dịch Markdown thô thành wiki có cấu trúc, không RAG hay vector DB.
+
+| Tính năng | Mô tả |
+|-----------|-------|
+| **Kiến trúc Ba Tầng** | Nguồn thô (bất biến) / Wiki (LLM biên soạn) / Schema (CLAUDE.md) |
+| **6 Thao tác** | init, capture, ingest, query, lint, compile |
+| **My Understanding Delta** | Phần thiêng liêng dành cho hiểu biết của con người — LLM không bao giờ ghi đè |
+| **Zero Infra** | Markdown thuần + Git. Không database, embedding hay server |
+
+```text
+/tome-forge init              # Khởi tạo KB trong thư mục hiện tại
+/tome-forge capture "idea"    # Ghi chú nhanh
+/tome-forge ingest raw/paper  # Biên soạn tài liệu thô thành wiki
+/tome-forge query "question"  # Tìm kiếm và tổng hợp
+/tome-forge lint              # Kiểm tra sức khỏe cấu trúc wiki
+/tome-forge compile           # Biên soạn hàng loạt tất cả tài liệu mới
+```
+
+> Lấy cảm hứng từ [LLM Wiki của Karpathy](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f), xây dựng thành skill không phụ thuộc.
 
 ## Chất lượng
 
@@ -185,9 +247,9 @@ forge/
 ├── docs/
 │   ├── guide/                     # Hướng dẫn sử dụng (tiếng Anh)
 │   ├── plans/                     # Tài liệu thiết kế
-│   └── i18n/                      # Bản dịch (zh-CN, ja, ko)
+│   └── i18n/                      # Bản dịch (11 ngôn ngữ)
 │       ├── README.*.md            # README đã dịch
-│       └── guide/{zh-CN,ja,ko}/   # Hướng dẫn đã dịch
+│       └── guide/*-guide.*.md     # Hướng dẫn đã dịch
 └── plugin.json                    # Metadata bộ sưu tập
 ```
 

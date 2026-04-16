@@ -2,6 +2,13 @@
 name: skill-lint
 description: "Skill Lint — Validate Claude Code skill plugins. Structural + semantic checks for any plugin project."
 license: MIT
+metadata:
+  category: anvil
+  permissions:
+    network: false
+    filesystem: read-only
+    execution: sandboxed
+    tools: [Read, Bash, Glob, Grep]
 ---
 
 # Skill Lint — AI Agent Skill 校验工具

@@ -1,9 +1,9 @@
 # Forge
 
-> Forge stronger AI agents. 6 skills for a better coding rhythm with Claude Code.
+> Forge stronger AI agents. 7 skills for a better coding rhythm with Claude Code.
 
 [![MIT License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![Skills](https://img.shields.io/badge/skills-6-blue.svg)]()
+[![Skills](https://img.shields.io/badge/skills-7-blue.svg)]()
 [![Zero Dependencies](https://img.shields.io/badge/dependencies-0-brightgreen.svg)]()
 [![Claude Code](https://img.shields.io/badge/platform-Claude%20Code-purple.svg)]()
 [![OpenClaw](https://img.shields.io/badge/platform-OpenClaw-orange.svg)]()
@@ -55,6 +55,7 @@ cp -r forge/platforms/openclaw/* ~/.openclaw/skills/
 | Skill | What it does | Try it |
 |-------|-------------|--------|
 | **council-fuse** | Multi-perspective deliberation for better answers | `/council-fuse <question>` |
+| **insight-fuse** | Systematic multi-source research with professional reports | `/insight-fuse <topic>` |
 | **tome-forge** | Personal knowledge base with LLM-compiled wiki | `/tome-forge init` |
 
 ### Anvil
@@ -138,6 +139,26 @@ Inspired by [Karpathy's LLM Council](https://github.com/karpathy/llm-council) �
 /council-fuse Redis vs PostgreSQL for job queues
 ```
 
+## Insight Fuse — Multi-Source Research Engine
+
+From topic to professional research report. `/insight-fuse` runs a 5-stage progressive pipeline: scan → align → research → review → deep dive.
+
+Built-in multi-perspective analysis (Generalist/Critic/Specialist), extensible report templates, and configurable depth. The fuse-series sibling to council-fuse — while council-fuse deliberates on known information, insight-fuse actively gathers and synthesizes new information.
+
+| Mechanism | Description |
+|-----------|-------------|
+| **5-Stage Pipeline** | Scan → Align → Research → Review → Deep Dive |
+| **Configurable Depth** | quick (scan only) / standard (auto research) / deep (+ multi-perspective) / full (+ human gates) |
+| **3 Perspectives** | Generalist (breadth) / Critic (verification) / Specialist (precision) |
+| **Report Templates** | technology / market / competitive / custom — or auto-generated structure |
+| **Quality Standards** | Multi-source enforcement, citation integrity, source diversity checks |
+
+```text
+/insight-fuse AI Agent 安全风险
+/insight-fuse --depth quick --template technology WebAssembly
+/insight-fuse --depth deep --perspectives optimist,pessimist,pragmatist 量子计算商业化
+```
+
 ## Skill Lint — Skill Plugin Validator
 
 Validate your Claude Code plugins in one command.
@@ -159,7 +180,7 @@ Checks structural integrity and semantic quality of skill files in any Claude Co
 
 Burned out from debugging? `/news-fetch` — your 2-minute mental break.
 
-The other three skills push you to work harder. This one reminds you to take a breath. Grab the latest news on any topic, right from your terminal — no context switching, no browser rabbit holes. Just a quick scan and back to work, refreshed.
+The other skills push you to work harder. This one reminds you to take a breath. Grab the latest news on any topic, right from your terminal — no context switching, no browser rabbit holes. Just a quick scan and back to work, refreshed.
 
 | Feature | Description |
 |---------|-------------|
@@ -226,9 +247,9 @@ forge/
 ├── docs/
 │   ├── guide/                     # User guides (English)
 │   ├── plans/                     # Design documents
-│   └── i18n/                      # Translations (zh-CN, ja, ko)
+│   └── i18n/                      # Translations (11 languages)
 │       ├── README.*.md            # Translated READMEs
-│       └── guide/{zh-CN,ja,ko}/   # Translated guides
+│       └── guide/*-guide.*.md     # Translated guides
 └── plugin.json                    # Collection metadata
 ```
 

@@ -4,6 +4,11 @@ description: "Ralph Boost — Autonomous dev loop engine with convergence guaran
 license: MIT
 metadata:
   category: hammer
+  permissions:
+    network: false
+    filesystem: read-write
+    execution: sandboxed
+    tools: [Read, Write, Bash, Agent]
 argument-hint: "[setup|run|status|clean]"
 ---
 

@@ -2,6 +2,13 @@
 name: news-fetch
 description: "News Fetch — Quick news between coding sessions. Take a mental break, stay informed. 3-tier network fallback."
 license: MIT
+metadata:
+  category: quench
+  permissions:
+    network: true
+    filesystem: none
+    execution: none
+    tools: [WebSearch, WebFetch]
 ---
 
 # News Fetch — 新闻获取工具

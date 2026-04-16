@@ -42,11 +42,10 @@ skills/block-break/SKILL.md                    # 核心 skill 定义
 skills/block-break/references/checklist.md     # 7 项检查清单
 skills/block-break/references/methodology.md   # 五步方法论
 skills/block-break/references/anti-rationalization.md  # 抗合理化封堵表
-commands/block-break.md                        # /block-break 入口
-agents/block-break-worker.md                   # Sub-agent 行为约束
+skills/block-break/agents/block-break-worker.md       # Sub-agent 行为约束
 evals/block-break/scenarios.md                 # 10 个评估场景
 evals/block-break/run-trigger-test.sh          # 触发测试脚本
-guide-block-break.md                           # 用户手册
+docs/guide/block-break-guide.md                # 用户手册
 hooks/frustration-trigger.sh                   # 挫败检测
 hooks/failure-detector.sh                      # 失败计数
 hooks/session-restore.sh                       # 状态恢复

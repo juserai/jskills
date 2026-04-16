@@ -1,9 +1,9 @@
 # Forge
 
-> 张弛有度。5 个 skill，让你和 AI 的编码节奏更好。
+> 张弛有度。7 个 skill，让你和 AI 的编码节奏更好。
 
 [![MIT License](https://img.shields.io/badge/license-MIT-green.svg)](../../LICENSE)
-[![Skills](https://img.shields.io/badge/skills-5-blue.svg)]()
+[![Skills](https://img.shields.io/badge/skills-7-blue.svg)]()
 [![Zero Dependencies](https://img.shields.io/badge/dependencies-0-brightgreen.svg)]()
 [![Claude Code](https://img.shields.io/badge/platform-Claude%20Code-purple.svg)]()
 [![OpenClaw](https://img.shields.io/badge/platform-OpenClaw-orange.svg)]()
@@ -35,6 +35,7 @@ cp -r forge/platforms/openclaw/* ~/.openclaw/skills/
 | Skill | 功能 | 试试看 |
 |-------|------|--------|
 | **council-fuse** | 多视角议会蒸馏，获得更好的答案 | `/council-fuse <question>` |
+| **insight-fuse** | 系统化多源调研，生成专业报告 | `/insight-fuse <topic>` |
 | **tome-forge** | 个人知识库，LLM 编纂的 wiki | `/tome-forge init` |
 
 ### Anvil
@@ -120,7 +121,7 @@ AI 又放弃了？`/block-break` 强制它穷尽一切方案。
 
 debug 累了？`/news-fetch` — 2 分钟的合法摸鱼。
 
-前三个 skill 让你更拼命。这个提醒你该喘口气了。在终端里直接抓取任意主题的最新新闻——不用切换上下文，不会掉进浏览器兔子洞。快速扫一眼，刷新大脑，然后回去干活。
+其他 skill 让你更拼命。这个提醒你该喘口气了。在终端里直接抓取任意主题的最新新闻——不用切换上下文，不会掉进浏览器兔子洞。快速扫一眼，刷新大脑，然后回去干活。
 
 | 特性 | 说明 |
 |------|------|
@@ -135,6 +136,67 @@ debug 累了？`/news-fetch` — 2 分钟的合法摸鱼。
 /news-fetch 机器人 month          # 本月机器人新闻
 /news-fetch climate 2026-03-01~2026-03-31  # 指定时间段
 ```
+
+## Council Fuse — 多视角议会蒸馏引擎
+
+通过结构化辩论获得更好的答案。`/council-fuse` 生成 3 个独立视角，匿名评分后综合最优解。
+
+灵感来源：[Karpathy 的 LLM Council](https://github.com/karpathy/llm-council) — 精简为一条命令。
+
+| 机制 | 说明 |
+|------|------|
+| **三视角** | 通才（平衡） / 批评者（对抗） / 专家（深度技术） |
+| **匿名评分** | 4 维评估：正确性、完整性、实用性、清晰度 |
+| **综合** | 最高分回答为骨架，融入独特洞察 |
+| **少数意见** | 有效异议保留，不被消音 |
+
+```text
+/council-fuse 该不该用微服务？
+/council-fuse 审查这段错误处理模式
+/council-fuse Redis vs PostgreSQL 做任务队列
+```
+
+## Insight Fuse — 系统化多源调研熔炼引擎
+
+从主题到专业调研报告。`/insight-fuse` 运行 5 阶段渐进式流水线：扫描 → 对齐 → 调研 → 审阅 → 深挖。
+
+内置多视角分析（通才/批评者/专家），可扩展报告模板，可配置调研深度。与 council-fuse 互为姊妹 — council-fuse 对已知信息做思辨，insight-fuse 主动采集并综合新信息。
+
+| 机制 | 说明 |
+|------|------|
+| **5 阶段流水线** | 扫描 → 对齐 → 调研 → 审阅 → 深挖 |
+| **可配置深度** | quick（仅扫描）/ standard（自动调研）/ deep（+ 多视角）/ full（+ 人工检查点） |
+| **3 视角** | 通才（广度） / 批评者（验证） / 专家（精度） |
+| **报告模板** | technology / market / competitive / 自定义 — 或自适应生成 |
+| **质量标准** | 多源强制、引用完整性、来源多样性检查 |
+
+```text
+/insight-fuse AI Agent 安全风险
+/insight-fuse --depth quick --template technology WebAssembly
+/insight-fuse --depth deep --perspectives optimist,pessimist,pragmatist 量子计算商业化
+```
+
+## Tome Forge — 个人知识库引擎
+
+构建由 LLM 编纂和维护的个人知识库。基于 [Karpathy 的 LLM Wiki 模式](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) — 原始 Markdown 编译为结构化 wiki，无需 RAG 或向量数据库。
+
+| 特性 | 说明 |
+|------|------|
+| **三层架构** | 原始素材（不可变） / Wiki（LLM 编纂） / Schema（CLAUDE.md） |
+| **6 种操作** | init、capture、ingest、query、lint、compile |
+| **My Understanding Delta** | 人类洞察专区 — LLM 永不覆写 |
+| **零基础设施** | 纯 Markdown + Git，无数据库、无嵌入、无服务器 |
+
+```text
+/tome-forge init              # 在当前目录初始化知识库
+/tome-forge capture "idea"    # 快速捕获笔记
+/tome-forge ingest raw/paper  # 将原始素材编译进 wiki
+/tome-forge query "question"  # 搜索并综合
+/tome-forge lint              # 健康检查 wiki 结构
+/tome-forge compile           # 批量编译所有新素材
+```
+
+> 灵感来源：[Karpathy 的 LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f)，构建为零依赖 skill。
 
 ## 质量保证
 

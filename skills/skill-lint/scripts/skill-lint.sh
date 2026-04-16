@@ -5,7 +5,7 @@
 # Output: JSON { "errors": [...], "warnings": [...], "passed": [...] }
 #
 # Core rules (S01-S08) always run for any Claude Code plugin.
-# Extended rules (S09-S15) only run when .skill-lint.json exists in the target directory.
+# Extended rules (S09-S17) only run when .skill-lint.json exists in the target directory.
 
 set -euo pipefail
 
@@ -29,6 +29,11 @@ CFG_REQUIRE_GUIDE=""
 CFG_REQUIRE_DESIGN_DOC=""
 CFG_PLATFORMS=""
 CFG_I18N_DIR=""
+CFG_REQUIRE_I18N_GUIDE=""
+CFG_REQUIRE_PERMISSIONS=""
+CFG_VERIFY_INTEGRITY=""
+CFG_REQUIRE_AGENT_MODEL=""
+CFG_NO_DANGEROUS_PATTERNS=""
 
 if [ -f "$CONFIG_FILE" ]; then
     # Parse config using python
@@ -51,6 +56,16 @@ if 'platforms' in rules and rules['platforms']:
     print(f'CFG_PLATFORMS={shlex.quote(\" \".join(rules[\"platforms\"]))}')
 if 'i18n-dir' in rules:
     print(f'CFG_I18N_DIR={shlex.quote(rules[\"i18n-dir\"])}')
+if rules.get('require-i18n-guide'):
+    print('CFG_REQUIRE_I18N_GUIDE=1')
+if rules.get('require-permissions-declaration'):
+    print('CFG_REQUIRE_PERMISSIONS=1')
+if rules.get('verify-integrity-hash'):
+    print('CFG_VERIFY_INTEGRITY=1')
+if rules.get('require-agent-model'):
+    print('CFG_REQUIRE_AGENT_MODEL=1')
+if rules.get('no-dangerous-patterns'):
+    print('CFG_NO_DANGEROUS_PATTERNS=1')
 " 2>/dev/null)" || true
 fi
 
@@ -172,7 +187,7 @@ sys.exit(1)
     fi
 
     # ============================================================
-    # Extended Rules (S09-S15) — only when .skill-lint.json exists
+    # Extended Rules (S09-S16) — only when .skill-lint.json exists
     # ============================================================
 
     # --- S09: Naming convention ---
@@ -263,7 +278,110 @@ sys.exit(1)
             done
         fi
     fi
+
+    # --- S16: i18n guide coverage ---
+    if [ -n "$CFG_REQUIRE_I18N_GUIDE" ] && [ -n "$CFG_I18N_DIR" ]; then
+        i18n_path="$PLUGIN_ROOT/$CFG_I18N_DIR"
+        guide_i18n_dir="$PLUGIN_ROOT/docs/guide/i18n"
+        if [ -d "$i18n_path" ]; then
+            for i18n_readme in "$i18n_path/"README.*.md; do
+                [ -f "$i18n_readme" ] || continue
+                lang="$(basename "$i18n_readme" | sed 's/README\.//;s/\.md//')"
+                guide_i18n_file="$guide_i18n_dir/$skill_name-guide.$lang.md"
+                if [ -f "$guide_i18n_file" ]; then
+                    add_passed "S16: docs/guide/i18n/$skill_name-guide.$lang.md exists"
+                else
+                    add_warning "S16: docs/guide/i18n/$skill_name-guide.$lang.md missing"
+                fi
+            done
+        fi
+    fi
 done
+
+# --- S17: i18n guide wrong-path guard ---
+# Detect common misplacement: docs/i18n/guide/ instead of docs/guide/i18n/
+if [ -n "$CFG_REQUIRE_I18N_GUIDE" ] && [ -d "$PLUGIN_ROOT/docs/i18n/guide" ]; then
+    wrong_count=$(find "$PLUGIN_ROOT/docs/i18n/guide" -type f -name "*.md" 2>/dev/null | wc -l)
+    if [ "$wrong_count" -gt 0 ]; then
+        add_error "S17: docs/i18n/guide/ contains $wrong_count files — wrong path. i18n guides belong in docs/guide/i18n/"
+    fi
+fi
+
+# --- S18: permissions declaration ---
+if [ -n "$CFG_REQUIRE_PERMISSIONS" ]; then
+    s18_fail=0
+    for skill_md in "$PLUGIN_ROOT"/skills/*/SKILL.md; do
+        [ -f "$skill_md" ] || continue
+        skill_name="$(basename "$(dirname "$skill_md")")"
+        if ! head -30 "$skill_md" | grep -q "permissions:"; then
+            add_error "S18: $skill_name/SKILL.md missing metadata.permissions declaration"
+            s18_fail=1
+        fi
+    done
+    [ "$s18_fail" -eq 0 ] && add_passed "S18: All skills declare metadata.permissions"
+fi
+
+# --- S19: integrity hash verification ---
+if [ -n "$CFG_VERIFY_INTEGRITY" ] && [ -f "$PLUGIN_ROOT/.claude-plugin/marketplace.json" ]; then
+    s19_fail=0
+    for skill_md in "$PLUGIN_ROOT"/skills/*/SKILL.md; do
+        [ -f "$skill_md" ] || continue
+        skill_name="$(basename "$(dirname "$skill_md")")"
+        skill_rel="./skills/$skill_name"
+        expected_hash=$(python -c "
+import json
+with open('$PLUGIN_ROOT/.claude-plugin/marketplace.json') as f:
+    data = json.load(f)
+for p in data.get('plugins', []):
+    if '$skill_rel' in p.get('skills', []):
+        print(p.get('integrity', {}).get('skill-md-sha256', ''))
+        break
+" 2>/dev/null)
+        if [ -z "$expected_hash" ]; then
+            add_warning "S19: $skill_name missing integrity hash in marketplace.json"
+            continue
+        fi
+        actual_hash=$(sha256sum "$skill_md" | cut -d' ' -f1)
+        if [ "$expected_hash" != "$actual_hash" ]; then
+            add_error "S19: $skill_name SKILL.md hash mismatch (expected: ${expected_hash:0:12}... got: ${actual_hash:0:12}...)"
+            s19_fail=1
+        fi
+    done
+    [ "$s19_fail" -eq 0 ] && add_passed "S19: All integrity hashes match"
+fi
+
+# --- S20: agent model declaration ---
+if [ -n "$CFG_REQUIRE_AGENT_MODEL" ]; then
+    s20_fail=0
+    for agent_md in "$PLUGIN_ROOT"/skills/*/agents/*.md; do
+        [ -f "$agent_md" ] || continue
+        agent_name="$(basename "$agent_md")"
+        if ! head -10 "$agent_md" | grep -q "^model:"; then
+            add_error "S20: $agent_name missing 'model' in frontmatter"
+            s20_fail=1
+        fi
+    done
+    [ "$s20_fail" -eq 0 ] && add_passed "S20: All agent files declare model"
+fi
+
+# --- S21: no dangerous patterns ---
+if [ -n "$CFG_NO_DANGEROUS_PATTERNS" ]; then
+    s21_fail=0
+    dangerous_patterns="--dangerously-skip-permissions|--no-verify|rm -rf /|curl.*\| *sh"
+    for skill_dir in "$PLUGIN_ROOT"/skills/*/; do
+        [ -d "$skill_dir" ] || continue
+        skill_name="$(basename "$skill_dir")"
+        matches=$(grep -rlE "$dangerous_patterns" "$skill_dir"SKILL.md "$skill_dir"references/ "$skill_dir"agents/ 2>/dev/null || true)
+        if [ -n "$matches" ]; then
+            for m in $matches; do
+                rel_path="${m#$PLUGIN_ROOT/}"
+                add_warning "S21: Dangerous pattern found in $rel_path"
+            done
+            s21_fail=1
+        fi
+    done
+    [ "$s21_fail" -eq 0 ] && add_passed "S21: No dangerous patterns detected"
+fi
 
 # --- Output JSON ---
 json_array() {

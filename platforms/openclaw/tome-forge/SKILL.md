@@ -2,6 +2,13 @@
 name: tome-forge
 description: "Tome Forge — Personal knowledge base engine. LLM-compiled Markdown wiki, no RAG needed. init/ingest/query/lint/compile."
 license: MIT
+metadata:
+  category: crucible
+  permissions:
+    network: false
+    filesystem: read-write
+    execution: none
+    tools: [Read, Write, Glob, Grep]
 ---
 
 # Tome Forge — Personal Knowledge Base Engine

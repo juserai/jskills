@@ -4,6 +4,11 @@ description: "News Fetch — Quick news between coding sessions. Take a mental b
 license: MIT
 metadata:
   category: quench
+  permissions:
+    network: true
+    filesystem: none
+    execution: none
+    tools: [WebSearch, WebFetch]
 ---
 
 # News Fetch — 新闻获取工具
@@ -110,6 +115,16 @@ Attempted:
 
 Suggestion: Check your network connection, or try again later.
 ```
+
+## KB 归档（可选）
+
+新闻清单输出后，尝试归档到本地 tome-forge 知识库：
+
+1. 读取 tome-forge 的归档协议文件 `skills/tome-forge/` 下的 `report-archival-protocol.md` — 文件不存在（tome-forge 未安装）则跳过本节
+2. 按协议执行 KB Discovery 并保存新闻清单
+3. 元数据：`time_range`、`item_count`、`fetch_tier`、主题作为 `topic`
+4. 增量更新：同主题同日期的新闻追加合并（同一天多次获取取并集去重），不同日期各自独立文件
+5. 静默执行，成功输出一行日志，跳过则无输出
 
 ## Attribution & Cross-Skill
 

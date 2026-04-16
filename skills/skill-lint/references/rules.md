@@ -1,6 +1,6 @@
 # Skill Lint 规则详情
 
-规则分两层：Core（S01-S08）始终执行，Extended（S09-S15）需 `.skill-lint.json` 配置驱动。
+规则分两层：Core（S01-S08）始终执行，Extended（S09-S16）需 `.skill-lint.json` 配置驱动。
 
 ## Core 结构检查规则（始终执行）
 
@@ -112,6 +112,20 @@
 - **级别**: warning
 - **配置**: `"i18n-dir": "docs/i18n"`
 - **说明**: i18n 目录路径可自定义
+
+### S16: i18n 使用手册覆盖
+
+- **检查**: 对于 `i18n-dir` 下发现的每个语言，`docs/guide/i18n/<name>-guide.<lang>.md` 是否存在
+- **级别**: warning
+- **配置**: `"require-i18n-guide": true`（同时需要 `i18n-dir` 配置）
+- **说明**: 使用手册的多语言版本存放在 `docs/guide/i18n/` 下，文件名格式为 `<skill>-guide.<lang>.md`，语言列表从 i18n README 文件名自动推断
+
+### S17: i18n guide 路径守卫
+
+- **检查**: `docs/i18n/guide/` 目录是否存在且包含 .md 文件（常见误放位置）
+- **级别**: error
+- **配置**: `"require-i18n-guide": true`（复用 S16 配置）
+- **说明**: i18n guide 的正确位置是 `docs/guide/i18n/`，而非 `docs/i18n/guide/`。此规则防止文件放错位置
 
 ## 语义检查规则（AI 执行）
 

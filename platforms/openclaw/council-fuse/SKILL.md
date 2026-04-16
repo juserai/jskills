@@ -2,6 +2,13 @@
 name: council-fuse
 description: "Council Fuse — Multi-perspective deliberation engine. 3 agents debate independently, Chairman synthesizes the best answer."
 license: MIT
+metadata:
+  category: crucible
+  permissions:
+    network: false
+    filesystem: none
+    execution: none
+    tools: []
 ---
 
 # Council Fuse — 多视角议会蒸馏引擎

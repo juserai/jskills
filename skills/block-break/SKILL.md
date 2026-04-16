@@ -4,6 +4,11 @@ description: "Block Break — Behavioral constraint engine. When stuck, forces e
 license: MIT
 metadata:
   category: hammer
+  permissions:
+    network: false
+    filesystem: read-only
+    execution: none
+    tools: [Read, Bash]
 ---
 
 # Block Break — 高能动性行为约束引擎

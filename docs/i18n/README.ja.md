@@ -1,9 +1,9 @@
 # Forge
 
-> 全力で取り組み、ひと休みする。Claude Code との開発リズムを整える 5 つの skill。
+> 全力で取り組み、ひと休みする。Claude Code との開発リズムを整える 7 つの skill。
 
 [![MIT License](https://img.shields.io/badge/license-MIT-green.svg)](../../LICENSE)
-[![Skills](https://img.shields.io/badge/skills-5-blue.svg)]()
+[![Skills](https://img.shields.io/badge/skills-7-blue.svg)]()
 [![Zero Dependencies](https://img.shields.io/badge/dependencies-0-brightgreen.svg)]()
 [![Claude Code](https://img.shields.io/badge/platform-Claude%20Code-purple.svg)]()
 [![OpenClaw](https://img.shields.io/badge/platform-OpenClaw-orange.svg)]()
@@ -35,6 +35,7 @@ cp -r forge/platforms/openclaw/* ~/.openclaw/skills/
 | Skill | 機能 | 試してみる |
 |-------|------|------------|
 | **council-fuse** | 多角的な議論で、より良い回答を導く | `/council-fuse <question>` |
+| **insight-fuse** | 体系的なマルチソース調査で専門レポートを生成 | `/insight-fuse <topic>` |
 | **tome-forge** | LLMで編纂するパーソナルナレッジベース | `/tome-forge init` |
 
 ### Anvil
@@ -120,7 +121,7 @@ Claude Code plugin プロジェクトの skill ファイルについて、構造
 
 デバッグ疲れしていませんか？ `/news-fetch` で 2 分間の気分転換を。
 
-他の 3 つの skill はあなたを追い込みます。この skill は深呼吸を思い出させてくれます。ターミナルから直接、好きなトピックの最新ニュースを取得できます。コンテキストスイッチ不要、ブラウザの沼にハマる心配もなし。サッと目を通して、リフレッシュしたら仕事に戻りましょう。
+他の skill はあなたを追い込みます。この skill は深呼吸を思い出させてくれます。ターミナルから直接、好きなトピックの最新ニュースを取得できます。コンテキストスイッチ不要、ブラウザの沼にハマる心配もなし。サッと目を通して、リフレッシュしたら仕事に戻りましょう。
 
 | 特徴 | 説明 |
 |------|------|
@@ -135,6 +136,67 @@ Claude Code plugin プロジェクトの skill ファイルについて、構造
 /news-fetch robotics month        # 今月のロボティクスニュース
 /news-fetch climate 2026-03-01~2026-03-31  # 期間を指定
 ```
+
+## Council Fuse — 多角的議論エンジン
+
+構造化された議論でより良い回答を。`/council-fuse` は3つの独立した視点を生成し、匿名で評価した後、最良の回答を統合します。
+
+[Karpathy の LLM Council](https://github.com/karpathy/llm-council) にインスパイア — 1コマンドに凝縮。
+
+| 仕組み | 説明 |
+|--------|------|
+| **3つの視点** | ジェネラリスト（バランス） / クリティック（批判的） / スペシャリスト（技術深堀） |
+| **匿名評価** | 4次元評価：正確性、完全性、実用性、明確性 |
+| **統合** | 最高評価の回答を骨格に、独自の洞察を融合 |
+| **少数意見** | 有効な反論は保持、消さない |
+
+```text
+/council-fuse マイクロサービスにすべきか？
+/council-fuse このエラーハンドリングパターンをレビュー
+/council-fuse Redis vs PostgreSQL ジョブキュー用途
+```
+
+## Insight Fuse — マルチソース調査エンジン
+
+トピックから専門的な調査レポートへ。`/insight-fuse` は5段階の漸進的パイプラインを実行：スキャン → アライメント → リサーチ → レビュー → ディープダイブ。
+
+多角的分析（ジェネラリスト/クリティック/スペシャリスト）内蔵、拡張可能なレポートテンプレート、設定可能な深度。council-fuse の姉妹スキル — council-fuse が既知情報を議論する一方、insight-fuse は新しい情報を積極的に収集・統合します。
+
+| 仕組み | 説明 |
+|--------|------|
+| **5段階パイプライン** | スキャン → アライメント → リサーチ → レビュー → ディープダイブ |
+| **設定可能な深度** | quick（スキャンのみ）/ standard（自動リサーチ）/ deep（+ 多角的分析）/ full（+ 人的チェックポイント） |
+| **3つの視点** | ジェネラリスト（広さ） / クリティック（検証） / スペシャリスト（精度） |
+| **レポートテンプレート** | technology / market / competitive / カスタム — または自動生成 |
+| **品質基準** | マルチソース必須、引用整合性、ソース多様性チェック |
+
+```text
+/insight-fuse AI Agent 安全風険
+/insight-fuse --depth quick --template technology WebAssembly
+/insight-fuse --depth deep --perspectives optimist,pessimist,pragmatist 量子コンピューティング商業化
+```
+
+## Tome Forge — パーソナルナレッジベースエンジン
+
+LLMが編纂・維持するパーソナルナレッジベースを構築。[Karpathy の LLM Wiki パターン](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f)に基づく — 生のMarkdownを構造化wikiにコンパイル、RAGやベクトルDBは不要。
+
+| 特徴 | 説明 |
+|------|------|
+| **3層アーキテクチャ** | 生ソース（不変） / Wiki（LLMコンパイル） / Schema（CLAUDE.md） |
+| **6つの操作** | init、capture、ingest、query、lint、compile |
+| **My Understanding Delta** | 人間の洞察専用セクション — LLMは上書きしない |
+| **ゼロインフラ** | 純粋なMarkdown + Git。データベース、埋め込み、サーバー不要 |
+
+```text
+/tome-forge init              # 現在のディレクトリでKBを初期化
+/tome-forge capture "idea"    # クイックキャプチャ
+/tome-forge ingest raw/paper  # 生素材をwikiにコンパイル
+/tome-forge query "question"  # 検索と統合
+/tome-forge lint              # wikiの健全性チェック
+/tome-forge compile           # 新素材を一括コンパイル
+```
+
+> [Karpathy の LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) にインスパイア、ゼロ依存スキルとして構築。
 
 ## 品質保証
 

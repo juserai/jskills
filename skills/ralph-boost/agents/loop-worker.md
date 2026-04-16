@@ -1,6 +1,7 @@
 ---
 name: ralph-boost-loop-worker
 description: Single-iteration autonomous worker for ralph-boost loop
+model: sonnet
 ---
 
 # Ralph Boost Loop Worker

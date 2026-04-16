@@ -6,6 +6,11 @@
     "require-guide": true,
     "require-design-doc": true,
     "platforms": ["openclaw"],
-    "i18n-dir": "docs/i18n"
+    "i18n-dir": "docs/i18n",
+    "require-i18n-guide": true,
+    "require-permissions-declaration": true,
+    "verify-integrity-hash": true,
+    "require-agent-model": true,
+    "no-dangerous-patterns": true
   }
 }

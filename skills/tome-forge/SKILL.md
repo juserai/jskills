@@ -4,6 +4,11 @@ description: "Tome Forge — Personal knowledge base engine. LLM-compiled Markdo
 license: MIT
 metadata:
   category: crucible
+  permissions:
+    network: false
+    filesystem: read-write
+    execution: none
+    tools: [Read, Write, Glob, Grep]
 argument-hint: "[init|ingest|query|lint|compile|capture] [args...]"
 ---
 
@@ -204,6 +209,7 @@ Batch compile: ingest all raw files added since last compile.
 4. **Index is the entry point** — always keep `index.md` up to date
 5. **Log with rotation** — append to `logs/{YYYY-MM}.md`，按月自动轮转，避免单文件膨胀
 6. **Cite sources** — every wiki claim traces back to `raw/` via `source_refs`
+7. **Reports are first-class raw material** — `raw/reports/` files from other skills follow the same ingest pipeline, frontmatter metadata enables smarter routing
 
 ## Help Text (no arguments)
 

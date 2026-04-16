@@ -22,6 +22,7 @@ platforms/<platform>/<skill>/      # 其他平台适配
 evals/<skill>/scenarios.md         # 评估场景（跨平台）
 evals/<skill>/run-trigger-test.sh  # 自动化触发测试
 docs/guide/<skill>-guide.md        # 使用手册
+docs/i18n/guide/<skill>-guide.<lang>.md  # 使用手册多语言版
 docs/plans/<topic>-design.md       # 设计文档
 ```
 
@@ -48,11 +49,12 @@ docs/plans/<topic>-design.md       # 设计文档
 7. `evals/<name>/scenarios.md` — 至少 5 个评估场景
 8. `evals/<name>/run-trigger-test.sh` — 可执行的触发测试脚本
 9. `docs/guide/<name>-guide.md` — 使用手册
-10. `docs/plans/<name>-design.md` — 设计文档
-11. `.claude-plugin/marketplace.json` — 在 `plugins` 数组追加条目
-12. `README.md` — 在对应分类章节追加介绍，同步所有 `docs/i18n/README.*.md`
-13. 如需 Claude Code hooks，在根 `hooks/hooks.json` 中添加配置
-14. 运行 `/skill-lint .` 验证所有检查通过（`.skill-lint.json` 已配置扩展规则）
+10. `docs/i18n/guide/<name>-guide.<lang>.md` — 使用手册多语言版，为每个 `docs/i18n/README.*.md` 对应的语言创建
+11. `docs/plans/<name>-design.md` — 设计文档
+12. `.claude-plugin/marketplace.json` — 在 `plugins` 数组追加条目
+13. `README.md` — 在对应分类章节追加介绍，同步所有 `docs/i18n/README.*.md`
+14. 如需 Claude Code hooks，在根 `hooks/hooks.json` 中添加配置
+15. 运行 `/skill-lint .` 验证所有检查通过（`.skill-lint.json` 已配置扩展规则）
 
 ## 新增平台流程
 
@@ -85,11 +87,15 @@ docs/plans/<topic>-design.md       # 设计文档
 
 - 根 `plugin.json` 变更时同步 `.claude-plugin/plugin.json`
 - SKILL.md 保持精简，详细内容放 `references/` 按需加载，减少 token 消耗
-- frontmatter 支持字段：name, description, license, argument-hint, user-invokable, metadata, category
+- frontmatter 支持字段：name, description, license, argument-hint, user-invokable, metadata（含 category、permissions）
 - 每个 skill 保持零依赖，可独立使用
 - skill 之间不应有硬依赖，可有可选组合关系
 - Spawn sub-agent 时必须注入行为约束（使用同目录 agents/ 的定义）
 - 各平台各自持有完整文件，修改通用内容时需同步各平台
+- 每个 skill 必须在 frontmatter `metadata.permissions` 中声明最小权限集（network/filesystem/execution/tools）
+- `.claude-plugin/marketplace.json` 中每个 skill 条目须包含 `integrity.skill-md-sha256` 字段，值为对应 SKILL.md 的 SHA-256 hash
+- 修改 SKILL.md 后须重新计算 hash 并更新 marketplace.json
+- 安全编码指南详见 `docs/guide/security-guidelines.md`
 
 ## 状态持久化
 
