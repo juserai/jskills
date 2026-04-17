@@ -11,6 +11,9 @@
     "require-permissions-declaration": true,
     "verify-integrity-hash": true,
     "require-agent-model": true,
-    "no-dangerous-patterns": true
+    "no-dangerous-patterns": true,
+    "verify-platform-subdirs": true,
+    "verify-i18n-structure-parity": true,
+    "verify-cross-skill-category-claim": true
   }
 }

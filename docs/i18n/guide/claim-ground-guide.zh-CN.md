@@ -44,6 +44,23 @@ Claim Ground 是**自动触发**的 skill。没有 slash 命令 — skill 根据
 
 ---
 
+## 红线（不可违反）
+
+红线是**始终生效**的禁令。违反其中任何一条都意味着 skill 失效，无论回答的其他部分看起来如何。
+
+| # | 红线 | 阻断的核心幻觉类型 |
+|---|------|-------------------|
+| 1 | **无源断言** — 没有引用 runtime 证据就下关于"当前状态"的结论 | Factuality × extrinsic hallucination |
+| 2 | **示例当穷举** — 从 CLI help 示例 / 文档片段推断完整功能列表 | Overgeneralization |
+| 3 | **换措辞不重验** — 用户反驳后没有新的工具调用就重复原答案（含 3a：带引用的反驳风险更高） | Pushback sycophancy |
+| 4 | **不读代码就断言 API** — 没有 Read 定义文件就断言某符号存在 / 签名为 X | Code/API hallucination（[FSE 2025](https://conf.researchr.org/details/fse-2025/fse-2025-industry-papers/41/)） |
+| 5 | **不 WebFetch 就引用** — 引用 URL / 论文 / DOI / API 端点前未实际 fetch | Citation fabrication（[EurekAlert 2025](https://www.eurekalert.org/news-releases/1106130) 报告 19.9% 基线率） |
+| 6 | **总结不锚定行号** — 总结具体文件/PR/日志时每条声明没有行号或章节引用 | Faithfulness / extrinsic addition（[HalluLens ACL 2025](https://arxiv.org/html/2504.17550v1)） |
+
+完整定义、信号、正反例和边界情况见 [references/red-lines.md](../../skills/claim-ground/references/red-lines.md)。
+
+---
+
 ## 正反例
 
 ### 例 1：当前模型
@@ -114,7 +131,27 @@ Claim Ground 是**自动触发**的 skill。没有 slash 命令 — skill 根据
 
 ### 与 skill-lint
 
-同一分类（anvil）。skill-lint 校验静态 plugin 文件；claim-ground 校验 Claude 自己的认知输出。职责不重叠。
+**不同分类**。skill-lint 属 **anvil**（校验静态 plugin 文件，输出 pass/fail）；claim-ground 属 **hammer**（运行时约束 Claude 自己的认知输出）。职责不重叠。
+
+---
+
+## 使用场景 / 不应使用场景
+
+### ✅ 适用
+
+- 询问当前系统状态（模型版本、已安装工具、环境变量、配置）
+- 反驳先前的事实断言（"真的吗？/ 你确定？"）
+- Claude 即将对"此刻状态"下断言之前
+
+### ❌ 不适用
+
+- 纯推理任务（算法、数学、类型推断）
+- 创意 / 头脑风暴工作
+- 解释训练知识范畴的概念（如"什么是 async/await"）
+
+> 事实类断言的入口闸门——保证引用存在，不保证引用正确，也不处理非事实类思考。
+
+完整边界分析: [references/scope-boundaries.md](../../../skills/claim-ground/references/scope-boundaries.md)
 
 ---
 
@@ -140,26 +177,6 @@ Claim Ground 是**自动触发**的 skill。没有 slash 命令 — skill 根据
 ### 怎么知道 skill 触发了？
 
 看回答里有没有引用模式：`系统 prompt 说："..."`、`命令输出：...`、`文件内容：...`。如果先贴证据再下结论 = 触发了。
-
----
-
-## 使用场景 / 不应使用场景
-
-### ✅ 适用
-
-- Asking about current system state (model version, installed tools, env, config)
-- Challenging a prior factual assertion ("really? / are you sure?")
-- Before Claude is about to claim something about "right now"
-
-### ❌ 不适用
-
-- Pure reasoning tasks (algorithms, math, type inference)
-- Creative / brainstorming work
-- Explaining training-knowledge concepts (e.g., "what is async/await")
-
-> 事实类断言的入口闸门——保证引用存在，不保证引用正确，也不处理非事实类思考。
-
-完整边界分析: [references/scope-boundaries.md](../../../skills/claim-ground/references/scope-boundaries.md)
 
 ---
 

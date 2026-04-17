@@ -44,9 +44,20 @@ metadata:
 11. **触发测试脚本** — `evals/<name>/run-trigger-test.sh` 是否存在
 12. **使用手册** — `docs/guide/<name>-guide.md` 是否存在
 13. **设计文档** — `docs/plans/<name>-design.md` 是否存在
-14. **平台适配** — 配置中 `platforms` 数组指定的平台目录下是否有对应 SKILL.md 及 references
+14. **平台适配（references/）** — 配置中 `platforms` 数组指定的平台目录下是否有对应 SKILL.md 及 references
 15. **i18n 覆盖** — 配置中 `i18n-dir` 指定目录下的每个 README 是否包含该 skill
 16. **i18n 使用手册** — `docs/i18n/guide/<name>-guide.<lang>.md` 是否对每个语言都存在
+17. **i18n 路径守卫** — 防止 i18n guide 被误放到 `docs/guide/i18n/` 反向目录
+18. **Permissions 声明** — 每个 SKILL.md 是否声明 `metadata.permissions`
+19. **Integrity hash** — 每个 SKILL.md 的 SHA256 是否与 marketplace.json 记录匹配
+20. **Agent model 字段** — `skills/*/agents/*.md` 是否声明 `model` frontmatter
+21. **Dangerous patterns** — SKILL.md/references/agents 中是否包含 `--dangerously-skip-permissions` / `rm -rf /` / `curl \| sh` 等危险模式
+
+**防范类新增规则（基于过往回归事故加固）：**
+
+22. **Platform 子目录镜像（`verify-platform-subdirs`）** — 除了 references/，还检查 `agents/` / `templates/` / `scripts/` 三个子目录是否在 `platforms/<p>/<skill>/` 下对称存在。防止 ralph-boost agents 或 insight-fuse templates 类型的孤岛。
+23. **i18n 结构 parity（`verify-i18n-structure-parity`）** — 每份 `docs/i18n/guide/<name>-guide.<lang>.md` 的 H2 heading 数必须 ≥ 英文版的 90%。防止 i18n guide 在英文版扩展新 section 后结构性缺失（例如 claim-ground Red lines）。
+24. **Cross-skill 分类声明（`verify-cross-skill-category-claim`）** — 扫描所有 guide 里的 "Same category" / "同一分类" / "Different categories" 等 12 语言关键词，对引用的目标 skill 查 frontmatter category，若声明与事实不符即报 error。防止分类翻修后 guide 跨引用段落变成 stale（本次审计即源于此类 bug）。
 
 **`.skill-lint.json` 配置示例：**
 
@@ -60,7 +71,14 @@ metadata:
     "require-design-doc": true,
     "platforms": ["openclaw"],
     "i18n-dir": "docs/i18n",
-    "require-i18n-guide": true
+    "require-i18n-guide": true,
+    "require-permissions-declaration": true,
+    "verify-integrity-hash": true,
+    "require-agent-model": true,
+    "no-dangerous-patterns": true,
+    "verify-platform-subdirs": true,
+    "verify-i18n-structure-parity": true,
+    "verify-cross-skill-category-claim": true
   }
 }
 ```

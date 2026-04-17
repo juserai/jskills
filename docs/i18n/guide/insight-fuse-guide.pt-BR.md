@@ -16,6 +16,9 @@
 
 # Pesquisa profunda com perspectivas personalizadas
 /insight-fuse --depth deep --perspectives optimist,pessimist,pragmatist comercializacao de direcao autonoma
+
+# Apenas pesquisar sem arquivar (pular salvamento na KB do tome-forge)
+/insight-fuse --depth quick --no-save pesquisa de contexto temporaria
 ```
 
 ## Parametros
@@ -26,6 +29,7 @@
 | `--depth` | Profundidade da pesquisa | `quick` / `standard` / `deep` / `full` |
 | `--template` | Template de relatorio | `technology` / `market` / `competitive` |
 | `--perspectives` | Lista de perspectivas | `optimist,pessimist,pragmatist` |
+| `--no-save` | Pular arquivamento na KB (opt-out quando tome-forge esta instalado) | Padrao `false`; ativado = apenas pesquisa sem salvar |
 
 ## Modos de profundidade
 
@@ -110,6 +114,18 @@ Cada relatorio e verificado automaticamente:
 Análise completa de limites: [references/scope-boundaries.md](../../../skills/insight-fuse/references/scope-boundaries.md)
 
 ---
+
+## Arquivamento na KB e opt-out
+
+Apos a saida do relatorio, se a base de conhecimento tome-forge estiver instalada localmente, insight-fuse tenta **automaticamente** salvar o relatorio seguindo o protocolo de arquivamento do tome-forge; sem tome-forge, o passo e silenciosamente ignorado.
+
+Para recusar explicitamente o salvamento em uma pesquisa pontual (opt-out quando tome-forge esta instalado), adicione `--no-save`:
+
+```bash
+/insight-fuse --depth quick --no-save pesquisa de contexto temporaria
+```
+
+`--no-save` afeta somente o arquivamento na KB; o relatorio em si continua sendo exibido no console normalmente. O `permissions.filesystem` do insight-fuse e `none`, nenhuma escrita de arquivo e realizada alem do caminho de arquivamento.
 
 ## Diferenca em relacao ao council-fuse
 

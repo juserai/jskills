@@ -48,7 +48,7 @@
                 "url": "https://github.com/juserai"
             },
             "integrity": {
-                "skill-md-sha256": "7f792418fc689b92c2a317cf39ac8e11712aa6c041aa1408cc3ab0e7cffa1f65"
+                "skill-md-sha256": "5a21d518753f4f9766c71eccbae7c6686080edcc1656a5c5b076a70a46f754ea"
             },
             "skills": [
                 "./skills/skill-lint"
@@ -64,7 +64,7 @@
                 "url": "https://github.com/juserai"
             },
             "integrity": {
-                "skill-md-sha256": "28a0fd38cc7596184d2c26e9d710c40288f061155d239aafe17a249eee0cdada"
+                "skill-md-sha256": "308f21e106f4e8091e9a812b6b38562687ad1e72410658f1b1cecaf2d64e6418"
             },
             "skills": [
                 "./skills/council-fuse"
@@ -80,7 +80,7 @@
                 "url": "https://github.com/juserai"
             },
             "integrity": {
-                "skill-md-sha256": "8d37d2675113b411b58bfcb7f92eb61df0ee2c4a8b4a9e4e428ff08ace26e2a9"
+                "skill-md-sha256": "3029d88bf4370d5024357f2adde265b2d44cf81923db14bd714773a7dea9425e"
             },
             "skills": [
                 "./skills/news-fetch"
@@ -96,7 +96,7 @@
                 "url": "https://github.com/juserai"
             },
             "integrity": {
-                "skill-md-sha256": "8431fc24e0e6b6e3cb7e538953aa8af8a20d543f9074de84b5fac422b4af809e"
+                "skill-md-sha256": "4b4a2d1b3e3ce12b707e960f71eeed9a2059d8c51349af21d0a48d5e2e769e76"
             },
             "skills": [
                 "./skills/tome-forge"
@@ -112,7 +112,7 @@
                 "url": "https://github.com/juserai"
             },
             "integrity": {
-                "skill-md-sha256": "e7e687f564db5d0c3616d223473772c58a922fdfa93333fa43d03e3637e46bbb"
+                "skill-md-sha256": "48a10ac5fc22bf0292651c6e86913f5cec4ac50d9a8c78eaf441f829a7340fc8"
             },
             "skills": [
                 "./skills/insight-fuse"
@@ -128,7 +128,7 @@
                 "url": "https://github.com/juserai"
             },
             "integrity": {
-                "skill-md-sha256": "bb74f87371999cc2056e9e93ed4df1dce646b489f6b8092bd4cb925c032bfcc0"
+                "skill-md-sha256": "2de0aab3d0aba7c3722355a000c7daf5afda753858b27733cc591855fd448818"
             },
             "skills": [
                 "./skills/claim-ground"

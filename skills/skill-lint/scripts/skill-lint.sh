@@ -34,6 +34,9 @@ CFG_REQUIRE_PERMISSIONS=""
 CFG_VERIFY_INTEGRITY=""
 CFG_REQUIRE_AGENT_MODEL=""
 CFG_NO_DANGEROUS_PATTERNS=""
+CFG_VERIFY_PLATFORM_SUBDIRS=""
+CFG_VERIFY_I18N_STRUCTURE=""
+CFG_VERIFY_CROSS_SKILL_CATEGORY=""
 
 if [ -f "$CONFIG_FILE" ]; then
     # Parse config using python
@@ -66,6 +69,12 @@ if rules.get('require-agent-model'):
     print('CFG_REQUIRE_AGENT_MODEL=1')
 if rules.get('no-dangerous-patterns'):
     print('CFG_NO_DANGEROUS_PATTERNS=1')
+if rules.get('verify-platform-subdirs'):
+    print('CFG_VERIFY_PLATFORM_SUBDIRS=1')
+if rules.get('verify-i18n-structure-parity'):
+    print('CFG_VERIFY_I18N_STRUCTURE=1')
+if rules.get('verify-cross-skill-category-claim'):
+    print('CFG_VERIFY_CROSS_SKILL_CATEGORY=1')
 " 2>/dev/null)" || true
 fi
 
@@ -383,6 +392,128 @@ if [ -n "$CFG_NO_DANGEROUS_PATTERNS" ]; then
         fi
     done
     [ "$s21_fail" -eq 0 ] && add_passed "S21: No dangerous patterns detected"
+fi
+
+# --- S22: platform-parity for agents/ templates/ scripts/ subdirs ---
+# Extends S14 which only covers references/.
+# When "platforms" and "verify-platform-subdirs" are set, mirror-check every subdir under skills/<name>/
+# against platforms/<platform>/<name>/.
+if [ -n "$CFG_VERIFY_PLATFORM_SUBDIRS" ] && [ -n "$CFG_PLATFORMS" ]; then
+    s22_fail=0
+    for skill_name in "${SKILL_NAMES[@]}"; do
+        for platform in $CFG_PLATFORMS; do
+            for subdir in agents templates scripts; do
+                cc_sub="$PLUGIN_ROOT/skills/$skill_name/$subdir"
+                plat_sub="$PLUGIN_ROOT/platforms/$platform/$skill_name/$subdir"
+                [ -d "$cc_sub" ] || continue
+                for cc_file in "$cc_sub"/*; do
+                    [ -f "$cc_file" ] || continue
+                    fname="$(basename "$cc_file")"
+                    plat_file="$plat_sub/$fname"
+                    if [ -f "$plat_file" ]; then
+                        add_passed "S22: platforms/$platform/$skill_name/$subdir/$fname exists"
+                    else
+                        add_warning "S22: platforms/$platform/$skill_name/$subdir/$fname missing (present in skills/$skill_name/$subdir/)"
+                        s22_fail=1
+                    fi
+                done
+            done
+        done
+    done
+    [ "$s22_fail" -eq 0 ] && add_passed "S22: All skill subdirectories mirrored to platforms"
+fi
+
+# --- S23: i18n structure parity (H2 headings) ---
+# For each skill's English guide, ensure each i18n guide has >= 90% of the H2 headings.
+if [ -n "$CFG_VERIFY_I18N_STRUCTURE" ] && [ -n "$CFG_I18N_DIR" ]; then
+    s23_fail=0
+    guide_dir="$PLUGIN_ROOT/docs/guide"
+    i18n_guide_dir="$PLUGIN_ROOT/docs/i18n/guide"
+    for skill_name in "${SKILL_NAMES[@]}"; do
+        en_guide="$guide_dir/$skill_name-guide.md"
+        [ -f "$en_guide" ] || continue
+        en_h2_count=$(grep -c "^## " "$en_guide" 2>/dev/null || echo 0)
+        [ "$en_h2_count" -eq 0 ] && continue
+        for i18n_file in "$i18n_guide_dir/$skill_name-guide."*.md; do
+            [ -f "$i18n_file" ] || continue
+            lang=$(basename "$i18n_file" | sed "s/^$skill_name-guide\\.//;s/\\.md$//")
+            i18n_h2_count=$(grep -c "^## " "$i18n_file" 2>/dev/null || echo 0)
+            # require i18n to have >= ceil(en * 0.9) sections
+            threshold=$(( (en_h2_count * 90 + 99) / 100 ))
+            if [ "$i18n_h2_count" -ge "$threshold" ]; then
+                add_passed "S23: $skill_name.$lang H2 parity OK ($i18n_h2_count/$en_h2_count)"
+            else
+                add_error "S23: $skill_name.$lang H2 structure gap ($i18n_h2_count/$en_h2_count, need >= $threshold)"
+                s23_fail=1
+            fi
+        done
+    done
+    [ "$s23_fail" -eq 0 ] && add_passed "S23: All i18n guides match English structure within 90%"
+fi
+
+# --- S24: cross-skill category-claim detection ---
+# Detect "same category" / "different category" claims in guide files and flag for manual review
+# when they reference a category keyword. Does not prove correctness (full semantic check is out
+# of scope for bash lint), but warns on the pattern that caused past regressions.
+if [ -n "$CFG_VERIFY_CROSS_SKILL_CATEGORY" ]; then
+    s24_fail=0
+    cat_keywords='hammer|crucible|anvil|quench'
+    same_category_patterns='Same category|Different categories?|同一分类|不同分类|同カテゴリ|異なるカテゴリ|동일 카테고리|다른 카테고리|समान श्रेणी|अलग श्रेणी|Misma categoría|Categorías diferentes|Même catégorie|Catégories différentes|Gleiche Kategorie|Unterschiedliche Kategorien|Mesma categoria|Categorias diferentes|Та же категория|Разные категории|Aynı kategori|Farklı kategoriler|Cùng phân loại|Phân loại khác'
+    declare -A seen_categories
+    # Build skill → category map
+    for skill_name in "${SKILL_NAMES[@]}"; do
+        skill_md="$SKILLS_DIR/$skill_name/SKILL.md"
+        [ -f "$skill_md" ] || continue
+        cat_val=$(grep -E '^\s*category:' "$skill_md" | head -1 | sed 's/.*category:[[:space:]]*//' | tr -d '[:space:]')
+        [ -n "$cat_val" ] && seen_categories[$skill_name]=$cat_val
+    done
+    # Scan guide files for potentially stale claims
+    for guide_file in "$PLUGIN_ROOT/docs/guide/"*.md "$PLUGIN_ROOT/docs/i18n/guide/"*.md; do
+        [ -f "$guide_file" ] || continue
+        # Find lines matching "<same/different category phrase> ... (<category keyword>)" OR "... is <category>"
+        matches=$(grep -nE "($same_category_patterns).*\\((${cat_keywords})\\)|\\*\\*(${cat_keywords})\\*\\*" "$guide_file" 2>/dev/null || true)
+        if [ -n "$matches" ]; then
+            # Check if this guide is for a specific skill
+            guide_basename=$(basename "$guide_file")
+            guide_skill=$(echo "$guide_basename" | sed 's/-guide.*$//')
+            if [ -n "${seen_categories[$guide_skill]:-}" ]; then
+                # The guide belongs to a known skill — verify claims against the referenced other skill
+                declared_category="${seen_categories[$guide_skill]}"
+                # Check each matched line: does it mention another skill? If so, is the stated category consistent?
+                while IFS= read -r line; do
+                    [ -n "$line" ] || continue
+                    # Determine whether "same" or "different" is being claimed
+                    is_same=0; is_different=0
+                    if echo "$line" | grep -qE "(Same category|同一分类|同カテゴリ|동일 카테고리|समान श्रेणी|Misma categoría|Même catégorie|Gleiche Kategorie|Mesma categoria|Та же категория|Aynı kategori|Cùng phân loại)" 2>/dev/null; then
+                        is_same=1
+                    fi
+                    if echo "$line" | grep -qE "(Different categories?|不同分类|異なるカテゴリ|다른 카테고리|अलग श्रेणी|Categorías diferentes|Catégories différentes|Unterschiedliche Kategorien|Categorias diferentes|Разные категории|Farklı kategoriler|Phân loại khác)" 2>/dev/null; then
+                        is_different=1
+                    fi
+                    [ $is_same -eq 0 ] && [ $is_different -eq 0 ] && continue
+                    # Which other skill is being referenced in this line?
+                    other_skill=""
+                    for s in "${!seen_categories[@]}"; do
+                        [ "$s" = "$guide_skill" ] && continue
+                        if echo "$line" | grep -qw "$s" 2>/dev/null; then
+                            other_skill="$s"
+                            break
+                        fi
+                    done
+                    [ -z "$other_skill" ] && continue
+                    other_cat="${seen_categories[$other_skill]}"
+                    if [ $is_same -eq 1 ] && [ "$declared_category" != "$other_cat" ]; then
+                        add_error "S24: $guide_basename claims 'same category' between $guide_skill($declared_category) and $other_skill($other_cat) — mismatch"
+                        s24_fail=1
+                    elif [ $is_different -eq 1 ] && [ "$declared_category" = "$other_cat" ]; then
+                        add_error "S24: $guide_basename claims 'different categories' between $guide_skill($declared_category) and $other_skill($other_cat) — but they're the same"
+                        s24_fail=1
+                    fi
+                done <<< "$matches"
+            fi
+        fi
+    done
+    [ "$s24_fail" -eq 0 ] && add_passed "S24: Cross-skill category claims consistent with SKILL.md frontmatter"
 fi
 
 # --- Output JSON ---

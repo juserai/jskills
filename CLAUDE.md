@@ -155,7 +155,10 @@ grep -rn "<skill-name>" . --include="*.md" --include="*.json" --include="*.sh" \
 - [ ] `docs/plans/<name>-design.md` 更新分类决策行（加修订日期 + 新理由）
 - [ ] `README.md` Skills 表格：把行从旧章节移到新章节；详情段落按新分类调整顺序（Hammer→Crucible→Anvil→Quench）
 - [ ] `docs/i18n/README.*.md` **× 11**：两处同步（表格 + 详情段落位置）
+- [ ] `docs/guide/<name>-guide.md` 的"Interaction with other forge skills"段 — 全部跨 skill 分类声明（如 "Same category"、"sibling of X"）
+- [ ] `docs/i18n/guide/<name>-guide.*.md` **× 11** — 同上，每份 i18n guide 都要核对跨 skill 分类声明
 - [ ] 全文 grep 该 skill 名，确认没有遗留的旧分类描述（如 "anvil sibling of skill-lint"）
+- [ ] 额外跑一轮多语言关键词扫描（见下方"自检关键动作"）
 
 ### 场景 D — 删除或重命名
 
@@ -169,12 +172,15 @@ grep -rn "<skill-name>" . --include="*.md" --include="*.json" --include="*.sh" \
 改完以后必须执行一次：
 
 ```bash
-bash skills/skill-lint/scripts/skill-lint.sh .                       # 结构检查
+bash skills/skill-lint/scripts/skill-lint.sh .                       # 结构检查（含 hash/platform-parity/i18n-structure/cross-skill-category 4 条防线）
 grep -rn "<skill-name>" . --include="*.md" --include="*.json"        # 漏网扫描
 grep -rn "skills-[0-9]*-blue" README.md docs/i18n/README.*.md        # badge 一致性
+
+# 多语言跨 skill 分类声明扫描（场景 C 必跑，防止 i18n guide 残留旧分类）
+grep -rnE "(Same category|同一分类|同カテゴリ|동일 카테고리|समान श्रेणी|Misma categoría|Même catégorie|Gleiche Kategorie|Mesma categoria|Та же категория|Aynı kategori|Cùng phân loại)" docs/
 ```
 
-任何一项发现不一致，视为变更未完成。
+任何一项发现不一致，视为变更未完成。skill-lint 的 4 条新增防线（hash-integrity / platform-parity / i18n-structure-parity / cross-skill-category-claim）是自动化主防线，CI 环境应当把它们作为 blocker。
 
 ## 开发规范
 

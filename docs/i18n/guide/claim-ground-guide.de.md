@@ -44,6 +44,23 @@ Claim Ground ist eine **automatisch ausgelöste** Skill. Kein Slash-Befehl — d
 
 ---
 
+## Rote Linien (unverletzlich)
+
+Rote Linien sind *dauerhaft aktive* Verbote. Eine Verletzung bedeutet, dass die Skill fehlgeschlagen ist — unabhängig davon, wie der Rest der Antwort aussieht.
+
+| # | Rote Linie | Blockierter Halluzinationsmodus |
+|---|-----------|--------------------------------|
+| 1 | **Behauptung ohne Quelle** — eine Schlussfolgerung über den aktuellen Zustand ziehen, ohne Laufzeit-Beweise zu zitieren | Factuality × extrinsic hallucination |
+| 2 | **Beispiel als Aufzählung** — eine vollständige Liste aus einem CLI-Help-Beispiel / Doku-Ausschnitt ableiten | Overgeneralization |
+| 3 | **Umformulieren statt erneut prüfen** — dieselbe Antwort nach Nutzer-Pushback ohne neue Tool-Aufrufe wiederholen (inkl. 3a: zitierter Pushback ist riskanter) | Pushback sycophancy |
+| 4 | **Code/API-Behauptung ohne Read/Grep** — behaupten, ein Symbol existiere / habe Signatur X, ohne vorher die Definitionsdatei zu lesen | Code/API hallucination ([FSE 2025](https://conf.researchr.org/details/fse-2025/fse-2025-industry-papers/41/)) |
+| 5 | **Zitat ohne WebFetch** — URL / Paper / DOI / API-Endpoint zitieren, ohne es vorher tatsächlich abzurufen | Citation fabrication (19,9 % Basisrate laut [EurekAlert 2025](https://www.eurekalert.org/news-releases/1106130)) |
+| 6 | **Zusammenfassung ohne Zeilenverankerung** — eine Datei/PR/Log zusammenfassen, ohne pro Aussage Zeilennummern / Abschnitte zu zitieren | Faithfulness / extrinsic addition ([HalluLens ACL 2025](https://arxiv.org/html/2504.17550v1)) |
+
+Vollständige Definitionen mit Signalen, guten/schlechten Beispielen und Grenzfällen: [references/red-lines.md](../../skills/claim-ground/references/red-lines.md).
+
+---
+
 ## Gute / schlechte Beispiele
 
 ### Beispiel 1: aktuelles Modell
@@ -108,7 +125,7 @@ Wenn beide auslösen: block-break verhindert Aufgeben, claim-ground erzwingt Neu
 
 ### Mit skill-lint
 
-Gleiche Kategorie (anvil). skill-lint validiert statische Plugin-Dateien; claim-ground validiert Claudes eigene epistemische Ausgabe. Keine Überschneidung.
+**Unterschiedliche Kategorien**. skill-lint ist **anvil** (validiert statische Plugin-Dateien, gibt pass/fail aus); claim-ground ist **hammer** (beschränkt Claudes eigene epistemische Ausgabe zur Laufzeit). Keine Überschneidung der Verantwortlichkeiten.
 
 ---
 

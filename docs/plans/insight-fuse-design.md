@@ -51,6 +51,16 @@ Stage 1: Scan       Stage 2: Align      Stage 3: Research    Stage 4: Review    
 | --depth | 否 | full | quick / standard / deep / full |
 | --template | 否 | 无（自适应） | technology / market / competitive / 自定义名 |
 | --perspectives | 否 | generalist,critic,specialist | 逗号分隔的视角列表 |
+| --no-save | 否 | false | 跳过 KB 归档，仅输出控制台报告（已装 tome-forge 时的 opt-out） |
+
+### 无归档模式决策（2026-04-17）
+
+`--no-save` 的设计需解释清楚：
+
+- **为何是 opt-out 而非 opt-in**：现有用户若已装 tome-forge，默认行为是自动归档。改成 opt-in 会破坏既有预期；opt-out 零回归、成本最低。
+- **为何作用域仅限 KB 归档**：`metadata.permissions.filesystem` 已经是 `none`，除 tome-forge 的归档协议外没有别的持久化路径。"只调研不保存"在当前架构下只剩这一条路径可以关掉，不必引入更泛化的 `--dry-run` / `--ephemeral` 等。
+- **为何选 `--no-save` 而非 `--no-archive` / `--ephemeral`**：用户偏好 + 自然语言更贴近（"不保存"比"不归档"在中文里更直观）。`--ephemeral` 偏学术、可发现性差；`--no-archive` 精确但比用户选定的 `--no-save` 多一个字。
+- **与 depth 模式的关系**：`--no-save` 在所有 depth（quick / standard / deep / full）下都生效；归档节始终位于 Stage 5 之后（或 quick 的快速报告后），与 depth 路由正交。
 
 ### 模板发现逻辑
 

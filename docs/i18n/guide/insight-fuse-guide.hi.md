@@ -16,6 +16,9 @@
 
 # कस्टम दृष्टिकोण के साथ गहन अनुसंधान
 /insight-fuse --depth deep --perspectives optimist,pessimist,pragmatist स्वचालित ड्राइविंग व्यावसायीकरण
+
+# केवल अनुसंधान, संग्रह नहीं (tome-forge KB सहेजना छोड़ें)
+/insight-fuse --depth quick --no-save अस्थायी पृष्ठभूमि अनुसंधान
 ```
 
 ## पैरामीटर
@@ -26,6 +29,7 @@
 | `--depth` | अनुसंधान गहराई | `quick` / `standard` / `deep` / `full` |
 | `--template` | रिपोर्ट टेम्पलेट | `technology` / `market` / `competitive` |
 | `--perspectives` | दृष्टिकोण सूची | `optimist,pessimist,pragmatist` |
+| `--no-save` | KB संग्रह छोड़ें (tome-forge स्थापित होने पर opt-out) | डिफ़ॉल्ट `false`; सक्षम करने पर केवल अनुसंधान, सहेजना नहीं |
 
 ## गहराई मोड
 
@@ -110,6 +114,18 @@ Stage 1 + 3 + 5 निष्पादित करता है। मानक 
 पूर्ण सीमा विश्लेषण: [references/scope-boundaries.md](../../../skills/insight-fuse/references/scope-boundaries.md)
 
 ---
+
+## KB संग्रह और opt-out
+
+रिपोर्ट आउटपुट के बाद, यदि स्थानीय रूप से tome-forge ज्ञान आधार स्थापित है, तो insight-fuse **स्वचालित रूप से** tome-forge के संग्रह प्रोटोकॉल के अनुसार रिपोर्ट सहेजने का प्रयास करता है; tome-forge स्थापित न होने पर यह चरण चुपचाप छोड़ दिया जाता है।
+
+किसी एकल अनुसंधान में स्पष्ट रूप से सहेजने से बचने के लिए (tome-forge स्थापित होने पर opt-out), `--no-save` जोड़ें:
+
+```bash
+/insight-fuse --depth quick --no-save अस्थायी पृष्ठभूमि अनुसंधान
+```
+
+`--no-save` केवल KB संग्रह को प्रभावित करता है; रिपोर्ट स्वयं कंसोल पर सामान्य रूप से आउटपुट होती रहती है। insight-fuse का `permissions.filesystem` `none` है, संग्रह पथ के अलावा कोई फ़ाइल लेखन नहीं होता।
 
 ## council-fuse से अंतर
 

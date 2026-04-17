@@ -13,7 +13,7 @@
         ]
       },
       {
-        "matcher": "真的吗|不对吧|你确定|已经更新|官方不是|我记得.*已经|不是.*已经|really\\?|are you sure|I thought.*(was|were)|isn'?t it already",
+        "matcher": "真的吗|不对吧|你确定|已经更新|官方不是|我记得.*已经|不是.*已经|等下|等一下|不是说|不是吧|我以为|really\\?|are you sure|I thought.*(was|were)|isn'?t it already|wait.*thought|hold on|wasn't that|didn't.*(change|update)|本当に|本当ですか|確か\\?|진짜\\?|정말\\?|아닌데|확실\\?|¿en serio|¿seguro|¿de verdad|vraiment\\?|en réalité|t'es sûr|tu es sûr|wirklich\\?|bist du sicher|неужели|ты уверен|حقا\\?|حقاً\\?|هل أنت متأكد|mesmo\\?|tem certeza|sério\\?|सच में|पक्का",
         "hooks": [
           {
             "type": "command",
@@ -30,6 +30,16 @@
           {
             "type": "command",
             "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/failure-detector.sh",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "Read|Grep|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/evidence-reminder.sh",
             "timeout": 5
           }
         ]
@@ -53,6 +63,16 @@
           {
             "type": "command",
             "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/session-restore.sh",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "startup|resume|clear",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/session-anchor.sh",
             "timeout": 5
           }
         ]

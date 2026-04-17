@@ -201,6 +201,10 @@ Batch compile: ingest all raw files added since last compile.
 
 ---
 
+## Report archival protocol (for other forge skills)
+
+Other forge skills (`insight-fuse`, `council-fuse`, `news-fetch`) may archive their outputs into the KB as a follow-on step. The archival contract — filename scheme, required frontmatter, routing rules — is defined in [references/report-archival-protocol.md](./references/report-archival-protocol.md). Those skills read that file at runtime to emit compatible reports; tome-forge itself does not need to load it during normal operation. Cross-skill integration thus stays **opt-in and read-only** from tome-forge's perspective.
+
 ## Key Principles
 
 1. **Raw Sources are immutable** — never modify files in `raw/`

@@ -16,6 +16,9 @@
 
 # Глубокое исследование с пользовательскими перспективами
 /insight-fuse --depth deep --perspectives optimist,pessimist,pragmatist коммерциализация автономного вождения
+
+# Только исследование без архивирования (пропустить сохранение в KB tome-forge)
+/insight-fuse --depth quick --no-save временное фоновое исследование
 ```
 
 ## Параметры
@@ -26,6 +29,7 @@
 | `--depth` | Глубина исследования | `quick` / `standard` / `deep` / `full` |
 | `--template` | Шаблон отчета | `technology` / `market` / `competitive` |
 | `--perspectives` | Список перспектив | `optimist,pessimist,pragmatist` |
+| `--no-save` | Пропустить архивирование в KB (opt-out при установленном tome-forge) | По умолчанию `false`; при включении — только исследование без сохранения |
 
 ## Режимы глубины
 
@@ -110,6 +114,18 @@
 Полный анализ границ: [references/scope-boundaries.md](../../../skills/insight-fuse/references/scope-boundaries.md)
 
 ---
+
+## Архивирование в KB и opt-out
+
+После вывода отчета, если локально установлена база знаний tome-forge, insight-fuse **автоматически** пытается сохранить отчет по протоколу архивирования tome-forge; если tome-forge не установлен, шаг тихо пропускается.
+
+Чтобы явно отказаться от сохранения в рамках одного исследования (opt-out при установленном tome-forge), добавьте `--no-save`:
+
+```bash
+/insight-fuse --depth quick --no-save временное фоновое исследование
+```
+
+`--no-save` влияет только на архивирование в KB; сам отчет, как и прежде, выводится в консоль. `permissions.filesystem` у insight-fuse — `none`, никаких записей в файлы вне пути архивирования не выполняется.
 
 ## Отличие от council-fuse
 

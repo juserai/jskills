@@ -1,6 +1,6 @@
 ---
 name: insight-fuse
-description: "Insight Fuse — Systematic multi-source research engine. 5-stage progressive pipeline with multi-perspective analysis and extensible report templates."
+description: "Insight Fuse — Systematic multi-source research engine. 5-stage progressive pipeline with configurable depth, built-in multi-perspective analysis, and extensible report templates."
 license: MIT
 user-invokable: true
 metadata:
@@ -10,6 +10,7 @@ metadata:
     filesystem: none
     execution: none
     tools: [WebSearch, WebFetch]
+argument-hint: "[topic] [--depth quick|standard|deep|full] [--template name] [--perspectives P1,P2,P3]"
 ---
 
 # Insight Fuse — 系统化多源调研熔炼引擎

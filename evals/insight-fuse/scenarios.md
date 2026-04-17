@@ -83,6 +83,18 @@
 
 **Validates:** Ambiguity detection, Stage 2 alignment value, scope clarification
 
+## Scenario 7: No-Save Opt-Out
+
+**Input:** `/insight-fuse --depth quick --no-save 临时背景调研`
+
+**Expected behavior:**
+- Stage 1 executes normally; quick report produced to console
+- KB 归档 section is skipped in full: no attempt to read `skills/tome-forge/report-archival-protocol.md`, no archival log line
+- Compared against a run without `--no-save`, only the archival-related line differs (if tome-forge is installed)
+- `--no-save` works across all depth modes (quick / standard / deep / full)
+
+**Validates:** KB archival opt-out, flag does not affect console report, archival independent of depth routing
+
 ## Trigger Patterns
 
 The skill should activate when:

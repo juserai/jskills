@@ -16,6 +16,9 @@
 
 # Ozel bakis acilariyla derinlemesine arastirma
 /insight-fuse --depth deep --perspectives optimist,pessimist,pragmatist otonom surusun ticarilesmesi
+
+# Sadece arastir, arsivleme (tome-forge KB kaydini atla)
+/insight-fuse --depth quick --no-save gecici arka plan arastirmasi
 ```
 
 ## Parametreler
@@ -26,6 +29,7 @@
 | `--depth` | Arastirma derinligi | `quick` / `standard` / `deep` / `full` |
 | `--template` | Rapor sablonu | `technology` / `market` / `competitive` |
 | `--perspectives` | Bakis acisi listesi | `optimist,pessimist,pragmatist` |
+| `--no-save` | KB arsivlemesini atla (tome-forge kuruluysa opt-out) | Varsayilan `false`; acik = sadece arastir, kaydetme |
 
 ## Derinlik Modlari
 
@@ -110,6 +114,18 @@ Her rapor otomatik olarak kontrol edilir:
 Tam sınır analizi: [references/scope-boundaries.md](../../../skills/insight-fuse/references/scope-boundaries.md)
 
 ---
+
+## KB Arsivleme ve opt-out
+
+Rapor ciktisindan sonra, yerel olarak tome-forge bilgi bankasi kurulu ise insight-fuse raporu tome-forge'un arsivleme protokolune gore **otomatik olarak** kaydetmeye calisir; tome-forge kurulu degilse adim sessizce atlanir.
+
+Tek seferlik bir arastirmada kaydetmeyi acikca reddetmek icin (tome-forge kuruluysa opt-out), `--no-save` ekleyin:
+
+```bash
+/insight-fuse --depth quick --no-save gecici arka plan arastirmasi
+```
+
+`--no-save` yalnizca KB arsivlemesini etkiler; raporun kendisi her zamanki gibi konsola yazdirilir. insight-fuse'un `permissions.filesystem` degeri `none`, arsivleme yolu disinda hicbir dosya yazma islemi gerceklestirilmez.
 
 ## council-fuse ile Farki
 

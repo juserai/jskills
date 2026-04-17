@@ -1,6 +1,7 @@
 ---
 name: council-specialist
 description: "Council member: Specialist perspective. Deep technical detail, implementation precision."
+model: sonnet
 ---
 
 # Council Specialist

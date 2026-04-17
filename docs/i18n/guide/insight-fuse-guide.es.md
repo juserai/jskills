@@ -16,6 +16,9 @@
 
 # Investigacion profunda con perspectivas personalizadas
 /insight-fuse --depth deep --perspectives optimist,pessimist,pragmatist comercializacion de conduccion autonoma
+
+# Solo investigar sin archivar (omitir guardado en KB de tome-forge)
+/insight-fuse --depth quick --no-save investigacion de contexto temporal
 ```
 
 ## Parametros
@@ -26,6 +29,7 @@
 | `--depth` | Profundidad de investigacion | `quick` / `standard` / `deep` / `full` |
 | `--template` | Plantilla de informe | `technology` / `market` / `competitive` |
 | `--perspectives` | Lista de perspectivas | `optimist,pessimist,pragmatist` |
+| `--no-save` | Omitir archivado en KB (opt-out cuando tome-forge esta instalado) | Por defecto `false`; al activarlo solo investiga sin guardar |
 
 ## Modos de profundidad
 
@@ -110,6 +114,18 @@ Cada informe se verifica automaticamente:
 Análisis completo de límites: [references/scope-boundaries.md](../../../skills/insight-fuse/references/scope-boundaries.md)
 
 ---
+
+## Archivado en KB y opt-out
+
+Tras la salida del informe, si la base de conocimiento tome-forge esta instalada localmente, insight-fuse intenta **automaticamente** guardar el informe segun el protocolo de archivado de tome-forge; sin tome-forge instalado, el paso se omite en silencio.
+
+Para evitar explicitamente el guardado en una investigacion puntual (opt-out cuando tome-forge esta instalado), anadir `--no-save`:
+
+```bash
+/insight-fuse --depth quick --no-save investigacion de contexto temporal
+```
+
+`--no-save` solo afecta al archivado en KB; el informe se sigue imprimiendo en la consola sin cambios. `permissions.filesystem` de insight-fuse es `none`, por lo que fuera de la ruta de archivado no se realiza ninguna escritura de archivos.
 
 ## Diferencia con council-fuse
 

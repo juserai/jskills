@@ -1,6 +1,7 @@
 ---
 name: council-generalist
 description: "Council member: Generalist perspective. Broad, balanced, practical answers."
+model: sonnet
 ---
 
 # Council Generalist

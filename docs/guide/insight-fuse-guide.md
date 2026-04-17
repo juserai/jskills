@@ -16,6 +16,9 @@
 
 # 自定义视角深度调研
 /insight-fuse --depth deep --perspectives optimist,pessimist,pragmatist 自动驾驶商业化
+
+# 只调研不归档（跳过 tome-forge KB 保存）
+/insight-fuse --depth quick --no-save 临时背景调研
 ```
 
 ## 参数说明
@@ -26,6 +29,7 @@
 | `--depth` | 调研深度 | `quick` / `standard` / `deep` / `full` |
 | `--template` | 报告模板 | `technology` / `market` / `competitive` |
 | `--perspectives` | 视角列表 | `optimist,pessimist,pragmatist` |
+| `--no-save` | 跳过 KB 归档（已装 tome-forge 时的 opt-out） | 默认 `false`；加上即只调研不保存 |
 
 ## 深度模式
 
@@ -90,6 +94,18 @@
 - 无悬空引用
 - 单来源占比不超 40%
 - 所有对比断言有数据支撑
+
+## KB 归档与 opt-out
+
+报告输出后，若本地已安装 tome-forge 知识库，insight-fuse 会**自动**尝试按 tome-forge 的归档协议保存报告；若未装 tome-forge，该步骤静默跳过。
+
+想在单次调研中明确不保存（已装 tome-forge 时的 opt-out），加上 `--no-save`：
+
+```bash
+/insight-fuse --depth quick --no-save 临时背景调研
+```
+
+`--no-save` 只影响 KB 归档；报告本体依旧输出到控制台，不受任何影响。insight-fuse 的 `permissions.filesystem` 为 `none`，除归档路径外不做任何文件写入。
 
 ## 与 council-fuse 的区别
 

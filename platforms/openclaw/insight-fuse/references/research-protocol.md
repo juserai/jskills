@@ -71,8 +71,42 @@ When no `--template` is specified, the main agent generates report structure aft
 3. If 3+ comparable items found → include comparison table section
 4. If topic is event/timeline-driven → include chronology section
 5. If technology topic → include architecture/principles section
-6. Always include: overview section (first), action recommendations (second-to-last), references (last)
+6. Always include: overview section (first), references (last). End the body with a neutral **"Outlook / 格局启示"** section — describe industry trends, moat structures, likely winners and losers as impersonal observations. Do NOT address any specific reader, company, or product team. Do NOT write sections titled "对 X 的建议 / 给 X 的启示 / 对我们的启发 / 为 X 设计"; those belong to advisory/brainstorming skills, not research
 7. Aim for 8-12 sections for standard depth, 5-7 for quick
+
+## Advisory Appendix Protocol
+
+Advisory Appendix is rendered **only when the user explicitly authorizes it** via:
+
+- `--audience "<角色1,角色2,...>"` parameter, or
+- In `--depth full` mode, user-confirmed audiences via interactive prompt
+
+If neither condition holds (or `--no-advisory` is set), the report body ends after the Outlook section and references; **no Appendix is produced**.
+
+### Rendering rules
+
+1. **One Appendix per audience**, lettered sequentially: `Appendix A`, `Appendix B`, `Appendix C`…
+2. **Physical separation from the main body**: each Appendix MUST begin with a `---` horizontal rule, followed by a level-2 heading `## Appendix {letter} — 针对 {audience} 的建议`.
+3. **Authorization stamp (3 lines)** immediately after the heading, as a blockquote:
+   - Line 1: `> 授权戳：{YYYY-MM-DD} | --audience="{audience}" --strategy={strategy}`
+   - Line 2: `> 基于主体：§{cited sections} | 命令：{original /insight-fuse invocation}`
+   - Line 3: `> **本节非中立调研，为用户显式请求后产出**`
+4. **Audience value provenance**: the `{audience}` token MUST be copied verbatim from the `--audience` parameter value (or from the user's interactive selection in `full` mode). It MUST NOT be inferred from CWD, additional working directories, IDE-opened files, chat history, or any other environmental signal.
+5. **Six-section structure** (strict — see `quality-standards.md` Check 9 for the full rubric):
+   - `### 1. 受众画像` — 2-4 items describing the audience's concerns, constraints, decision boundaries
+   - `### 2. 调研依据（引用主体）` — every claim must cite a main-body section by number (e.g., "§三对比表显示…"); no new external facts introduced here
+   - `### 3. 推导链（if-then）` — stepwise reasoning from facts + assumptions → observations → conclusions; no unsupported leaps
+   - `### 4. 策略梯度` — a comparison table with three columns (保守 / 中庸 / 激进). The column matching the `--strategy` parameter is marked as the recommended column (e.g., with a ✓ or bold)
+   - `### 5. 风险与反事实` — enumerated risks with mitigations, plus at least one counterfactual ("若假设 A 不成立 → ...")
+   - `### 6. 行动清单` — items ranked by confidence: **High** (strong data) / **Medium** (needs verifiable assumption) / **Low** (exploratory)
+6. **Strategy parameter effect**: `--strategy` only affects which column in §4 is highlighted. It does NOT change the content of other sections (all three strategy options are described in §4 for comparison).
+7. **No cross-contamination**: Appendix content MUST NOT alter the main body. If writing the Appendix reveals a factual error in the body, the main agent should fix the body and regenerate; do not patch via Appendix.
+
+### Failure handling
+
+- If the `--audience` value is empty after trimming, treat as "no audience" (skip Advisory).
+- If a specified audience appears outside the whitelist (see `quality-standards.md`), treat it as a user-authorized custom audience and record it verbatim in the authorization stamp.
+- If the main body has fewer than 3 numbered sections, the Appendix §2 constraint ("cite main body by section number") may fail Check 9 — in that case, main agent should note this limitation and proceed, or ask the user to re-run with a deeper `--depth`.
 
 ## Parsing Logic
 

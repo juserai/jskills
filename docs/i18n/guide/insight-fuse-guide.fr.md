@@ -16,6 +16,9 @@
 
 # Recherche approfondie avec perspectives personnalisees
 /insight-fuse --depth deep --perspectives optimist,pessimist,pragmatist commercialisation de la conduite autonome
+
+# Recherche sans archivage (sauter la sauvegarde dans la KB tome-forge)
+/insight-fuse --depth quick --no-save recherche de contexte temporaire
 ```
 
 ## Parametres
@@ -26,6 +29,7 @@
 | `--depth` | Profondeur de recherche | `quick` / `standard` / `deep` / `full` |
 | `--template` | Modele de rapport | `technology` / `market` / `competitive` |
 | `--perspectives` | Liste de perspectives | `optimist,pessimist,pragmatist` |
+| `--no-save` | Ignorer l'archivage KB (opt-out lorsque tome-forge est installe) | Par defaut `false`; active = rechercher sans sauvegarder |
 
 ## Modes de profondeur
 
@@ -110,6 +114,18 @@ Chaque rapport est automatiquement verifie :
 Analyse complète des limites: [references/scope-boundaries.md](../../../skills/insight-fuse/references/scope-boundaries.md)
 
 ---
+
+## Archivage KB et opt-out
+
+Apres la sortie du rapport, si la base de connaissances tome-forge est installee localement, insight-fuse tente **automatiquement** de sauvegarder le rapport selon le protocole d'archivage de tome-forge; sans tome-forge, l'etape est ignoree silencieusement.
+
+Pour refuser explicitement la sauvegarde lors d'une recherche ponctuelle (opt-out lorsque tome-forge est installe), ajouter `--no-save` :
+
+```bash
+/insight-fuse --depth quick --no-save recherche de contexte temporaire
+```
+
+`--no-save` n'affecte que l'archivage KB ; le rapport lui-meme continue d'etre affiche dans la console. `permissions.filesystem` d'insight-fuse vaut `none`, aucune ecriture de fichier n'est effectuee en dehors du chemin d'archivage.
 
 ## Difference avec council-fuse
 

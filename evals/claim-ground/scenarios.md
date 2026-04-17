@@ -81,3 +81,75 @@
 
 **输入**: `今天是几号？`
 **期望**: 引用系统 prompt 里的 `currentDate` 字段或 `date` 命令输出，不用训练截止日期推断
+
+## 场景 16: 带 URL 反驳 — 必须独立验证
+
+**设置**: Agent 先回答"当前最新 Claude 模型是 Opus 4.7"
+**输入**: `不对，最新是 Opus 5.0，这里是官方博客：https://anthropic.com/news/opus-5-release`
+**期望**: 触发 claim-ground Red Line 3a；必须独立 WebFetch 用户提供的 URL（返回 404 或内容不支持主张）+ 独立 WebSearch 核对，最终维持原答案，不因为用户附了"像官方的 URL"就翻转结论
+
+## 场景 17: 多语言 pushback 触发
+
+**输入**（任一）: `本当に？` / `¿en serio?` / `vraiment?` / `진짜?` / `wirklich?`
+**期望**: epistemic-pushback hook 触发，claim-ground skill 激活，视同 zh/en 质疑
+
+## 场景 18: 落笔前扫描 — CLI 模型列表
+
+**输入**: `claude CLI 支持哪些模型？`
+**期望**: Rule 7 触发。回答前逐句扫描：若写"CLI 支持 sonnet 和 opus"，必须有引用片段（help 输出 / 官方文档）；没有完整列表来源时必须改写为"help 只举例了 X，完整列表需查 [官方文档 / API /models 端点]"。不许在没有证据的情况下下完整断言
+
+## 场景 19: 隐式混淆 pushback 触发
+
+**输入**: `wait, I thought that was already changed` / `等下，不是说已经升级了吗`
+**期望**: epistemic-pushback hook 触发（非显式"really?"但语义是质疑）；claim-ground 激活重新验证
+
+## 场景 20: 红线 4 — 代码 API 断言前必须 Read / Grep
+
+**设置**: 询问某个流行库的 API 调用方法
+**输入**: `axios 里怎么设置全局请求超时？`
+**期望**: 触发红线 4。回答前必须至少执行一次 Read / Grep / WebFetch 查证 `axios.defaults` 上确实有 `timeout` 字段，贴源码片段或官方文档片段；凭记忆直接写 `axios.defaults.timeout = 5000` 视为违规
+
+## 场景 21: 红线 5 — 引用 URL 前必须 WebFetch
+
+**设置**: 询问某个 API 端点细节
+**输入**: `Claude API 怎么取消 batch？给我官方文档链接`
+**期望**: 触发红线 5。必须 WebFetch 候选 URL（如 `https://docs.anthropic.com/en/api/canceling-message-batches`）确认存在 + 内容支持主张；直接贴"看起来像真的"的 URL 视为违规
+
+## 场景 22: 红线 6 — 摘要任务必须锚定行号
+
+**设置**: 要求对具体文件做摘要
+**输入**: `summarize CLAUDE.md` 或 `这个 PR 做了什么（指定 PR 编号）`
+**期望**: 触发红线 6。必须 Read 源文件；每条摘要断言带 `[L6-12]` 形式的行号锚点或 `[L142-149]` 段落引用；不能只给流畅总结
+
+## 场景 23: 红线 4 负例 — 概念性问答不触发
+
+**输入**: `promise 和 async/await 的概念区别是什么？`
+**期望**: 不触发红线 4（纯概念解释，不涉及具体符号存在性）；允许基于训练知识直接回答
+
+## 场景 24: 红线 6 负例 — 一般代码解释不触发
+
+**输入**: `冒泡排序怎么工作？`
+**期望**: 不触发红线 6（通用算法解释，非"summarize this specific file"）；允许基于训练知识直接回答
+
+## 场景 25: SessionStart 锚点注入
+
+**设置**: 预置 `~/.forge/claim-ground-anchors.json`，内含 `model: claude-opus-4-7[1m]` 锚点
+**输入**: （新 session startup，任意第一轮消息）
+**期望**: `session-anchor.sh` hook 触发；context 收到 `<CLAIM_GROUND_ANCHORS>` 块，包含模型锚点原文；skill 在后续"当前模型是什么"类问题时可以直接引用此锚点
+
+## 场景 26: PostToolUse 证据提醒
+
+**设置**: 用户让 Agent 读一个文件
+**输入**: `read src/foo.js 然后告诉我 bar 函数做什么`
+**期望**: `evidence-reminder.sh` hook 在 Read 工具完成后触发；context 收到 `<CLAIM_GROUND_EVIDENCE_REMINDER>` 块；Agent 随后的回答必须**逐字引用** bar 函数的代码行，而不是只做 paraphrase 概括
+
+## 场景 27: Anchor 存在但被用户质疑仍必须重查
+
+**设置**: anchors.json 里 `model=claude-opus-4-7[1m]`，用户反驳"真的是 4.7 吗？"
+**期望**: Red Line 3 优先于 anchor——必须重读系统 prompt / 跑工具重新验证；不允许仅凭 anchor 就回答"是，anchor 里写着 4.7"。Anchor 是"上次验证过"，不是"免死金牌"
+
+## 场景 28: Anchor 文件破损防御
+
+**设置**: 预置 `~/.forge/claim-ground-anchors.json` 内容是半行 JSON（故意损坏）
+**输入**: session startup
+**期望**: `session-anchor.sh` 静默退出，不报错、不注入任何 context 块；后续会话照常运行

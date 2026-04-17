@@ -174,6 +174,61 @@
 
 ---
 
+## 9. 代码符号存在性 / API 签名
+
+**首要证据源**：代码库本身，不是训练记忆。
+
+**查找顺序**：
+
+| 目标 | 命令 |
+|------|------|
+| 函数 / 类 / 方法在哪个文件定义 | `rg -nS 'def <name>\|function <name>\|class <name>'` |
+| 某符号是否存在（快速检查） | `rg -c '<symbol>' path/` |
+| 具体签名 | Read 定义文件，贴完整函数原型 |
+| 依赖库符号 | `ls node_modules/<pkg>/` + Read 具体模块 |
+| 最近版本 breaking change | `CHANGELOG.md` / `CHANGES.rst` / `git log -- <file>` |
+
+**陷阱**：
+
+- 训练数据可能混了多个库 / 多个版本的 API。比如 `axios.defaults.timeout` 在 axios v1 有，但在旧版可能没有
+- `grep` 返回结果 ≠ 符号"可调用"；可能在注释里、在测试里、在已注释掉的代码里
+- 模块重导出（re-export）会让 `rg` 找不到真实定义。找不到就顺着 `import from './foo'` 递归跟过去
+
+**标准回答模板**：
+
+> [Grep / Read 命令 + 输出]，据此确认 `<symbol>` 定义在 `<file>:<line>`，签名是 `<proto>`。
+
+**反例（触犯红线 4）**：
+
+> 直接写 `axios.defaults.adapter = myAdapter` 但没 Read 过 `axios/lib/defaults/index.js` 确认 `adapter` 字段真存在于 `defaults` 对象上。
+
+## 10. 外部 URL / 论文 / DOI / API 端点
+
+**首要证据源**：
+
+| 目标 | 命令 |
+|------|------|
+| URL 存在性 + 内容 | `WebFetch <url>` —— 必看返回的前几百字 |
+| 论文索引 | `WebSearch "author title year"` + 打开 arXiv / DOI 链接 |
+| DOI 有效性 | WebFetch `https://doi.org/<doi>` |
+| API 端点存在性 | WebFetch 官方 API 文档页 |
+
+**陷阱**：
+
+- URL 返回 200 ≠ 内容正确；必须读返回内容
+- 训练数据里的 URL 可能已迁移 / 改名 / 下线
+- 论文标题 + 作者 + 年份，其中任一字段错就是伪造（引用的完整性）
+
+**标准回答模板**：
+
+> [WebFetch <url>] 返回内容："<前 200 字>"。该资源确实存在并讨论了 X。
+
+**反例（触犯红线 5）**：
+
+> 写"详见 https://docs.anthropic.com/api/batches/cancel"但没 WebFetch；URL 可能根本不存在。
+
+---
+
 ## 跨类通用原则
 
 1. **先列证据，再下结论** — 贴命令 + 输出，再总结
@@ -181,3 +236,6 @@
 3. **找不到就说找不到** — 不要用"训练时大概是..."填空
 4. **举例不等于穷举** — 看到 help 里的 `e.g.`、`such as`、`etc.` 时警觉
 5. **被质疑就重查** — 用户反驳是"我漏看了什么"的信号，不是"要说服用户"的信号
+6. **代码符号先读再断言** — 红线 4：没有 Read / Grep 过就不写具体 API 调用
+7. **URL 先 Fetch 再引用** — 红线 5：没有 WebFetch 过就不贴"官方文档在 X"
+8. **摘要逐条锚定行号** — 红线 6：不做"流畅加料"

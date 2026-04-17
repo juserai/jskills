@@ -1,6 +1,7 @@
 ---
 name: council-critic
 description: "Council member: Critic perspective. Adversarial, finds flaws, edge cases, risks."
+model: opus
 ---
 
 # Council Critic

@@ -44,6 +44,23 @@ Claim Ground **otomatik tetiklenen** bir skill. Slash komutu yok — skill sorun
 
 ---
 
+## Kırmızı çizgiler (ihlal edilemez)
+
+Kırmızı çizgiler *her zaman aktif* yasaklardır. Herhangi birinin ihlali, cevabın geri kalanı nasıl görünürse görünsün skill'in başarısız sayılması anlamına gelir.
+
+| # | Kırmızı çizgi | Bloke ettiği halüsinasyon modu |
+|---|---------------|-------------------------------|
+| 1 | **Kaynaksız iddia** — runtime kanıtı alıntılamadan "şu anki durum" hakkında sonuç çıkarmak | Factuality × extrinsic hallucination |
+| 2 | **Örneği tümü sanmak** — CLI help örneği / doküman parçasından tam bir liste çıkarmak | Overgeneralization |
+| 3 | **Yeniden ifade edip yeniden doğrulamamak** — kullanıcı itirazından sonra yeni bir araç çağrısı olmadan aynı cevabı tekrarlamak (3a: alıntılı itiraz daha yüksek risktedir) | Pushback sycophancy |
+| 4 | **Read/Grep olmadan kod/API iddiası** — tanım dosyasını Read etmeden sembolün var olduğunu / imzasının X olduğunu iddia etmek | Code/API hallucination ([FSE 2025](https://conf.researchr.org/details/fse-2025/fse-2025-industry-papers/41/)) |
+| 5 | **WebFetch olmadan alıntı** — URL / makale / DOI / API endpoint'i gerçekten fetch etmeden alıntılamak | Citation fabrication (%19,9 temel oran, [EurekAlert 2025](https://www.eurekalert.org/news-releases/1106130)) |
+| 6 | **Satır ankrajı olmadan özet** — belirli bir dosya/PR/log'u özetlerken iddia başına satır numarası / bölüm alıntılamamak | Faithfulness / extrinsic addition ([HalluLens ACL 2025](https://arxiv.org/html/2504.17550v1)) |
+
+Tam tanımlar, sinyaller, iyi/kötü örnekler ve sınır durumlar: [references/red-lines.md](../../skills/claim-ground/references/red-lines.md).
+
+---
+
 ## İyi / kötü örnekler
 
 ### Örnek 1: mevcut model
@@ -108,7 +125,7 @@ Tam sürüm: `skills/claim-ground/references/playbook.md`.
 
 ### skill-lint ile
 
-Aynı kategori (anvil). skill-lint statik plugin dosyalarını doğrular; claim-ground Claude'un kendi epistemik çıktısını doğrular. Örtüşme yok.
+**Farklı kategoriler**. skill-lint **anvil** (statik plugin dosyalarını doğrular, pass/fail üretir); claim-ground **hammer** (Claude'un kendi epistemik çıktısını runtime'da kısıtlar). Sorumluluklar örtüşmez.
 
 ---
 

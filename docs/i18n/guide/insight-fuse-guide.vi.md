@@ -16,6 +16,9 @@
 
 # Nghien cuu sau voi goc nhin tuy chinh
 /insight-fuse --depth deep --perspectives optimist,pessimist,pragmatist thuong mai hoa xe tu lai
+
+# Chi nghien cuu khong luu tru (bo qua viec luu vao KB cua tome-forge)
+/insight-fuse --depth quick --no-save nghien cuu boi canh tam thoi
 ```
 
 ## Tham so
@@ -26,6 +29,7 @@
 | `--depth` | Do sau nghien cuu | `quick` / `standard` / `deep` / `full` |
 | `--template` | Mau bao cao | `technology` / `market` / `competitive` |
 | `--perspectives` | Danh sach goc nhin | `optimist,pessimist,pragmatist` |
+| `--no-save` | Bo qua viec luu tru vao KB (opt-out khi da cai tome-forge) | Mac dinh `false`; bat len = chi nghien cuu khong luu |
 
 ## Che do do sau
 
@@ -110,6 +114,18 @@ Moi bao cao duoc tu dong kiem tra:
 Phân tích phạm vi đầy đủ: [references/scope-boundaries.md](../../../skills/insight-fuse/references/scope-boundaries.md)
 
 ---
+
+## Luu tru KB va opt-out
+
+Sau khi xuat bao cao, neu may da cai co so tri thuc tome-forge, insight-fuse se **tu dong** co gang luu bao cao theo giao thuc luu tru cua tome-forge; neu chua cai tome-forge, buoc nay se bi bo qua yen lang.
+
+De tu choi viec luu ro rang trong mot lan nghien cuu duy nhat (opt-out khi da cai tome-forge), them `--no-save`:
+
+```bash
+/insight-fuse --depth quick --no-save nghien cuu boi canh tam thoi
+```
+
+`--no-save` chi anh huong den viec luu tru KB; ban than bao cao van duoc in ra console nhu binh thuong. `permissions.filesystem` cua insight-fuse la `none`, ngoai duong dan luu tru thi khong co thao tac ghi file nao duoc thuc hien.
 
 ## Su khac biet voi council-fuse
 

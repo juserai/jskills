@@ -16,6 +16,9 @@
 
 # 사용자 정의 관점으로 심층 조사
 /insight-fuse --depth deep --perspectives optimist,pessimist,pragmatist 자율주행 상용화
+
+# 조사만 하고 보관하지 않음 (tome-forge KB 저장 건너뛰기)
+/insight-fuse --depth quick --no-save 임시 배경 조사
 ```
 
 ## 매개변수
@@ -26,6 +29,7 @@
 | `--depth` | 조사 깊이 | `quick` / `standard` / `deep` / `full` |
 | `--template` | 보고서 템플릿 | `technology` / `market` / `competitive` |
 | `--perspectives` | 관점 목록 | `optimist,pessimist,pragmatist` |
+| `--no-save` | KB 보관 건너뛰기 (tome-forge 설치 시 opt-out) | 기본값 `false`; 활성화 시 조사만 하고 저장하지 않음 |
 
 ## 깊이 모드
 
@@ -110,6 +114,18 @@ Stage 1 + 3 + 5를 실행합니다. 표준 조사를 기반으로 모든 하위 
 전체 경계 분석: [references/scope-boundaries.md](../../../skills/insight-fuse/references/scope-boundaries.md)
 
 ---
+
+## KB 보관 및 opt-out
+
+보고서 출력 후 로컬에 tome-forge 지식 베이스가 설치되어 있으면 insight-fuse는 tome-forge의 보관 프로토콜에 따라 **자동으로** 보고서를 저장하려고 시도합니다. tome-forge가 설치되지 않은 경우 이 단계는 조용히 건너뜁니다.
+
+단일 조사에서 명시적으로 저장을 원하지 않을 때(tome-forge 설치 시 opt-out) `--no-save`를 추가하세요:
+
+```bash
+/insight-fuse --depth quick --no-save 임시 배경 조사
+```
+
+`--no-save`는 KB 보관에만 영향을 줍니다. 보고서 자체는 평소대로 콘솔에 출력됩니다. insight-fuse의 `permissions.filesystem`은 `none`이며, 보관 경로 외에 어떠한 파일 쓰기도 수행하지 않습니다.
 
 ## council-fuse와의 차이점
 

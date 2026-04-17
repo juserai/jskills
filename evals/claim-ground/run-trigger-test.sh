@@ -61,6 +61,14 @@ test_prompt "Which packages are installed globally via npm?" "yes" "installed-pa
 test_prompt "真的吗？我记得已经更新到 4.7 了" "yes" "user-pushback-zh"
 test_prompt "Are you sure? I thought it was updated" "yes" "user-pushback-en"
 test_prompt "What's in my PATH env var?" "yes" "env-var-query"
+test_prompt "本当に？最新モデルが更新されたと思います" "yes" "user-pushback-ja"
+test_prompt "¿en serio? ya pensaba que se había actualizado" "yes" "user-pushback-es"
+test_prompt "wait, I thought that was already changed" "yes" "implicit-pushback-en"
+test_prompt "不对，最新是 Opus 5.0，官方博客：https://anthropic.com/news/opus-5-release" "yes" "cited-url-pushback"
+test_prompt "claude CLI 支持哪些模型？" "yes" "cli-model-list-scan"
+test_prompt "axios 里怎么设置全局请求超时？" "yes" "code-api-assertion"
+test_prompt "Claude API 怎么取消 batch？给我官方文档链接" "yes" "cited-url-required"
+test_prompt "summarize CLAUDE.md" "yes" "summarize-file-anchor"
 
 echo ""
 echo "--- Should NOT Trigger ---"
@@ -69,6 +77,7 @@ test_prompt "What's the difference between list and tuple in Python?" "no" "trai
 test_prompt "Help me refactor this function" "no" "coding-task"
 test_prompt "Explain the bubble sort algorithm" "no" "algorithm-explain"
 test_prompt "/news-fetch AI" "no" "other-skill-command"
+test_prompt "promise 和 async/await 的概念区别是什么？" "no" "conceptual-explain"
 
 echo ""
 echo "=== Results ==="
