@@ -15,6 +15,27 @@ metadata:
 
 获取指定主题和时间段的新闻，以结构化清单输出。
 
+## Help
+
+当第一参数为 `help` / `--help`，**或无参数**时，输出以下 help card 并停止执行（parsing 规则详见 [CLAUDE.md § Help 模式约定](../../CLAUDE.md)）：
+
+```
+News Fetch — Quick news between coding sessions (3-tier network fallback)
+
+Usage:
+  /news-fetch <topic> [time-range]   Fetch news for the topic in the range
+  /news-fetch help                   Show this help
+
+Time range: today | week (default) | month | YYYY-MM-DD~YYYY-MM-DD
+
+Examples:
+  /news-fetch AI
+  /news-fetch "rust 语言" week
+  /news-fetch "climate change" 2026-04-01~2026-04-15
+
+Guide: docs/user-guide/news-fetch-guide.md
+```
+
 ## Scope Isolation（强制约束）
 
 news-fetch 是一个**独立**的新闻获取工具。每次运行是一次从零开始的独立行为。

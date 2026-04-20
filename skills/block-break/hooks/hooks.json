@@ -1,0 +1,52 @@
+{
+  "description": "Block Break hooks: frustration detection, failure counting, state persistence across sessions and compaction",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "matcher": "try harder|别偷懒|又错了|还不行|stop giving|you broke|降智|原地打转|换个方法|stop spinning|figure it out|you keep failing|加油|再试试|为什么还不行|怎么又失败|质量太差|重新做|能不能靠谱|认真点|怎么搞|不行啊",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/frustration-trigger.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/failure-detector.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "[Block Break PreCompact — State Checkpoint]\n\nCheck: did Block Break trigger this session? Look for [Block Break 🔥] markers.\nIf Block Break was NOT active, skip.\n\nIf active: dump state to ~/.forge/block-break-state.json using Bash:\n```json\n{\"failure_count\": N, \"pressure_level\": N, \"last_updated\": \"ISO timestamp\", \"active_task\": \"description\", \"tried_approaches\": [\"...\"], \"excluded\": [\"...\"], \"next_hypothesis\": \"...\"}\n```\n\nThis preserves pressure level across compaction. Output: > [Block Break Checkpoint] State saved."
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "compact|startup|resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/session-restore.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

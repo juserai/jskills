@@ -15,6 +15,30 @@ metadata:
 
 把每一个关于"当前状态"的断言，接地到一条运行时证据上。
 
+## Help
+
+当第一参数为 `help` / `--help`，**或无参数**时，输出以下 help card 并停止执行（parsing 规则详见 [CLAUDE.md § Help 模式约定](../../CLAUDE.md)）。Hook 自动触发（UserPromptSubmit + SessionStart）不受此路径影响。
+
+```
+Claim Ground — Epistemic constraint engine (runtime evidence before assertions)
+
+Usage:
+  /claim-ground                  Show this help (skill is hook-driven; manual invocation = help)
+  /claim-ground help             Show this help
+
+How it normally activates:
+  - Auto via UserPromptSubmit hook when user input matches pushback regex
+    ("really? / are you sure / 真的吗 / 你确定 / ..." and multilingual variants)
+  - Auto via SessionStart hook to restore previously verified anchors
+
+What it enforces:
+  - Quote runtime evidence (system prompt / tool output / env var) inline BEFORE any conclusion
+  - On user pushback → RE-VERIFY instead of rephrasing (see Red Line 3)
+  - Prevents stale-training-data hallucinations about current/live state
+
+Guide: docs/user-guide/claim-ground-guide.md
+```
+
 ## 触发场景
 
 - 用户问"当前/最新 X 是什么"——**先判断作用域**：

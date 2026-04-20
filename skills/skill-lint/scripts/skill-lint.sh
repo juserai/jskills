@@ -37,6 +37,12 @@ CFG_NO_DANGEROUS_PATTERNS=""
 CFG_VERIFY_PLATFORM_SUBDIRS=""
 CFG_VERIFY_I18N_STRUCTURE=""
 CFG_VERIFY_CROSS_SKILL_CATEGORY=""
+CFG_REQUIRE_HELP_SECTION=""
+# Path config (see rules.md): fallback to legacy layout if keys absent.
+CFG_USER_GUIDE_DIR="docs/guide"
+CFG_DESIGN_DIR="docs/plans"
+CFG_I18N_GUIDE_DIR="docs/i18n/guide"
+CFG_PROTECT_CROSS_NAMESPACE=""
 
 if [ -f "$CONFIG_FILE" ]; then
     # Parse config using python
@@ -75,6 +81,21 @@ if rules.get('verify-i18n-structure-parity'):
     print('CFG_VERIFY_I18N_STRUCTURE=1')
 if rules.get('verify-cross-skill-category-claim'):
     print('CFG_VERIFY_CROSS_SKILL_CATEGORY=1')
+# require-help-section: tri-value 'warn' / 'error' / 'off' (also accepts true/false for back-compat)
+help_rule = rules.get('require-help-section')
+if help_rule is True or help_rule == 'error':
+    print('CFG_REQUIRE_HELP_SECTION=error')
+elif help_rule == 'warn':
+    print('CFG_REQUIRE_HELP_SECTION=warn')
+# Path config — single source of truth; legacy defaults applied in shell if absent.
+if 'user-guide-dir' in rules:
+    print(f'CFG_USER_GUIDE_DIR={shlex.quote(rules[\"user-guide-dir\"])}')
+if 'design-dir' in rules:
+    print(f'CFG_DESIGN_DIR={shlex.quote(rules[\"design-dir\"])}')
+if 'i18n-guide-dir' in rules:
+    print(f'CFG_I18N_GUIDE_DIR={shlex.quote(rules[\"i18n-guide-dir\"])}')
+if rules.get('protect-cross-namespace'):
+    print('CFG_PROTECT_CROSS_NAMESPACE=1')
 " 2>/dev/null)" || true
 fi
 
@@ -231,19 +252,19 @@ sys.exit(1)
 
     # --- S12: User guide ---
     if [ -n "$CFG_REQUIRE_GUIDE" ]; then
-        if [ -f "$PLUGIN_ROOT/docs/guide/$skill_name-guide.md" ]; then
-            add_passed "S12: docs/guide/$skill_name-guide.md exists"
+        if [ -f "$PLUGIN_ROOT/$CFG_USER_GUIDE_DIR/$skill_name-guide.md" ]; then
+            add_passed "S12: $CFG_USER_GUIDE_DIR/$skill_name-guide.md exists"
         else
-            add_warning "S12: docs/guide/$skill_name-guide.md missing"
+            add_warning "S12: $CFG_USER_GUIDE_DIR/$skill_name-guide.md missing"
         fi
     fi
 
     # --- S13: Design document ---
     if [ -n "$CFG_REQUIRE_DESIGN_DOC" ]; then
-        if [ -f "$PLUGIN_ROOT/docs/plans/$skill_name-design.md" ]; then
-            add_passed "S13: docs/plans/$skill_name-design.md exists"
+        if [ -f "$PLUGIN_ROOT/$CFG_DESIGN_DIR/$skill_name-design.md" ]; then
+            add_passed "S13: $CFG_DESIGN_DIR/$skill_name-design.md exists"
         else
-            add_warning "S13: docs/plans/$skill_name-design.md missing"
+            add_warning "S13: $CFG_DESIGN_DIR/$skill_name-design.md missing"
         fi
     fi
 
@@ -289,19 +310,19 @@ sys.exit(1)
     fi
 
     # --- S16: i18n guide coverage ---
-    # Per CLAUDE.md convention: i18n guides live at docs/i18n/guide/<name>-guide.<lang>.md
+    # Path driven by CFG_I18N_GUIDE_DIR (default docs/i18n/guide).
     if [ -n "$CFG_REQUIRE_I18N_GUIDE" ] && [ -n "$CFG_I18N_DIR" ]; then
         i18n_path="$PLUGIN_ROOT/$CFG_I18N_DIR"
-        guide_i18n_dir="$PLUGIN_ROOT/docs/i18n/guide"
+        guide_i18n_dir="$PLUGIN_ROOT/$CFG_I18N_GUIDE_DIR"
         if [ -d "$i18n_path" ]; then
             for i18n_readme in "$i18n_path/"README.*.md; do
                 [ -f "$i18n_readme" ] || continue
                 lang="$(basename "$i18n_readme" | sed 's/README\.//;s/\.md//')"
                 guide_i18n_file="$guide_i18n_dir/$skill_name-guide.$lang.md"
                 if [ -f "$guide_i18n_file" ]; then
-                    add_passed "S16: docs/i18n/guide/$skill_name-guide.$lang.md exists"
+                    add_passed "S16: $CFG_I18N_GUIDE_DIR/$skill_name-guide.$lang.md exists"
                 else
-                    add_warning "S16: docs/i18n/guide/$skill_name-guide.$lang.md missing"
+                    add_warning "S16: $CFG_I18N_GUIDE_DIR/$skill_name-guide.$lang.md missing"
                 fi
             done
         fi
@@ -309,12 +330,14 @@ sys.exit(1)
 done
 
 # --- S17: i18n guide wrong-path guard ---
-# Per CLAUDE.md convention, i18n guides belong at docs/i18n/guide/.
-# Guard against the reversed misplacement: docs/guide/i18n/ (where files would be invisible to S16).
-if [ -n "$CFG_REQUIRE_I18N_GUIDE" ] && [ -d "$PLUGIN_ROOT/docs/guide/i18n" ]; then
-    wrong_count=$(find "$PLUGIN_ROOT/docs/guide/i18n" -type f -name "*.md" 2>/dev/null | wc -l)
+# Guard against i18n guides placed at <user-guide-dir>/i18n/ when that path is NOT the configured
+# i18n-guide-dir. If the config puts i18n guides exactly there, this path is legitimate — skip.
+if [ -n "$CFG_REQUIRE_I18N_GUIDE" ] \
+    && [ "$CFG_I18N_GUIDE_DIR" != "$CFG_USER_GUIDE_DIR/i18n" ] \
+    && [ -d "$PLUGIN_ROOT/$CFG_USER_GUIDE_DIR/i18n" ]; then
+    wrong_count=$(find "$PLUGIN_ROOT/$CFG_USER_GUIDE_DIR/i18n" -type f -name "*.md" 2>/dev/null | wc -l)
     if [ "$wrong_count" -gt 0 ]; then
-        add_error "S17: docs/guide/i18n/ contains $wrong_count files — wrong path. i18n guides belong in docs/i18n/guide/"
+        add_error "S17: $CFG_USER_GUIDE_DIR/i18n/ contains $wrong_count files — wrong path. i18n guides belong in $CFG_I18N_GUIDE_DIR/"
     fi
 fi
 
@@ -343,8 +366,15 @@ if [ -n "$CFG_VERIFY_INTEGRITY" ] && [ -f "$PLUGIN_ROOT/.claude-plugin/marketpla
 import json
 with open('$PLUGIN_ROOT/.claude-plugin/marketplace.json') as f:
     data = json.load(f)
+target = '$skill_name'
+target_path = '$skill_rel'
 for p in data.get('plugins', []):
-    if '$skill_rel' in p.get('skills', []):
+    # Match either legacy layout (source='./' + skills=['./skills/<name>'])
+    # or per-skill source layout (source='./skills/<name>' + skills=['./']).
+    if target_path in p.get('skills', []):
+        print(p.get('integrity', {}).get('skill-md-sha256', ''))
+        break
+    if p.get('source', '').rstrip('/').endswith('/' + target) and p.get('name') == target:
         print(p.get('integrity', {}).get('skill-md-sha256', ''))
         break
 " 2>/dev/null)
@@ -359,6 +389,61 @@ for p in data.get('plugins', []):
         fi
     done
     [ "$s19_fail" -eq 0 ] && add_passed "S19: All integrity hashes match"
+fi
+
+# --- S25: require-help-section (user-invokable skills must carry `## Help`) ---
+# Tri-value: 'error' → add_error, 'warn' → add_warning, empty → skip.
+# Note: S24 is already taken by the cross-skill-category-claim rule below.
+if [ -n "$CFG_REQUIRE_HELP_SECTION" ]; then
+    s25_fail=0
+    # Report helper resolves tri-value to the correct add_* function.
+    _s25_report() {
+        local severity="$1" msg="$2"
+        case "$severity" in
+            error) add_error "$msg"; s25_fail=1 ;;
+            warn)  add_warning "$msg" ;;
+        esac
+    }
+    for skill_md in "$PLUGIN_ROOT"/skills/*/SKILL.md; do
+        [ -f "$skill_md" ] || continue
+        skill_name="$(basename "$(dirname "$skill_md")")"
+        # 1) Must contain `## Help` heading (standalone, not `## Help Text` variants)
+        if ! grep -qE '^## Help[[:space:]]*$' "$skill_md"; then
+            _s25_report "$CFG_REQUIRE_HELP_SECTION" "S25: $skill_name SKILL.md missing '## Help' section"
+            continue
+        fi
+        # 2) Must mention both `help` and `--help` tokens somewhere in the file (literal, in backticks)
+        if ! grep -q '`help`' "$skill_md"; then
+            _s25_report "$CFG_REQUIRE_HELP_SECTION" "S25: $skill_name SKILL.md Help section missing \`help\` token"
+            continue
+        fi
+        if ! grep -q '`--help`' "$skill_md"; then
+            _s25_report "$CFG_REQUIRE_HELP_SECTION" "S25: $skill_name SKILL.md Help section missing \`--help\` token"
+            continue
+        fi
+    done
+    [ "$s25_fail" -eq 0 ] && add_passed "S25: All skills declare '## Help' section with required tokens"
+fi
+
+# --- S26: cross-namespace protection in <design-dir>/ ---
+# Any file in $CFG_DESIGN_DIR named cross-<token>-design.md must NOT shadow an existing skill
+# named <token>. Preserves the 'cross-' prefix as a reserved namespace for horizontal design docs
+# without restricting skill naming itself.
+if [ -n "$CFG_PROTECT_CROSS_NAMESPACE" ] && [ -d "$PLUGIN_ROOT/$CFG_DESIGN_DIR" ]; then
+    s26_fail=0
+    for cross_file in "$PLUGIN_ROOT/$CFG_DESIGN_DIR"/cross-*.md; do
+        [ -f "$cross_file" ] || continue
+        # Strip `cross-` prefix and `-design.md` suffix (both optional; prefix required)
+        token=$(basename "$cross_file")
+        token="${token#cross-}"
+        token="${token%-design.md}"
+        token="${token%.md}"
+        if [ -d "$PLUGIN_ROOT/skills/$token" ]; then
+            add_error "S26: $CFG_DESIGN_DIR/$(basename "$cross_file") collides with skills/$token/ — 'cross-' prefix is reserved for horizontal design docs, not per-skill files"
+            s26_fail=1
+        fi
+    done
+    [ "$s26_fail" -eq 0 ] && add_passed "S26: cross-* namespace in $CFG_DESIGN_DIR/ does not shadow any skill"
 fi
 
 # --- S20: agent model declaration ---
@@ -427,8 +512,8 @@ fi
 # For each skill's English guide, ensure each i18n guide has >= 90% of the H2 headings.
 if [ -n "$CFG_VERIFY_I18N_STRUCTURE" ] && [ -n "$CFG_I18N_DIR" ]; then
     s23_fail=0
-    guide_dir="$PLUGIN_ROOT/docs/guide"
-    i18n_guide_dir="$PLUGIN_ROOT/docs/i18n/guide"
+    guide_dir="$PLUGIN_ROOT/$CFG_USER_GUIDE_DIR"
+    i18n_guide_dir="$PLUGIN_ROOT/$CFG_I18N_GUIDE_DIR"
     for skill_name in "${SKILL_NAMES[@]}"; do
         en_guide="$guide_dir/$skill_name-guide.md"
         [ -f "$en_guide" ] || continue
@@ -468,7 +553,7 @@ if [ -n "$CFG_VERIFY_CROSS_SKILL_CATEGORY" ]; then
         [ -n "$cat_val" ] && seen_categories[$skill_name]=$cat_val
     done
     # Scan guide files for potentially stale claims
-    for guide_file in "$PLUGIN_ROOT/docs/guide/"*.md "$PLUGIN_ROOT/docs/i18n/guide/"*.md; do
+    for guide_file in "$PLUGIN_ROOT/$CFG_USER_GUIDE_DIR/"*.md "$PLUGIN_ROOT/$CFG_I18N_GUIDE_DIR/"*.md; do
         [ -f "$guide_file" ] || continue
         # Find lines matching "<same/different category phrase> ... (<category keyword>)" OR "... is <category>"
         matches=$(grep -nE "($same_category_patterns).*\\((${cat_keywords})\\)|\\*\\*(${cat_keywords})\\*\\*" "$guide_file" 2>/dev/null || true)

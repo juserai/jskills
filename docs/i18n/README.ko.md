@@ -23,6 +23,8 @@ cp -r forge/platforms/openclaw/* ~/.openclaw/skills/
 
 ## Skills
 
+> 모든 skill은 `/<skill> help`(또는 `--help`)로 사용 카드를 표시합니다. 필수 인자가 있는 skill은 인자 없이 호출해도 help가 표시됩니다.
+
 ### Hammer
 
 | Skill | 기능 | 사용해 보기 |
@@ -36,7 +38,7 @@ cp -r forge/platforms/openclaw/* ~/.openclaw/skills/
 | Skill | 기능 | 사용해 보기 |
 |-------|------|-------------|
 | **council-fuse** | 다관점 심의로 더 나은 답변 도출 | `/council-fuse <question>` |
-| **insight-fuse** | 체계적 다중 소스 조사로 전문 보고서 생성 | `/insight-fuse <topic>` |
+| **insight-fuse** | 7단계 조사 엔진, skeleton.yaml 데이터 계약 + 6차원 품질 루브릭 | `/insight-fuse <topic>` |
 | **tome-forge** | LLM으로 편찬하는 개인 지식 베이스 | `/tome-forge init` |
 
 ### Anvil
@@ -141,24 +143,26 @@ block-break 와 직교적으로 협업: 둘 다 활성화되면 block-break 는 
 /council-fuse Redis vs PostgreSQL 작업 큐용
 ```
 
-## Insight Fuse — 다중 소스 조사 엔진
+## Insight Fuse — 체계적 다중 소스 조사 용광로 엔진 (v3)
 
-주제에서 전문 조사 보고서까지. `/insight-fuse`는 5단계 점진적 파이프라인을 실행합니다: 스캔 → 정렬 → 조사 → 검토 → 심층 분석.
+주제에서 전문 조사 보고서까지. `/insight-fuse`는 `skeleton.yaml`을 데이터 계약으로 하는 7단계 파이프라인을 실행합니다: brainstorm → scan → align → research → review → deep dive → QA.
 
-다관점 분석(제너럴리스트/크리틱/스페셜리스트) 내장, 확장 가능한 보고서 템플릿, 구성 가능한 깊이. council-fuse의 자매 스킬 — council-fuse가 알려진 정보를 논의하는 반면, insight-fuse는 새로운 정보를 능동적으로 수집하고 종합합니다.
+다관점 분석, 6가지 연구 유형 프리셋(overview / technology / market / academic / product / competitive), 5가지 출력물(report / checklist / ADR / decision-tree / PoC), 그리고 6차원 직교 품질 점수 + 14개 blocking check 내장. council-fuse의 자매 스킬 — council-fuse가 알려진 정보를 논의하는 반면, insight-fuse는 새로운 정보를 능동적으로 수집하고 종합합니다.
 
 | 메커니즘 | 설명 |
 |----------|------|
-| **5단계 파이프라인** | 스캔 → 정렬 → 조사 → 검토 → 심층 분석 |
-| **구성 가능한 깊이** | quick(스캔만) / standard(자동 조사) / deep(+ 다관점) / full(+ 수동 검토) |
-| **3개 관점** | 제너럴리스트(폭) / 크리틱(검증) / 스페셜리스트(정밀도) |
-| **보고서 템플릿** | technology / market / competitive / 커스텀 — 또는 자동 생성 |
-| **품질 기준** | 다중 소스 강제, 인용 무결성, 소스 다양성 검사 |
+| **7단계 파이프라인** | Brainstorm(골격) → Scan → Align → Research → Review → Deep Dive → QA |
+| **연구 유형** | overview / technology / market / academic / product / competitive — 프리셋 번들(템플릿 + 관점 + 고유 check) |
+| **구성 가능한 깊이** | quick / standard / deep / full — quick은 Stage 2-5 생략; full은 7단계 전부 + 인터랙티브 gate |
+| **Skeleton.yaml** | 7필드 데이터 계약(dimensions / taxonomies / out_of_scope / existing_consensus / known_dissensus / hypotheses / business_neutral)을 각 stage가 소비 |
+| **품질 루브릭** | 6차원 점수(반증 가능성 / 증거 밀도 / 재현성 / 소스 다양성 / 실행 가능성 / 투명성) + 14개 blocking check + A/B/C/D 등급 |
+| **멀티 출력** | report / checklist / ADR / decision-tree / PoC — `--outputs`로 조합 선택 |
 
 ```text
-/insight-fuse AI Agent 보안 위험
-/insight-fuse --depth quick --template technology WebAssembly
-/insight-fuse --depth deep --perspectives optimist,pessimist,pragmatist 양자컴퓨팅 상용화
+/insight-fuse "AI glasses"
+/insight-fuse "Kubernetes autoscaling" --type technology --outputs report,adr,poc
+/insight-fuse "Sparse MoE interpretability" --type academic --depth deep
+/insight-fuse "AI Native landscape" --type overview --depth full --audience "new entrants"
 ```
 
 ## Tome Forge — 개인 지식 베이스 엔진
@@ -236,7 +240,8 @@ forge/
 │       ├── SKILL.md               # Skill 정의
 │       ├── references/            # 필요 시 로드되는 상세 내용
 │       ├── scripts/               # 보조 스크립트
-│       └── agents/                # Sub-agent 정의
+│       ├── agents/                # Sub-agent 정의
+│       └── hooks/                 # skill별 Claude Code hooks (hook-owner skill 전용)
 ├── platforms/                     # 기타 플랫폼 적응 계층
 │   └── openclaw/
 │       └── <skill>/
@@ -244,7 +249,6 @@ forge/
 │           ├── references/        # 해당 플랫폼의 상세 내용
 │           └── scripts/           # 해당 플랫폼의 보조 스크립트
 ├── .claude-plugin/                # Claude Code marketplace 메타데이터
-├── hooks/                         # Claude Code 플랫폼 hooks
 ├── evals/                         # 크로스 플랫폼 평가 시나리오
 ├── docs/                          # 크로스 플랫폼 문서
 └── plugin.json                    # 컬렉션 메타데이터
@@ -256,7 +260,7 @@ forge/
 2. `platforms/openclaw/<name>/SKILL.md` — OpenClaw 적응 버전 + references/scripts
 3. `evals/<name>/scenarios.md` + `run-trigger-test.sh` — 평가 시나리오
 4. `.claude-plugin/marketplace.json` — `plugins` 배열에 항목 추가
-5. hooks가 필요한 경우 `hooks/hooks.json`에 추가
+5. hooks가 필요한 경우: `skills/<name>/hooks/hooks.json` + 스크립트 생성. marketplace.json의 `source`는 `./skills/<name>`을 가리켜야 함
 
 자세한 개발 가이드라인은 [CLAUDE.md](../../CLAUDE.md)를 참고하십시오.
 

@@ -1,132 +1,218 @@
 ---
 name: insight-fuse
-description: "Insight Fuse — Systematic multi-source research engine. 5-stage progressive pipeline with configurable depth, built-in multi-perspective analysis, and extensible report templates."
+description: "Insight Fuse v3 — Systematic multi-source research engine. 7-stage pipeline with skeleton.yaml data contract, 6 research-type presets, 6-dim quality rubric, and 5 output formats."
 license: MIT
 user-invokable: true
 metadata:
   category: crucible
   permissions:
     network: true
-    filesystem: none
+    filesystem: read-write
     execution: none
-    tools: [WebSearch, WebFetch]
-argument-hint: "[topic] [--depth quick|standard|deep|full] [--template name] [--perspectives P1,P2,P3]"
+    tools: [WebSearch, WebFetch, Agent, Read, Write, Bash]
+argument-hint: "[topic] [--type overview|technology|market|academic|product|competitive] [--depth quick|standard|deep|full] [--skeleton path|auto|skip] [--perspectives p1,p2,p3] [--outputs report,checklist,adr,decision-tree,poc] [--focus q] [--audience role] [--strategy c|b|a] [--no-advisory] [--no-save]"
 ---
 
-# Insight Fuse — 系统化多源调研熔炼引擎
+# Insight Fuse v3 — 系统化多源调研熔炼引擎
 
-从主题到专业调研报告的 5 阶段渐进式流水线。多源信息采集 + 多视角深度分析 + 可扩展报告模板。
+从主题到专业调研报告的 7 阶段流水线。**skeleton.yaml 作为结构化数据契约**贯穿全程 + **6 维正交评分 + 14 项 blocking check** 作为质量尺 + **6 research-type 预设** 覆盖场景差异 + **5 种输出物** 满足多受众。
 
-## 自动激活（无 Hook 环境）
+## Scope Isolation（强制约束）
 
-触发信号：
-1. 用户说"调研 X"、"研究一下 X"、"帮我做个调研报告"
-2. 用户需要对某个技术/市场/竞品进行系统性了解
-3. 用户明确调用 `/insight-fuse`
+insight-fuse 是**独立**调研工具。每次调用从零开始。运行时**只使用**：
+
+- 用户消息中显式提供的 topic 与参数
+- WebSearch/WebFetch 抓取的公开来源
+- `skeleton.yaml`（Stage 0 产出或 `--skeleton <path>` 导入）
+
+运行时**不使用** CWD / 附加目录 / IDE 打开文件 / CLAUDE.md / 对话中的项目上下文。例外：`--audience` / `--focus` 参数值作为用户显式授权记入 Appendix。详见 [references/research-protocol.md](references/research-protocol.md) §十。
 
 ## 参数
 
 | 参数 | 必需 | 默认 | 说明 |
 |------|------|------|------|
 | topic | 是 | — | 调研主题 |
-| --depth | 否 | full | quick / standard / deep / full |
-| --template | 否 | 自适应 | technology / market / competitive / 自定义名 |
-| --perspectives | 否 | generalist,critic,specialist | 逗号分隔视角列表 |
+| `--type` | 否 | overview | overview / technology / market / academic / product / competitive（6 预设）|
+| `--depth` | 否 | standard | quick / standard / deep / full |
+| `--skeleton` | 否 | auto | `<path>` 导入 / `auto` Stage 0 自动 / `skip` 跳过（仅 quick/standard）|
+| `--perspectives` | 否 | 从 --type 预设 | 逗号分隔视角列表，2-5 个 |
+| `--outputs` | 否 | 从 --type 预设 | report / checklist / adr / decision-tree / poc |
+| `--focus` | 否 | — | Stage 5 显式锚点；未指定时 deep 必须用户选，full 自动推荐 |
+| `--audience` | 否 | — | 多值逗号分隔；触发 Advisory Appendix |
+| `--strategy` | 否 | balanced | conservative / balanced / aggressive，仅 Appendix 生效 |
+| `--no-advisory` | 否 | false | 显式关闭 advisory，即 full 模式也不问 |
+| `--no-save` | 否 | false | 跳过 KB 归档，仅控制台输出 |
+| `--timeout-seconds` | 否 | 300 | Stage 2/4 交互超时；超时自动降级 |
 
-## 模板发现
+## 工作流（7 阶段）
 
-1. 有 `--template` → 使用内置模板结构（technology / market / competitive），不识别的名称则报错
-2. 无 `--template` → 根据 Stage 1 内容自适应生成结构（读 `references/research-protocol.md`）
+```
+Stage 0 → 1 → 2 → 3 → 4 → 5 → 6
+Brainstorm Scan Align Research Review Deep QA
+(skeleton)                              (14 check
+                                         + 6-dim
+                                         + multi-out)
+```
 
-> 注：OpenClaw 版使用内置模板定义，不依赖外部模板文件。模板结构与 Claude Code 版一致。
+### 深度路由
 
-## 深度路由
+| `--depth` | 跑的阶段 | Stage 0 行为 | 交互 gate |
+|-----------|---------|-------------|----------|
+| quick | 0*, 1, 6 | auto skeleton | 无 |
+| standard（默认） | 0*, 1, 3, 6 | auto skeleton | 无 |
+| deep | 0, 1, 3, 5, 6 | auto 或 `--skeleton` 导入 | focus selection（若无 `--focus`） |
+| full | 0, 1, 2, 3, 4, 5, 6 | interactive 5 问 + 2-3 候选 + section approval | Stage 0 user gate + Stage 2 + Stage 4 |
 
-| --depth | 阶段 | 交互 |
-|---------|------|------|
-| quick | 1 | 否 |
-| standard | 1, 3 | 否 |
-| deep | 1, 3, 5 | 否 |
-| full（默认） | 1, 2, 3, 4, 5 | 是（2, 4） |
+`*` `--skeleton skip` 仅 quick/standard 生效；deep/full 强制 Stage 0。
 
-## 工作流
+### Stage 0 — Brainstorm
 
-### Stage 1 — 快速扫描
+Spawn `insight-methodologist` sub-agent。构造 `~/.forge/insight-fuse/skeletons/<slug>-<date>.yaml`（schema 见 [references/skeleton-schema.md](references/skeleton-schema.md)）。
 
-1. 构造 3+ 搜索查询（原文 + 改写 + 跨语言变体）
-2. 执行搜索，提取 5+ 独立来源
-3. 输出初步简报：主题概述、3-5 个子问题、来源清单
-4. 若 `--depth quick`：按模板生成快速报告，结束
+- **full**：5 固定多选问题（dimensions / taxonomies / out_of_scope / consensus+dissensus / hypotheses+priority）→ 提出 2-3 候选骨架 → 7 字段逐个 section approval → self-review（4 项）→ user gate
+- **quick/standard**：基于 topic + type preset 自动生成 + self-review，不交互
+- **`--skeleton <path>` 导入**：读取并校验 schema_version
 
-### Stage 2 — 交互对齐（仅 full）
+### Stage 1 — Scan
 
-1. 展示简报，请用户确认/修正范围
-2. 记录确认后的 scope
+- 每 `skeleton.dimensions[]` 一条 WebSearch（不是每 sub-question）
+- `skeleton.existing_consensus` 覆盖区不扫描
+- `skeleton.out_of_scope` 作 negative filter
+- 输出：初步简报 + 按 dimension 的来源分布 + **覆盖缺口声明**（见 [research-protocol.md](references/research-protocol.md) §四）
+- 子问题通过 4 项 quality gates（信息增益 / 可调查性 / 维度一致性 / 独立性）
+- 若 `--depth quick`：按 template 生成快速报告，跳 Stage 2-5 直接 Stage 6
 
-### Stage 3 — 标准调研
+### Stage 2 — Align（full only）
 
-1. 对每个子问题进行**独立调研轮次**（逐个处理）
-2. 每轮使用通才视角，遵循 `references/research-protocol.md` 格式
-3. 搜索多源信息，探索衍生主题
-4. 收集所有 INSIGHT_RESPONSE 块，编排标准报告
-5. 若 `--depth standard`：结束
+展示简报 + 骨架对照表。Main agent 问 3 个定向问题：keep/cut dimensions？adjust hypotheses？raise known_dissensus？。`--timeout-seconds` 超时 → 自动接受并标 `assumption: auto-confirmed`，继续 Stage 3。
 
-### Stage 4 — 人工审阅（仅 full）
+### Stage 3 — Research
 
-1. 展示标准报告
-2. 请用户指定需深度多视角分析的焦点区域
+Per `skeleton.hypotheses[]`（或子问题）spawn 1 Generalist agent，**并行**。每 agent prompt 以**不可变 skeleton 块**起头（prefix cache 跨 agent 共享，节省 ~50% token），再拼 hypothesis-specific ask。
 
-### Stage 5 — 深度调研
+- 每 agent 读 [agents/insight-generalist.md](agents/insight-generalist.md) + [references/research-protocol.md](references/research-protocol.md)
+- 输出 INSIGHT_RESPONSE 之前默读 [references/pre-flight-checklist.md](references/pre-flight-checklist.md)（8 项自检）
+- 收集所有 INSIGHT_RESPONSE v2 块，按 `--type` 对应 template 编排标准报告
+- 若 `--depth standard`：直接 Stage 6
 
-焦点区域来源：full 模式取 Stage 4 用户指定的焦点；deep 模式自动将 Stage 3 的所有子问题作为焦点区域。
+### Stage 4 — Review（full only）
 
-对每个焦点区域，**分三轮独立推理**，每轮切换到不同视角：
+展示标准报告 + Focus Selection Protocol（见 [research-protocol.md](references/research-protocol.md) §六）：按 4 信号（分歧势能 / 方法学风险 / 决策权重 / 可证伪）打分候选焦点，**附质量信号摘要**。`skeleton.known_dissensus` 项自动入选 P0 标"预知分歧"。用户裁剪；`--timeout-seconds` 超时自动选所有"分歧势能:高 + 方法学风险:高"。
 
-**视角 1 — 通才（Generalist）**：
-- 读 `agents/insight-generalist.md` 获取角色定义
-- 广度覆盖，主流共识，至少 3 个来源
-- 输出 INSIGHT_RESPONSE 块
+### Stage 5 — Deep Dive
 
-**视角 2 — 批评者（Critic）**：
-- 读 `agents/insight-critic.md` 获取角色定义
-- 质疑验证，找反面证据，检查来源可信度
-- 输出 INSIGHT_RESPONSE 块
+每焦点 spawn `--perspectives` 指定的 3 agents（默认从 `--type` 预设）。焦点 ≤5 全并行；>5 分批每批 ≤15 agents，批次间 main 做中间总结。
 
-**视角 3 — 专家（Specialist）**：
-- 读 `agents/insight-specialist.md` 获取角色定义
-- 深度技术细节，一手来源，精确数据
-- 输出 INSIGHT_RESPONSE 块
+- Agent 1 — Generalist（sonnet）
+- Agent 2 — Critic（opus）
+- Agent 3 — Specialist / Methodologist / custom stance（sonnet）
 
-收集 3 个 INSIGHT_RESPONSE 块后，按 `references/perspectives.md` 执行匿名评分综合。将深度分析融入报告。
+每 prompt 格式：
 
-最终按 `references/quality-standards.md` 执行质量检查。
+```
+You are a research team member investigating this focus:
+<focus question>
+
+Skeleton prior context:
+<verbatim skeleton.yaml>
+
+Read references/research-protocol.md for INSIGHT_RESPONSE v2 format.
+If this focus hits skeleton.known_dissensus[i], you MUST render
+templates/disagreement-preservation.md (立场 A / 立场 B / 综合判断).
+Synthesis prohibited.
+
+<stance-override block if custom perspective>
+<agents/*.md role directives>
+```
+
+焦点命中 `skeleton.known_dissensus` → Critic **强制套** [templates/disagreement-preservation.md](templates/disagreement-preservation.md)。Check 12 blocking 扫此模式。焦点间串行，视角内并行。收集后按 [references/perspectives.md](references/perspectives.md) 匿名评分综合。
+
+### Stage 6 — QA
+
+纯内部，无 WebSearch。
+
+1. 跑 14 项 blocking check（见 [references/quality-standards.md](references/quality-standards.md)）
+2. 算 6 维评分（见 [references/scoring-rubric.md](references/scoring-rubric.md)），按 `--type` 加权
+3. 按 `--outputs` 逐一渲染（见 [references/output-formats.md](references/output-formats.md)）
+4. 落盘 + forge attribution
+
+任一 blocking check 失败 → 重写目标 section，重查，最多 2 轮；第 3 轮仍失败 → 输出并标 `QA-FAILED: <check-ids>` header。
+
+### Advisory Rendering（章节级）
+
+主体完成后按触发矩阵决定是否追加 Advisory Appendix。详见 [references/research-protocol.md](references/research-protocol.md) §七。
+
+| `--depth` | `--audience` | `--no-advisory` | 行为 |
+|-----------|------------|---------------|------|
+| 任意 | 给了 | — | 主体 + 每受众一个 Appendix（A/B/C...）|
+| full | 没给 | false | 主体完成后交互询问（候选角色白名单见 quality-standards.md）|
+| 非 full | 没给 | false | 主体末尾一行提示命令，不主动问 |
+| 任意 | 没给 | true | 主体，零 Advisory |
+
+## research-type 预设
+
+| type | template | perspectives | 默认 outputs |
+|------|---------|-------------|--------------|
+| overview | meta-overview | generalist+critic+specialist | report, checklist |
+| technology | technology | generalist+critic+specialist | report, adr, checklist |
+| market | market | generalist+specialist+futurist | report, decision-tree, checklist |
+| academic | academic | generalist+critic+methodologist | report, checklist |
+| product | product | user+designer+business | report, checklist, poc |
+| competitive | competitive | generalist+critic+strategist | report, decision-tree |
+
+完整预设矩阵 + stance-override 机制 + 特有 check 见 [references/research-types.md](references/research-types.md)。
 
 ## 降级策略
 
-- 某轮推理产出空内容或格式错误：该视角评分为 0，从剩余视角综合
-- 仅 1 轮产出有效内容：直接输出该视角回答，标注为单视角分析
-- 全部推理轮次失败：报告失败，建议用户直接提问
-- 搜索无结果：替代查询词，记录信息缺口
+- 1 个 Agent 失败：评分 0，从剩余 2 个综合
+- 2 个失败：输出唯一成功回答，标注单视角
+- 全部失败：报告失败，建议直接提问
+- WebSearch 无结果：替代查询词，记入 coverage_gap
+- Stage 0 YAML 解析失败：重试一次；第二次失败 → 不带 skeleton 走原 pipeline，标 `skeleton: unavailable`
 
-## 与 Claude Code 版的区别
-
-| 维度 | Claude Code | OpenClaw |
-|------|------------|---------|
-| Stage 3 并行 | 多 Agent 并行处理子问题 | 逐个子问题顺序调研 |
-| Stage 5 并行 | 3 个独立 Agent 并行 spawn | 单 agent 内三轮独立推理 |
-| 模型多样性 | critic=opus, 其余=sonnet | 取决于平台模型配置 |
-| 独立性保证 | 物理隔离（独立 agent） | 逻辑隔离（分轮推理） |
-
-## 详细参考
-
-- 结构化输出格式：`references/research-protocol.md`
-- 多视角框架 + 综合算法：`references/perspectives.md`
-- 质量标准：`references/quality-standards.md`
-
-## Attribution
-
-调研完成后，在报告末尾附加：
+## 用法示例
 
 ```
+/insight-fuse "AI 眼镜"
+/insight-fuse "AI 眼镜" --type overview --depth full
+/insight-fuse "k8s autoscaling" --type technology --outputs report,adr,poc
+/insight-fuse "向量数据库市场" --type market --depth deep --focus "开源 vs 商业化定价模型"
+/insight-fuse "Sparse MoE 可解释性" --type academic --perspectives generalist,critic,methodologist
+/insight-fuse "AI Coding 赛道" --type competitive --outputs report,decision-tree
+/insight-fuse "AI 眼镜" --audience "新入局者,投资人" --strategy aggressive
+/insight-fuse "AI 眼镜" --depth full --no-advisory
+/insight-fuse "临时背景调研" --depth quick --no-save
+/insight-fuse "AI Native 金融" --skeleton ~/team/skeletons/ai-native-fin.yaml
+```
+
+## KB 归档（可选）
+
+**若传入 `--no-save`，整节跳过。**
+
+Stage 6 落盘后尝试归档到本地 tome-forge 知识库：
+
+1. 读 tome-forge 插件提供的 `report-archival-protocol.md`（位于 `skills/tome-forge/` 下）— 不存在（未装）则跳过
+2. 按协议执行 KB Discovery，每个 output 物件作一条目
+3. 元数据：`type` / `depth` / `skeleton` / `perspectives` / top 5 URL / Grade / blocking checks passed
+4. 静默执行，成功输出一行日志
+
+## 定制
+
+- **视角**：stance-override（改 [references/perspectives.md](references/perspectives.md) §二 Stance Registry）或新增 `agents/insight-<name>.md`
+- **模板**：添加 `.md` 文件到 `templates/`，参考 [templates/custom-example.md](templates/custom-example.md) 的 skeleton hooks
+- **Research type**：扩展 [references/research-types.md](references/research-types.md) 的预设矩阵
+- **质量 check**：扩展 [references/quality-standards.md](references/quality-standards.md) 的 Check 编号（从 15 起）
+- **输出物**：新增 `templates/<output>.md` + 在 [references/output-formats.md](references/output-formats.md) 登记
+
+## References
+
+- [references/skeleton-schema.md](references/skeleton-schema.md) — skeleton.yaml 数据契约
+- [references/research-types.md](references/research-types.md) — 6 type 预设 + stance-override
+- [references/research-protocol.md](references/research-protocol.md) — INSIGHT_RESPONSE v2 + FIR + Focus Selection + Advisory Appendix
+- [references/scoring-rubric.md](references/scoring-rubric.md) — 6 维评分 + 14 check + A/B/C/D 等级
+- [references/quality-standards.md](references/quality-standards.md) — 14 blocking check 详述
+- [references/output-formats.md](references/output-formats.md) — 5 种输出物渲染规范
+- [references/perspectives.md](references/perspectives.md) — 多视角评分 + 综合算法
+- [references/pre-flight-checklist.md](references/pre-flight-checklist.md) — 发布前 8 项自检
+
 > Researched by [forge/insight-fuse](https://github.com/juserai/forge) — `claude plugin add juserai/forge`
-```

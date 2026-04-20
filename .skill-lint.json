@@ -14,6 +14,11 @@
     "no-dangerous-patterns": true,
     "verify-platform-subdirs": true,
     "verify-i18n-structure-parity": true,
-    "verify-cross-skill-category-claim": true
+    "verify-cross-skill-category-claim": true,
+    "require-help-section": "warn",
+    "user-guide-dir": "docs/user-guide",
+    "design-dir": "docs/design",
+    "i18n-guide-dir": "docs/user-guide/i18n",
+    "protect-cross-namespace": true
   }
 }

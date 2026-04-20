@@ -43,6 +43,8 @@ cp -r forge/platforms/openclaw/* ~/.openclaw/skills/
 
 ## Skills
 
+> Каждый skill поддерживает `/<skill> help` (а также `--help`) для показа карточки использования. Skills с обязательными аргументами также показывают help при вызове без аргументов.
+
 ### Hammer
 
 | Skill | Что делает | Попробуй |
@@ -56,7 +58,7 @@ cp -r forge/platforms/openclaw/* ~/.openclaw/skills/
 | Skill | Что делает | Попробуй |
 |-------|-----------|----------|
 | **council-fuse** | Мультиперспективное обсуждение для лучших ответов | `/council-fuse <question>` |
-| **insight-fuse** | Систематическое мультиисточниковое исследование с профессиональными отчётами | `/insight-fuse <topic>` |
+| **insight-fuse** | 7-этапный движок исследования с контрактом skeleton.yaml и 6-мерной шкалой качества | `/insight-fuse <topic>` |
 | **tome-forge** | Персональная база знаний с wiki, компилируемой LLM | `/tome-forge init` |
 
 ### Anvil
@@ -161,24 +163,26 @@ cp -r forge/platforms/openclaw/* ~/.openclaw/skills/
 /council-fuse Redis vs PostgreSQL для очередей задач
 ```
 
-## Insight Fuse — Мультиисточниковый исследовательский движок
+## Insight Fuse — Систематический движок мультиисточникового исследования (v3)
 
-От темы до профессионального исследовательского отчёта. `/insight-fuse` запускает 5-этапный прогрессивный конвейер: сканирование → выравнивание → исследование → обзор → глубокий анализ.
+От темы до профессионального исследовательского отчёта. `/insight-fuse` запускает 7-этапный конвейер с `skeleton.yaml` как контракт данных: brainstorm → scan → align → research → review → deep dive → QA.
 
-Встроенный мультиперспективный анализ (Генералист/Критик/Специалист), расширяемые шаблоны отчётов и настраиваемая глубина. Родственный навык council-fuse — пока council-fuse обсуждает известную информацию, insight-fuse активно собирает и синтезирует новую.
+Встроенный мультиперспективный анализ, 6 пресетов типов исследования (overview / technology / market / academic / product / competitive), 5 форматов вывода (report / checklist / ADR / decision-tree / PoC) и 6-мерная шкала качества с 14 блокирующими проверками. Родственный навык council-fuse — пока council-fuse обсуждает известную информацию, insight-fuse активно собирает и синтезирует новую.
 
 | Механизм | Описание |
 |----------|----------|
-| **5-этапный конвейер** | Сканирование → Выравнивание → Исследование → Обзор → Глубокий анализ |
-| **Настраиваемая глубина** | quick (только скан) / standard (авто-исследование) / deep (+ мульти-перспективы) / full (+ ручные контрольные точки) |
-| **3 перспективы** | Генералист (широта) / Критик (верификация) / Специалист (точность) |
-| **Шаблоны отчётов** | technology / market / competitive / пользовательский — или автогенерация |
-| **Стандарты качества** | Обязательность мульти-источников, целостность цитирования, проверка разнообразия источников |
+| **7-этапный конвейер** | Brainstorm (скелет) → Scan → Align → Research → Review → Deep Dive → QA |
+| **Типы исследования** | overview / technology / market / academic / product / competitive — пресет-пакет (шаблон + перспективы + специфические проверки) |
+| **Настраиваемая глубина** | quick / standard / deep / full — quick пропускает Stage 2-5; full проходит все 7 этапов с интерактивными шлюзами |
+| **Skeleton.yaml** | Контракт данных из 7 полей (dimensions / taxonomies / out_of_scope / existing_consensus / known_dissensus / hypotheses / business_neutral), потребляемый каждым stage |
+| **Шкала качества** | 6-мерная оценка (фальсифицируемость / плотность доказательств / воспроизводимость / разнообразие источников / действенность / прозрачность) + 14 блокирующих проверок + оценка A/B/C/D |
+| **Мульти-вывод** | report / checklist / ADR / decision-tree / PoC — `--outputs` выбирает комбинации |
 
 ```text
-/insight-fuse AI Agent риски безопасности
-/insight-fuse --depth quick --template technology WebAssembly
-/insight-fuse --depth deep --perspectives optimist,pessimist,pragmatist коммерциализация квантовых вычислений
+/insight-fuse "AI glasses"
+/insight-fuse "Kubernetes autoscaling" --type technology --outputs report,adr,poc
+/insight-fuse "Sparse MoE interpretability" --type academic --depth deep
+/insight-fuse "AI Native landscape" --type overview --depth full --audience "new entrants"
 ```
 
 ## Tome Forge — Движок персональной базы знаний
@@ -256,7 +260,8 @@ forge/
 │       ├── SKILL.md               # Определение skill'а
 │       ├── references/            # Детальный контент (загружается по запросу)
 │       ├── scripts/               # Вспомогательные скрипты
-│       └── agents/                # Определения sub-agent'ов
+│       ├── agents/                # Определения sub-agent'ов
+│       └── hooks/                 # Hooks Claude Code по skill'ам (только для hook-owner skill'ов)
 ├── platforms/                     # Адаптации для других платформ
 │   └── openclaw/
 │       └── <skill>/
@@ -264,14 +269,13 @@ forge/
 │           ├── references/        # Контент для платформы
 │           └── scripts/           # Скрипты для платформы
 ├── .claude-plugin/                # Метаданные для Claude Code marketplace
-├── hooks/                         # Hooks платформы Claude Code
 ├── evals/                         # Кроссплатформенные сценарии оценки
 ├── docs/
-│   ├── guide/                     # Руководства пользователя (English)
-│   ├── plans/                     # Проектная документация
+│   ├── user-guide/                # Руководства пользователя (English)
+│   ├── design/                    # Проектная документация
 │   └── i18n/                      # Переводы (11 языков)
 │       ├── README.*.md            # Переведённые README
-│       └── guide/*-guide.*.md     # Переведённые руководства
+│       └── (translated guides moved to docs/user-guide/i18n/)
 └── plugin.json                    # Метаданные коллекции
 ```
 
@@ -281,7 +285,7 @@ forge/
 2. `platforms/openclaw/<name>/SKILL.md` — адаптация для OpenClaw + references/scripts
 3. `evals/<name>/scenarios.md` + `run-trigger-test.sh` — сценарии оценки
 4. `.claude-plugin/marketplace.json` — добавить запись в массив `plugins`
-5. Hooks при необходимости в `hooks/hooks.json`
+5. Hooks при необходимости: создайте `skills/<name>/hooks/hooks.json` + скрипты; `source` в marketplace.json должен указывать на `./skills/<name>`
 
 Подробности в [CLAUDE.md](../../CLAUDE.md).
 

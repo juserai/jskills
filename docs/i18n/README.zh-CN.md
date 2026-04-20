@@ -23,6 +23,8 @@ cp -r forge/platforms/openclaw/* ~/.openclaw/skills/
 
 ## Skills
 
+> 每个 skill 都支持 `/<skill> help`（也可用 `--help`）查看用法卡片。必填参数的 skill 无参数调用时也会显示 help。
+
 ### Hammer
 
 | Skill | 功能 | 试试看 |
@@ -36,7 +38,7 @@ cp -r forge/platforms/openclaw/* ~/.openclaw/skills/
 | Skill | 功能 | 试试看 |
 |-------|------|--------|
 | **council-fuse** | 多视角议会蒸馏，获得更好的答案 | `/council-fuse <question>` |
-| **insight-fuse** | 系统化多源调研，生成专业报告 | `/insight-fuse <topic>` |
+| **insight-fuse** | 7 阶段调研引擎，skeleton.yaml 数据契约 + 6 维质量尺 | `/insight-fuse <topic>` |
 | **tome-forge** | 个人知识库，LLM 编纂的 wiki | `/tome-forge init` |
 
 ### Anvil
@@ -141,24 +143,26 @@ AI 又放弃了？`/block-break` 强制它穷尽一切方案。
 /council-fuse Redis vs PostgreSQL 做任务队列
 ```
 
-## Insight Fuse — 系统化多源调研熔炼引擎
+## Insight Fuse — 系统化多源调研熔炼引擎（v3）
 
-从主题到专业调研报告。`/insight-fuse` 运行 5 阶段渐进式流水线：扫描 → 对齐 → 调研 → 审阅 → 深挖。
+从主题到专业调研报告。`/insight-fuse` 运行 7 阶段流水线，以 `skeleton.yaml` 为数据契约：brainstorm → scan → align → research → review → deep dive → QA。
 
-内置多视角分析（通才/批评者/专家），可扩展报告模板，可配置调研深度。与 council-fuse 互为姊妹 — council-fuse 对已知信息做思辨，insight-fuse 主动采集并综合新信息。
+内置多视角分析、6 种研究类型预设（overview / technology / market / academic / product / competitive）、5 种输出物（report / checklist / ADR / decision-tree / PoC），以及 6 维正交质量评分 + 14 项 blocking check。与 council-fuse 互为姊妹 — council-fuse 对已知信息做思辨，insight-fuse 主动采集并综合新信息。
 
 | 机制 | 说明 |
 |------|------|
-| **5 阶段流水线** | 扫描 → 对齐 → 调研 → 审阅 → 深挖 |
-| **可配置深度** | quick（仅扫描）/ standard（自动调研）/ deep（+ 多视角）/ full（+ 人工检查点） |
-| **3 视角** | 通才（广度） / 批评者（验证） / 专家（精度） |
-| **报告模板** | technology / market / competitive / 自定义 — 或自适应生成 |
-| **质量标准** | 多源强制、引用完整性、来源多样性检查 |
+| **7 阶段流水线** | Brainstorm（骨架） → Scan → Align → Research → Review → Deep Dive → QA |
+| **研究类型** | overview / technology / market / academic / product / competitive — 预设 bundle（模板 + 视角 + 特有 check） |
+| **可配置深度** | quick / standard / deep / full — quick 跳过 Stage 2-5；full 跑全 7 阶段含交互 gate |
+| **Skeleton.yaml** | 7 字段数据契约（dimensions / taxonomies / out_of_scope / existing_consensus / known_dissensus / hypotheses / business_neutral）被每个 stage 消费 |
+| **质量尺** | 6 维评分（可证伪 / 证据密度 / 可复现 / 来源多样 / 可行动 / 透明度） + 14 项 blocking check + A/B/C/D 等级 |
+| **多输出物** | report / checklist / ADR / decision-tree / PoC — 通过 `--outputs` 组合 |
 
 ```text
-/insight-fuse AI Agent 安全风险
-/insight-fuse --depth quick --template technology WebAssembly
-/insight-fuse --depth deep --perspectives optimist,pessimist,pragmatist 量子计算商业化
+/insight-fuse "AI 眼镜"
+/insight-fuse "Kubernetes 自动伸缩" --type technology --outputs report,adr,poc
+/insight-fuse "Sparse MoE 可解释性" --type academic --depth deep
+/insight-fuse "AI Native 全景" --type overview --depth full --audience "新入局者"
 ```
 
 ## Tome Forge — 个人知识库引擎
@@ -236,7 +240,8 @@ forge/
 │       ├── SKILL.md               # Skill 定义
 │       ├── references/            # 按需加载的详细内容
 │       ├── scripts/               # 辅助脚本
-│       └── agents/                # Sub-agent 定义
+│       ├── agents/                # Sub-agent 定义
+│       └── hooks/                 # 该 skill 专属的 Claude Code hooks（仅 hook-owner skill 有）
 ├── platforms/                     # 其他平台适配层
 │   └── openclaw/
 │       └── <skill>/
@@ -244,7 +249,6 @@ forge/
 │           ├── references/        # 该平台的详细内容
 │           └── scripts/           # 该平台的辅助脚本
 ├── .claude-plugin/                # Claude Code marketplace 元数据
-├── hooks/                         # Claude Code 平台 hooks
 ├── evals/                         # 跨平台评估场景
 ├── docs/                          # 跨平台文档
 └── plugin.json                    # 集合级元数据
@@ -256,7 +260,7 @@ forge/
 2. `platforms/openclaw/<name>/SKILL.md` — OpenClaw 适配版 + references/scripts
 3. `evals/<name>/scenarios.md` + `run-trigger-test.sh` — 评估场景
 4. `.claude-plugin/marketplace.json` — 在 `plugins` 数组追加条目
-5. 如需 hooks，在 `hooks/hooks.json` 中添加
+5. 如需 hooks：创建 `skills/<name>/hooks/hooks.json` + 脚本；marketplace.json 的 `source` 必须指向 `./skills/<name>`
 
 详见 [CLAUDE.md](../../CLAUDE.md) 开发规范。
 

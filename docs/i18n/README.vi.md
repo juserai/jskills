@@ -43,6 +43,8 @@ cp -r forge/platforms/openclaw/* ~/.openclaw/skills/
 
 ## Các Skill
 
+> Mỗi skill hỗ trợ `/<skill> help` (cả `--help`) để hiển thị thẻ hướng dẫn sử dụng. Các skill có đối số bắt buộc cũng hiển thị trợ giúp khi gọi không có đối số.
+
 ### Hammer
 
 | Skill | Chức năng | Thử ngay |
@@ -56,7 +58,7 @@ cp -r forge/platforms/openclaw/* ~/.openclaw/skills/
 | Skill | Chức năng | Thử ngay |
 |-------|-----------|----------|
 | **council-fuse** | Thảo luận đa góc nhìn để có câu trả lời tốt hơn | `/council-fuse <question>` |
-| **insight-fuse** | Nghiên cứu đa nguồn có hệ thống với báo cáo chuyên nghiệp | `/insight-fuse <topic>` |
+| **insight-fuse** | Engine nghiên cứu 7 giai đoạn với hợp đồng dữ liệu skeleton.yaml & thước đo chất lượng 6 chiều | `/insight-fuse <topic>` |
 | **tome-forge** | Cơ sở tri thức cá nhân với wiki biên soạn bởi LLM | `/tome-forge init` |
 
 ### Anvil
@@ -161,24 +163,26 @@ Lấy cảm hứng từ [LLM Council của Karpathy](https://github.com/karpathy
 /council-fuse Redis vs PostgreSQL cho hàng đợi công việc
 ```
 
-## Insight Fuse — Công cụ Nghiên cứu Đa Nguồn
+## Insight Fuse — Engine Nghiên Cứu Đa Nguồn Có Hệ Thống (v3)
 
-Từ chủ đề đến báo cáo nghiên cứu chuyên nghiệp. `/insight-fuse` chạy pipeline tiến triển 5 giai đoạn: quét → căn chỉnh → nghiên cứu → đánh giá → phân tích sâu.
+Từ chủ đề đến báo cáo nghiên cứu chuyên nghiệp. `/insight-fuse` chạy pipeline 7 giai đoạn với `skeleton.yaml` làm hợp đồng dữ liệu: brainstorm → scan → align → research → review → deep dive → QA.
 
-Tích hợp sẵn phân tích đa góc nhìn (Generalist/Critic/Specialist), mẫu báo cáo mở rộng được, và độ sâu cấu hình được. Skill anh em của council-fuse — trong khi council-fuse thảo luận thông tin đã biết, insight-fuse chủ động thu thập và tổng hợp thông tin mới.
+Phân tích đa góc nhìn tích hợp sẵn, 6 preset loại nghiên cứu (overview / technology / market / academic / product / competitive), 5 định dạng đầu ra (report / checklist / ADR / decision-tree / PoC), và thước đo chất lượng 6 chiều với 14 kiểm tra chặn. Skill anh em fuse-series của council-fuse — trong khi council-fuse thảo luận thông tin đã biết, insight-fuse chủ động thu thập và tổng hợp thông tin mới.
 
 | Cơ chế | Mô tả |
 |--------|-------|
-| **Pipeline 5 Giai đoạn** | Quét → Căn chỉnh → Nghiên cứu → Đánh giá → Phân tích Sâu |
-| **Độ sâu Cấu hình** | quick (chỉ quét) / standard (nghiên cứu tự động) / deep (+ đa góc nhìn) / full (+ điểm kiểm tra thủ công) |
-| **3 Góc nhìn** | Generalist (bao quát) / Critic (xác minh) / Specialist (chính xác) |
-| **Mẫu Báo cáo** | technology / market / competitive / tùy chỉnh — hoặc tự động tạo cấu trúc |
-| **Tiêu chuẩn Chất lượng** | Bắt buộc đa nguồn, toàn vẹn trích dẫn, kiểm tra đa dạng nguồn |
+| **Pipeline 7 giai đoạn** | Brainstorm (khung) → Scan → Align → Research → Review → Deep Dive → QA |
+| **Loại nghiên cứu** | overview / technology / market / academic / product / competitive — gói preset (template + góc nhìn + kiểm tra đặc thù) |
+| **Độ sâu cấu hình được** | quick / standard / deep / full — quick bỏ qua Stage 2-5; full chạy toàn bộ 7 giai đoạn với cổng tương tác |
+| **Skeleton.yaml** | Hợp đồng dữ liệu 7 trường (dimensions / taxonomies / out_of_scope / existing_consensus / known_dissensus / hypotheses / business_neutral) được mỗi stage tiêu thụ |
+| **Thước đo chất lượng** | Điểm 6 chiều (khả năng phản chứng / mật độ bằng chứng / khả năng tái lập / đa dạng nguồn / khả năng hành động / minh bạch) + 14 kiểm tra chặn + hạng A/B/C/D |
+| **Đa đầu ra** | report / checklist / ADR / decision-tree / PoC — `--outputs` chọn kết hợp |
 
 ```text
-/insight-fuse AI Agent rủi ro bảo mật
-/insight-fuse --depth quick --template technology WebAssembly
-/insight-fuse --depth deep --perspectives optimist,pessimist,pragmatist thương mại hóa điện toán lượng tử
+/insight-fuse "AI glasses"
+/insight-fuse "Kubernetes autoscaling" --type technology --outputs report,adr,poc
+/insight-fuse "Sparse MoE interpretability" --type academic --depth deep
+/insight-fuse "AI Native landscape" --type overview --depth full --audience "new entrants"
 ```
 
 ## Tome Forge — Công cụ Cơ sở Tri thức Cá nhân
@@ -256,7 +260,8 @@ forge/
 │       ├── SKILL.md               # Định nghĩa skill
 │       ├── references/            # Nội dung chi tiết (tải khi cần)
 │       ├── scripts/               # Script hỗ trợ
-│       └── agents/                # Định nghĩa sub-agent
+│       ├── agents/                # Định nghĩa sub-agent
+│       └── hooks/                 # Hook Claude Code theo skill (chỉ hook-owner skill)
 ├── platforms/                     # Thích ứng nền tảng khác
 │   └── openclaw/
 │       └── <skill>/
@@ -264,14 +269,13 @@ forge/
 │           ├── references/        # Nội dung riêng nền tảng
 │           └── scripts/           # Script riêng nền tảng
 ├── .claude-plugin/                # Metadata marketplace Claude Code
-├── hooks/                         # Hook nền tảng Claude Code
 ├── evals/                         # Kịch bản đánh giá đa nền tảng
 ├── docs/
-│   ├── guide/                     # Hướng dẫn sử dụng (tiếng Anh)
-│   ├── plans/                     # Tài liệu thiết kế
+│   ├── user-guide/                # Hướng dẫn sử dụng (tiếng Anh)
+│   ├── design/                    # Tài liệu thiết kế
 │   └── i18n/                      # Bản dịch (11 ngôn ngữ)
 │       ├── README.*.md            # README đã dịch
-│       └── guide/*-guide.*.md     # Hướng dẫn đã dịch
+│       └── (translated guides moved to docs/user-guide/i18n/)
 └── plugin.json                    # Metadata bộ sưu tập
 ```
 
@@ -281,7 +285,7 @@ forge/
 2. `platforms/openclaw/<name>/SKILL.md` — Phiên bản OpenClaw + references/scripts
 3. `evals/<name>/scenarios.md` + `run-trigger-test.sh` — Kịch bản đánh giá
 4. `.claude-plugin/marketplace.json` — Thêm mục vào mảng `plugins`
-5. Hook nếu cần trong `hooks/hooks.json`
+5. Hook nếu cần: tạo `skills/<name>/hooks/hooks.json` + scripts; `source` trong marketplace.json phải trỏ đến `./skills/<name>`
 
 Xem [CLAUDE.md](../../CLAUDE.md) để biết đầy đủ hướng dẫn phát triển.
 

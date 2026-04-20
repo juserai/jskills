@@ -15,6 +15,27 @@ metadata:
 
 校验 Claude Code plugin 项目中 skill 文件的结构完整性和语义质量。
 
+## Help
+
+**无参数 ≠ help**：Skill Lint 无参数时对当前工作目录运行完整 lint（默认行为）。
+仅当第一参数为 `help` / `--help` 时输出以下 help card 并停止执行（parsing 规则详见 [CLAUDE.md § Help 模式约定](../../CLAUDE.md)）：
+
+```
+Skill Lint — Validate Claude Code skill plugins (structural + semantic)
+
+Usage:
+  /skill-lint                    Lint the current working directory (default)
+  /skill-lint <path>             Lint the plugin project at <path>
+  /skill-lint help               Show this help
+
+Examples:
+  /skill-lint
+  /skill-lint ~/projects/my-forge-clone
+
+Rules are configured in .skill-lint.json (see references/rules.md).
+Guide: docs/user-guide/skill-lint-guide.md
+```
+
 ## 工作流
 
 1. 确定目标路径（用户参数或当前目录）
@@ -42,12 +63,12 @@ metadata:
 9. **命名规范** — skill 目录名是否匹配配置中的 `naming-pattern` 正则
 10. **Category 字段** — frontmatter `category` 值是否在配置的 `category-values` 中
 11. **触发测试脚本** — `evals/<name>/run-trigger-test.sh` 是否存在
-12. **使用手册** — `docs/guide/<name>-guide.md` 是否存在
-13. **设计文档** — `docs/plans/<name>-design.md` 是否存在
+12. **使用手册** — `<user-guide-dir>/<name>-guide.md` (default `docs/user-guide/<name>-guide.md`) 是否存在
+13. **设计文档** — `<design-dir>/<name>-design.md` (default `docs/design/<name>-design.md`) 是否存在
 14. **平台适配（references/）** — 配置中 `platforms` 数组指定的平台目录下是否有对应 SKILL.md 及 references
 15. **i18n 覆盖** — 配置中 `i18n-dir` 指定目录下的每个 README 是否包含该 skill
-16. **i18n 使用手册** — `docs/i18n/guide/<name>-guide.<lang>.md` 是否对每个语言都存在
-17. **i18n 路径守卫** — 防止 i18n guide 被误放到 `docs/guide/i18n/` 反向目录
+16. **i18n 使用手册** — `<i18n-guide-dir>/<name>-guide.<lang>.md` (default `docs/user-guide/i18n/<name>-guide.<lang>.md`) 是否对每个语言都存在
+17. **i18n 路径守卫** — 防止 i18n guide 被误放到 `<user-guide-dir>/i18n/` 反向目录
 18. **Permissions 声明** — 每个 SKILL.md 是否声明 `metadata.permissions`
 19. **Integrity hash** — 每个 SKILL.md 的 SHA256 是否与 marketplace.json 记录匹配
 20. **Agent model 字段** — `skills/*/agents/*.md` 是否声明 `model` frontmatter
@@ -56,7 +77,7 @@ metadata:
 **防范类新增规则（基于过往回归事故加固）：**
 
 22. **Platform 子目录镜像（`verify-platform-subdirs`）** — 除了 references/，还检查 `agents/` / `templates/` / `scripts/` 三个子目录是否在 `platforms/<p>/<skill>/` 下对称存在。防止 ralph-boost agents 或 insight-fuse templates 类型的孤岛。
-23. **i18n 结构 parity（`verify-i18n-structure-parity`）** — 每份 `docs/i18n/guide/<name>-guide.<lang>.md` 的 H2 heading 数必须 ≥ 英文版的 90%。防止 i18n guide 在英文版扩展新 section 后结构性缺失（例如 claim-ground Red lines）。
+23. **i18n 结构 parity（`verify-i18n-structure-parity`）** — 每份 `<i18n-guide-dir>/<name>-guide.<lang>.md` (default `docs/user-guide/i18n/<name>-guide.<lang>.md`) 的 H2 heading 数必须 ≥ 英文版的 90%。防止 i18n guide 在英文版扩展新 section 后结构性缺失（例如 claim-ground Red lines）。
 24. **Cross-skill 分类声明（`verify-cross-skill-category-claim`）** — 扫描所有 guide 里的 "Same category" / "同一分类" / "Different categories" 等 12 语言关键词，对引用的目标 skill 查 frontmatter category，若声明与事实不符即报 error。防止分类翻修后 guide 跨引用段落变成 stale（本次审计即源于此类 bug）。
 
 **`.skill-lint.json` 配置示例：**

@@ -1,107 +1,192 @@
-# insight-fuse 评估场景
+# insight-fuse v3 Trigger Scenarios
 
-## Scenario 1: Quick Depth + Technology Template
+测试 insight-fuse v3 的触发、参数路由、7 阶段流水线、14 check 执行、6 维评分、多输出渲染。
 
-**Input:** `/insight-fuse --depth quick --template technology WebAssembly`
+## Scenario 1: Brainstorm-only (Stage 0 solo)
 
-**Expected behavior:**
-- Stage 1 only, no interactive gates
-- Constructs 3+ WebSearch queries (e.g., "WebAssembly", "WebAssembly 技术现状 2026", "WebAssembly use cases")
-- Collects 5+ distinct sources
-- Generates report using technology template structure
-- Report contains all template sections with actual content (not placeholders)
-- At least 5 inline source citations
-- Reference list at end
+**Input**: `/insight-fuse "AI 眼镜" --depth quick --skeleton auto`
 
-**Validates:** Quick path, template selection, source gathering, single-pass completion
+**Expected**:
+- Stage 0 `insight-methodologist` 被 spawn
+- 生成 `~/.forge/insight-fuse/skeletons/ai-yan-jing-<date>.yaml`（schema_version: 1）
+- skeleton 含 dimensions (3-7 条) + out_of_scope + 至少 1 条 hypotheses
+- Self-review 4 项通过
+- Stage 1 扫描 + Stage 6 QA 后输出 quick 报告 + checklist
+- quick 模式不交互
 
-## Scenario 2: Full Pipeline with Interactive Gates
+**Validates**: Stage 0 独立可用；auto 模式无用户干预
 
-**Input:** `/insight-fuse AI Agent 安全风险`
+---
 
-**Expected behavior:**
-- All 5 stages execute
-- Stage 1: outputs preliminary brief with 3-5 identified sub-questions
-- Stage 2: presents brief, asks user to confirm/refine scope
-- Stage 3: dispatches parallel agents per sub-question, compiles standard report
-- Stage 4: presents standard report, asks user which areas need deep analysis
-- Stage 5: spawns 3 perspectives per focus area, produces score matrix, synthesizes
-- Auto-generated structure (no template specified) with Chinese numbered sections
-- Final report includes both 基础调研来源 and 深度调研来源
+## Scenario 2: Skeleton import (`--skeleton <path>`)
 
-**Validates:** Full pipeline, interactive gates, auto-structure (mode C), bilingual output
+**Input**: `/insight-fuse "AI Native 金融" --skeleton /tmp/ai-native-fin.yaml --depth standard`
 
-## Scenario 3: Standard Depth + Market Template
+**Pre-condition**: /tmp/ai-native-fin.yaml 存在且 schema_version 为 1
 
-**Input:** `/insight-fuse --depth standard --template market 大模型推理芯片`
+**Expected**:
+- Stage 0 跳过（导入模式），直接 Stage 1
+- main agent 校验 schema；schema_version 不匹配 → 报错并停止
+- Stage 1 query 基于导入的 skeleton.dimensions 派生
+- `existing_consensus` 覆盖区不重复扫描
 
-**Expected behavior:**
-- Stages 1 and 3 only, no interactive gates
-- Market template structure used
-- Comparison table of major chip vendors present
-- TAM/SAM numbers cited with sources
-- Cross-language search (Chinese + English queries)
+**Validates**: 骨架导入场景，团队共享工作流
 
-**Validates:** Standard depth routing, market template, comparison tables, cross-language search
+---
 
-## Scenario 4: Custom Perspectives
+## Scenario 3: research-type=overview
 
-**Input:** `/insight-fuse --depth deep --perspectives optimist,pessimist,pragmatist 量子计算商业化`
+**Input**: `/insight-fuse "AI Native：全景认知、判别框架与演进趋势" --type overview --depth full`
 
-**Expected behavior:**
-- Stages 1, 3, 5
-- Stage 5 uses custom perspective labels (optimist, pessimist, pragmatist)
-- If `agents/insight-optimist.md` etc. do not exist, falls back to generalist role with custom perspective label
-- Score matrix shows custom perspective names
-- INSIGHT_RESPONSE blocks have PERSPECTIVE: optimist/pessimist/pragmatist
+**Expected**:
+- Stage 0 full 模式交互 5 问 + 2-3 候选骨架 + section approval
+- Default perspectives: generalist + critic + specialist
+- Default template: meta-overview.md
+- Stage 5 对 `known_dissensus` 每项自动套 Disagreement Preservation Template
+- 报告章节含定义/判别/驱动/全景图谱/代表玩家/格局启示
+- 6 维评分按 industry 权重
 
-**Validates:** Custom perspective handling, graceful fallback, score matrix with custom labels
+**Validates**: overview type 预设 + Disagreement Preservation + meta-overview template
 
-## Scenario 5: Competitive Analysis
+---
 
-**Input:** `/insight-fuse --template competitive Claude Code vs Cursor vs Windsurf`
+## Scenario 4: research-type=technology
 
-**Expected behavior:**
-- Full pipeline (default depth)
-- Competitive template structure
-- Feature comparison matrix with scoring
-- Pricing table comparing all three products
-- SWOT analysis section
-- Multiple sources per product (not just official sites)
+**Input**: `/insight-fuse "Kubernetes Autoscaling 方案选型" --type technology --outputs report,adr,poc`
 
-**Validates:** Competitive template, multi-entity comparison, table generation
+**Expected**:
+- Template: technology.md，含 FIR 标记 + 比例声明（10/30/35/15/10）
+- Specialist 强制 ≥1 comparison matrix（无则 GAPS_IDENTIFIED 显式说明）
+- 特有 check：学习/迁移/维护成本 + 锁定风险识别
+- 输出 3 物件：report.md + adr.md + poc.md
+- ADR 含 3 条证据每条带 URL
+- PoC 假设对齐 skeleton.hypotheses + 量化成功标准
 
-## Scenario 6: Ambiguous Topic
+**Validates**: technology 预设 + multi-output + specialist 强制数据表
 
-**Input:** `/insight-fuse Rust`
+---
 
-**Expected behavior:**
-- Stage 1 identifies ambiguity (programming language vs. oxidation vs. game)
-- Stage 2 (full pipeline default) asks user to clarify scope
-- Proceeds only with clarified scope
-- Does NOT assume the most popular meaning without confirmation
+## Scenario 5: research-type=market
 
-**Validates:** Ambiguity detection, Stage 2 alignment value, scope clarification
+**Input**: `/insight-fuse "向量数据库市场 2026" --type market --depth deep --outputs report,decision-tree`
 
-## Scenario 7: No-Save Opt-Out
+**Expected**:
+- Perspectives: generalist + specialist + futurist（futurist 走 stance-override）
+- Template: market.md
+- 特有 check：必含 TAM/SAM/SOM 之一 + CAGR
+- Decision tree 含 ≥2 层分支 + 量化条件阈值 + 叶子适用边界
+- futurist stance 在 3-5 年趋势部分明显
 
-**Input:** `/insight-fuse --depth quick --no-save 临时背景调研`
+**Validates**: market 预设 + stance-override + decision-tree 输出
 
-**Expected behavior:**
-- Stage 1 executes normally; quick report produced to console
-- KB 归档 section is skipped in full: no attempt to read `skills/tome-forge/report-archival-protocol.md`, no archival log line
-- Compared against a run without `--no-save`, only the archival-related line differs (if tome-forge is installed)
-- `--no-save` works across all depth modes (quick / standard / deep / full)
+---
 
-**Validates:** KB archival opt-out, flag does not affect console report, archival independent of depth routing
+## Scenario 6: research-type=academic
 
-## Trigger Patterns
+**Input**: `/insight-fuse "Sparse MoE 可解释性" --type academic --depth deep`
 
-The skill should activate when:
-- User explicitly runs `/insight-fuse [args]`
-- User says "调研 X" or "研究一下 X" or "research X" (natural language trigger)
+**Expected**:
+- Perspectives: generalist + critic + methodologist
+- Template: academic.md（IMRaD 结构）
+- L5 来源权重归零（academic 硬约束）
+- 每断言溯源到一手论文 + DOI/arXiv ID
+- methodologist Stage 5 出现（方法学审查）
+- 6 维评分按 academic 权重（falsifiability 0.25 + reproducibility 0.20 加权高）
 
-The skill should NOT activate for:
-- Simple factual questions ("What is X?")
-- Code implementation tasks
-- Debugging or troubleshooting
+**Validates**: academic 预设 + methodologist agent + academic 权重
+
+---
+
+## Scenario 7: research-type=product
+
+**Input**: `/insight-fuse "AI 笔记产品机会" --type product --outputs report,poc`
+
+**Expected**:
+- Perspectives: user + designer + business（三者都走 stance-override，无独立 agent 文件）
+- Template: product.md（JTBD + solution fit + wedge）
+- 必含 user quote 或 journey map
+- PoC 模板从 hypotheses 抽取验证目标
+
+**Validates**: product 预设 + 三个 stance-override + PoC 生成
+
+---
+
+## Scenario 8: research-type=competitive
+
+**Input**: `/insight-fuse "AI Coding 赛道竞品" --type competitive --audience "新入局者" --strategy aggressive`
+
+**Expected**:
+- Perspectives: generalist + critic + strategist
+- Template: competitive.md（SWOT + 定位矩阵 + 护城河）
+- SWOT 四象限齐全（check）
+- 定位矩阵 ≥2 轴（check）
+- 护城河 ≥2 类识别（check）
+- Advisory Appendix A（针对"新入局者"）渲染，6 节结构齐全
+- §4 策略梯度表 aggressive 列标推荐
+
+**Validates**: competitive 预设 + Advisory Appendix + Check 9 + strategy 参数
+
+---
+
+## Scenario 9: multi-output generation
+
+**Input**: `/insight-fuse "k8s 向量化 autoscaling" --type technology --outputs report,adr,decision-tree,checklist,poc`
+
+**Expected**:
+- Stage 6 依次渲染 5 个物件
+- 物件间相对路径互引
+- 每物件独立文件，命名 `<slug>-<date>-<kind>.md`
+- ADR 引用 report §X；decision-tree 引用 report；poc 引用 skeleton.hypotheses
+
+**Validates**: 全部 5 种输出物 + 物件间交叉引用
+
+---
+
+## Scenario 10: depth routing matrix
+
+**Input**:
+- `/insight-fuse "X" --depth quick`
+- `/insight-fuse "X" --depth standard`
+- `/insight-fuse "X" --depth deep`
+- `/insight-fuse "X" --depth full`
+
+**Expected per depth**:
+
+| `--depth` | 应跑阶段 | 不应跑 | 交互 |
+|-----------|---------|--------|------|
+| quick | 0, 1, 6 | 2, 3, 4, 5 | 否 |
+| standard | 0, 1, 3, 6 | 2, 4, 5 | 否 |
+| deep | 0, 1, 3, 5, 6 | 2, 4 | focus selection |
+| full | 0-6 全跑 | — | Stage 0/2/4 gate |
+
+**Validates**: depth 路由矩阵正确
+
+---
+
+## Scenario 11: QA stage blocking (14 check)
+
+**Input**: 喂入一个故意无来源、无 FIR 标记、合成 known_dissensus 的报告片段，触发 Stage 6 QA
+
+**Expected fail**:
+- Check 1 (source density) fail — 段落无 citation
+- Check 12 (framework preservation) fail — known_dissensus 被合成而非三段式
+- Check 14 (FIR separation) fail — 段落无 [F]/[I] 标记
+- 第 1 轮重写 → 仍有 Check 14 fail → 第 2 轮重写 → 通过
+- 或：3 轮后仍失败 → 输出标 `QA-FAILED: <check-ids>` header
+
+**Validates**: 14 check blocking + 重写循环 + 最终降级
+
+---
+
+## Scenario 12: edge cases combined
+
+**Input**: `/insight-fuse "X" --depth full --timeout-seconds 5`
+
+**Expected**:
+- Stage 2 gate 5 秒超时 → `assumption: auto-confirmed` flag 写入
+- Stage 4 5 秒超时 → 自动选"分歧势能:高 + 方法学风险:高"焦点
+- 所有来源都是 L5 → Accuracy ≤ 4 封顶 → 6 维 source_diversity 低分 → Grade C 或 D
+- `known_dissensus` 中一项来源全部追溯到 McKinsey 同一报告 → Check 10 独立性声明声明"有效独立来源 = 1" → Check 3 视为单源占比 100% → fail
+- 因果关键词"导致" + 无替代解释 → Check 11 fail
+
+**Validates**: 超时降级 + L5 封顶 + 伪三角 + 因果纪律

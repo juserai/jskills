@@ -18,9 +18,29 @@ argument-hint: "[setup|run|status|clean]"
 
 与 ralph-claude-code 完全独立：不依赖、不修改、不共享任何文件。使用独立目录 `.ralph-boost/`。
 
-## 子命令
+## Help
 
-根据参数执行对应操作。无参数时显示帮助。
+当第一参数为 `help` / `--help`，**或无参数**时，输出以下 help card 并停止执行（parsing 规则详见 [CLAUDE.md § Help 模式约定](../../CLAUDE.md)）：
+
+```
+Ralph Boost — Autonomous dev loop engine with convergence guarantee
+
+Usage:
+  /ralph-boost setup             Initialize ralph-boost in current project
+  /ralph-boost run               Start the autonomous loop
+  /ralph-boost status            Show current loop state + pressure level
+  /ralph-boost clean             Clean .ralph-boost/ artifacts
+  /ralph-boost help              Show this help
+
+Examples:
+  /ralph-boost setup
+  /ralph-boost run
+  /ralph-boost status
+
+Guide: docs/user-guide/ralph-boost-guide.md
+```
+
+## 子命令
 
 ### `/ralph-boost setup`
 

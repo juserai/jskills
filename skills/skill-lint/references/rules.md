@@ -87,14 +87,14 @@
 
 ### S12: 使用手册
 
-- **检查**: `docs/guide/<name>-guide.md` 是否存在
+- **检查**: `<user-guide-dir>/<name>-guide.md` (default `docs/user-guide/<name>-guide.md`) 是否存在
 - **级别**: warning
 - **配置**: `"require-guide": true`
 - **说明**: 使用手册是用户了解 skill 的入口
 
 ### S13: 设计文档
 
-- **检查**: `docs/plans/<name>-design.md` 是否存在
+- **检查**: `<design-dir>/<name>-design.md` (default `docs/design/<name>-design.md`) 是否存在
 - **级别**: warning
 - **配置**: `"require-design-doc": true`
 - **说明**: 设计文档记录 skill 的定位、机制和决策理由
@@ -115,17 +115,34 @@
 
 ### S16: i18n 使用手册覆盖
 
-- **检查**: 对于 `i18n-dir` 下发现的每个语言，`docs/i18n/guide/<name>-guide.<lang>.md` 是否存在
+- **检查**: 对于 `i18n-dir` 下发现的每个语言，`<i18n-guide-dir>/<name>-guide.<lang>.md` (default `docs/user-guide/i18n/<name>-guide.<lang>.md`) 是否存在
 - **级别**: warning
 - **配置**: `"require-i18n-guide": true`（同时需要 `i18n-dir` 配置）
-- **说明**: 使用手册的多语言版本存放在 `docs/i18n/guide/` 下，文件名格式为 `<skill>-guide.<lang>.md`，语言列表从 i18n README 文件名自动推断。与 CLAUDE.md 目录约定一致（i18n 相关资源统一在 `docs/i18n/` 下）
+- **说明**: 使用手册的多语言版本存放在 `<i18n-guide-dir>` (default `docs/user-guide/i18n/`) 下，文件名格式为 `<skill>-guide.<lang>.md`，语言列表从 i18n README 文件名自动推断。与 CLAUDE.md 目录约定一致（i18n 相关资源统一在 `docs/i18n/` 下）
 
 ### S17: i18n guide 路径守卫
 
-- **检查**: `docs/guide/i18n/` 目录是否存在且包含 .md 文件（常见误放位置）
+- **检查**: `<user-guide-dir>/i18n/` 目录是否存在且包含 .md 文件（常见误放位置）
 - **级别**: error
 - **配置**: `"require-i18n-guide": true`（复用 S16 配置）
-- **说明**: i18n guide 的正确位置是 `docs/i18n/guide/`，而非 `docs/guide/i18n/`。此规则防止文件放错位置
+- **说明**: i18n guide 的正确位置是 `<i18n-guide-dir>` (default `docs/user-guide/i18n/`)，而非 `<user-guide-dir>/i18n/`。此规则防止文件放错位置
+
+### S26: `docs/design/cross-*` 命名空间保护
+
+- **检查**: `<design-dir>/` 下 `cross-<token>[-design].md` 文件的 `<token>`（去前缀、去 `-design` 后缀）不得与任何 `skills/*/` 目录名重名
+- **级别**: error
+- **配置**: `"protect-cross-namespace": true`
+- **说明**: `cross-` 前缀保留给横切设计文档（跨多个 skill 的主题，例如 `cross-kb-archival-design.md`）。如果 `docs/design/cross-block-break-design.md` 与 `skills/block-break/` 并存，说明横切文件侵占了 per-skill 命名空间，视为命名冲突。本规则**不**限制 skill 本身以 `cross-` 开头（例如 `cross-check` 作为合法的 noun-verb kebab-case skill 名不会被误伤）——只保护 `docs/design/` 下的前缀语义
+
+### S25: Help 段落要求
+
+- **检查**: `skills/<name>/SKILL.md` 必须：
+  1. 含 `## Help` 标题行（独占一行）
+  2. 正文提及 `` `help` `` 和 `` `--help` `` 两个 token（加反引号，避免与叙述文本撞车）
+- **级别**: 由配置值决定（`"error"` / `"warn"`；`"off"` 或缺省则跳过此规则）
+- **配置**: `"require-help-section": "warn"`（灰度阶段）→ `"error"`（所有 skill 就位后切换）
+- **说明**: 配合 [CLAUDE.md § Help 模式约定](../../../CLAUDE.md) 的统一 parsing 规则。对有默认行为的 skill（block-break / skill-lint），Help 段首段需显式声明"无参数 ≠ help"。本规则不检查 openclaw 镜像（openclaw 的 help 机制未定义，follow-up PR 处理）
+- **兼容**: 配置值也接受 `true`（等价 `"error"`）/ `false`（等价 `"off"`），方便旧项目迁移
 
 ## 语义检查规则（AI 执行）
 

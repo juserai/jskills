@@ -37,6 +37,10 @@ CFG_NO_DANGEROUS_PATTERNS=""
 CFG_VERIFY_PLATFORM_SUBDIRS=""
 CFG_VERIFY_I18N_STRUCTURE=""
 CFG_VERIFY_CROSS_SKILL_CATEGORY=""
+# Path config (see rules.md): fallback to legacy layout if keys absent.
+CFG_USER_GUIDE_DIR="docs/guide"
+CFG_DESIGN_DIR="docs/plans"
+CFG_I18N_GUIDE_DIR="docs/i18n/guide"
 
 if [ -f "$CONFIG_FILE" ]; then
     # Parse config using python
@@ -75,6 +79,13 @@ if rules.get('verify-i18n-structure-parity'):
     print('CFG_VERIFY_I18N_STRUCTURE=1')
 if rules.get('verify-cross-skill-category-claim'):
     print('CFG_VERIFY_CROSS_SKILL_CATEGORY=1')
+# Path config — single source of truth; legacy defaults applied in shell if absent.
+if 'user-guide-dir' in rules:
+    print(f'CFG_USER_GUIDE_DIR={shlex.quote(rules[\"user-guide-dir\"])}')
+if 'design-dir' in rules:
+    print(f'CFG_DESIGN_DIR={shlex.quote(rules[\"design-dir\"])}')
+if 'i18n-guide-dir' in rules:
+    print(f'CFG_I18N_GUIDE_DIR={shlex.quote(rules[\"i18n-guide-dir\"])}')
 " 2>/dev/null)" || true
 fi
 
@@ -231,19 +242,19 @@ sys.exit(1)
 
     # --- S12: User guide ---
     if [ -n "$CFG_REQUIRE_GUIDE" ]; then
-        if [ -f "$PLUGIN_ROOT/docs/guide/$skill_name-guide.md" ]; then
-            add_passed "S12: docs/guide/$skill_name-guide.md exists"
+        if [ -f "$PLUGIN_ROOT/$CFG_USER_GUIDE_DIR/$skill_name-guide.md" ]; then
+            add_passed "S12: $CFG_USER_GUIDE_DIR/$skill_name-guide.md exists"
         else
-            add_warning "S12: docs/guide/$skill_name-guide.md missing"
+            add_warning "S12: $CFG_USER_GUIDE_DIR/$skill_name-guide.md missing"
         fi
     fi
 
     # --- S13: Design document ---
     if [ -n "$CFG_REQUIRE_DESIGN_DOC" ]; then
-        if [ -f "$PLUGIN_ROOT/docs/plans/$skill_name-design.md" ]; then
-            add_passed "S13: docs/plans/$skill_name-design.md exists"
+        if [ -f "$PLUGIN_ROOT/$CFG_DESIGN_DIR/$skill_name-design.md" ]; then
+            add_passed "S13: $CFG_DESIGN_DIR/$skill_name-design.md exists"
         else
-            add_warning "S13: docs/plans/$skill_name-design.md missing"
+            add_warning "S13: $CFG_DESIGN_DIR/$skill_name-design.md missing"
         fi
     fi
 
@@ -289,19 +300,19 @@ sys.exit(1)
     fi
 
     # --- S16: i18n guide coverage ---
-    # Per CLAUDE.md convention: i18n guides live at docs/i18n/guide/<name>-guide.<lang>.md
+    # Path driven by CFG_I18N_GUIDE_DIR (default docs/i18n/guide).
     if [ -n "$CFG_REQUIRE_I18N_GUIDE" ] && [ -n "$CFG_I18N_DIR" ]; then
         i18n_path="$PLUGIN_ROOT/$CFG_I18N_DIR"
-        guide_i18n_dir="$PLUGIN_ROOT/docs/i18n/guide"
+        guide_i18n_dir="$PLUGIN_ROOT/$CFG_I18N_GUIDE_DIR"
         if [ -d "$i18n_path" ]; then
             for i18n_readme in "$i18n_path/"README.*.md; do
                 [ -f "$i18n_readme" ] || continue
                 lang="$(basename "$i18n_readme" | sed 's/README\.//;s/\.md//')"
                 guide_i18n_file="$guide_i18n_dir/$skill_name-guide.$lang.md"
                 if [ -f "$guide_i18n_file" ]; then
-                    add_passed "S16: docs/i18n/guide/$skill_name-guide.$lang.md exists"
+                    add_passed "S16: $CFG_I18N_GUIDE_DIR/$skill_name-guide.$lang.md exists"
                 else
-                    add_warning "S16: docs/i18n/guide/$skill_name-guide.$lang.md missing"
+                    add_warning "S16: $CFG_I18N_GUIDE_DIR/$skill_name-guide.$lang.md missing"
                 fi
             done
         fi
@@ -309,12 +320,13 @@ sys.exit(1)
 done
 
 # --- S17: i18n guide wrong-path guard ---
-# Per CLAUDE.md convention, i18n guides belong at docs/i18n/guide/.
-# Guard against the reversed misplacement: docs/guide/i18n/ (where files would be invisible to S16).
-if [ -n "$CFG_REQUIRE_I18N_GUIDE" ] && [ -d "$PLUGIN_ROOT/docs/guide/i18n" ]; then
-    wrong_count=$(find "$PLUGIN_ROOT/docs/guide/i18n" -type f -name "*.md" 2>/dev/null | wc -l)
+# Guard against the reversed misplacement: <user-guide-dir>/i18n/ (where files would be invisible to S16).
+if [ -n "$CFG_REQUIRE_I18N_GUIDE" ] \
+    && [ "$CFG_I18N_GUIDE_DIR" != "$CFG_USER_GUIDE_DIR/i18n" ] \
+    && [ -d "$PLUGIN_ROOT/$CFG_USER_GUIDE_DIR/i18n" ]; then
+    wrong_count=$(find "$PLUGIN_ROOT/$CFG_USER_GUIDE_DIR/i18n" -type f -name "*.md" 2>/dev/null | wc -l)
     if [ "$wrong_count" -gt 0 ]; then
-        add_error "S17: docs/guide/i18n/ contains $wrong_count files — wrong path. i18n guides belong in docs/i18n/guide/"
+        add_error "S17: $CFG_USER_GUIDE_DIR/i18n/ contains $wrong_count files — wrong path. i18n guides belong in $CFG_I18N_GUIDE_DIR/"
     fi
 fi
 
@@ -427,8 +439,8 @@ fi
 # For each skill's English guide, ensure each i18n guide has >= 90% of the H2 headings.
 if [ -n "$CFG_VERIFY_I18N_STRUCTURE" ] && [ -n "$CFG_I18N_DIR" ]; then
     s23_fail=0
-    guide_dir="$PLUGIN_ROOT/docs/guide"
-    i18n_guide_dir="$PLUGIN_ROOT/docs/i18n/guide"
+    guide_dir="$PLUGIN_ROOT/$CFG_USER_GUIDE_DIR"
+    i18n_guide_dir="$PLUGIN_ROOT/$CFG_I18N_GUIDE_DIR"
     for skill_name in "${SKILL_NAMES[@]}"; do
         en_guide="$guide_dir/$skill_name-guide.md"
         [ -f "$en_guide" ] || continue
@@ -468,7 +480,7 @@ if [ -n "$CFG_VERIFY_CROSS_SKILL_CATEGORY" ]; then
         [ -n "$cat_val" ] && seen_categories[$skill_name]=$cat_val
     done
     # Scan guide files for potentially stale claims
-    for guide_file in "$PLUGIN_ROOT/docs/guide/"*.md "$PLUGIN_ROOT/docs/i18n/guide/"*.md; do
+    for guide_file in "$PLUGIN_ROOT/$CFG_USER_GUIDE_DIR/"*.md "$PLUGIN_ROOT/$CFG_I18N_GUIDE_DIR/"*.md; do
         [ -f "$guide_file" ] || continue
         # Find lines matching "<same/different category phrase> ... (<category keyword>)" OR "... is <category>"
         matches=$(grep -nE "($same_category_patterns).*\\((${cat_keywords})\\)|\\*\\*(${cat_keywords})\\*\\*" "$guide_file" 2>/dev/null || true)

@@ -16,6 +16,29 @@ argument-hint: "[init|ingest|query|lint|compile|capture] [args...]"
 
 Based on Karpathy's LLM Wiki pattern: raw materials + LLM compilation = structured Markdown wiki. No RAG, no vector DB, no infra. Zero dependencies.
 
+## Help
+
+当第一参数为 `help` / `--help`，**或无参数**时，输出以下 help card 并停止执行（parsing 规则详见 [CLAUDE.md § Help 模式约定](../../CLAUDE.md)）：
+
+```
+Tome Forge — Personal Knowledge Base Engine
+
+Usage:
+  /tome-forge init              Initialize KB (default: ~/.tome-forge/)
+  /tome-forge capture [text]    Quick-capture note, link, or clipboard (clip)
+  /tome-forge ingest <path>     Compile raw material into wiki
+  /tome-forge ingest <path> --dry-run  Preview routing without writing
+  /tome-forge query <question>  Search and synthesize from wiki
+  /tome-forge lint              Health-check wiki structure
+  /tome-forge compile           Batch compile all new raw materials
+  /tome-forge help              Show this help
+
+Tip: Run compile weekly for best wiki coherence. Avoid real-time ingest.
+
+Based on Karpathy's LLM Wiki pattern. Zero dependencies.
+Guide: docs/user-guide/tome-forge-guide.md
+```
+
 ## KB Discovery
 
 Before executing any sub-command, determine the KB root directory using this logic:
@@ -215,21 +238,5 @@ Other forge skills (`insight-fuse`, `council-fuse`, `news-fetch`) may archive th
 6. **Cite sources** — every wiki claim traces back to `raw/` via `source_refs`
 7. **Reports are first-class raw material** — `raw/reports/` files from other skills follow the same ingest pipeline, frontmatter metadata enables smarter routing
 
-## Help Text (no arguments)
+<!-- Help section has moved to the top of this SKILL.md (## Help). -->
 
-```
-Tome Forge — Personal Knowledge Base Engine
-
-Commands:
-  /tome-forge init              Initialize KB (default: ~/.tome-forge/)
-  /tome-forge capture [text]    Quick-capture note, link, or clipboard (clip)
-  /tome-forge ingest <path>     Compile raw material into wiki
-  /tome-forge ingest <path> --dry-run  Preview routing without writing
-  /tome-forge query <question>  Search and synthesize from wiki
-  /tome-forge lint              Health-check wiki structure
-  /tome-forge compile           Batch compile all new raw materials
-
-Tip: Run compile weekly for best wiki coherence. Avoid real-time ingest.
-
-Based on Karpathy's LLM Wiki pattern. Zero dependencies.
-```

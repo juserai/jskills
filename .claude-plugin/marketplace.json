@@ -10,128 +10,128 @@
             "name": "block-break",
             "description": "Block Break — Behavioral constraint engine. Forces Claude to exhaust all approaches before giving up. L0-L4 pressure escalation. Zero-dep.",
             "version": "1.0.0",
-            "source": "./",
+            "source": "./skills/block-break",
             "author": {
                 "name": "Juneq Cheung",
                 "url": "https://github.com/juserai"
             },
             "integrity": {
-                "skill-md-sha256": "e05b259c2567f045b9bb377c4487de0f5f19dc2b8a1380cf6cd9a5f03bb8d322"
+                "skill-md-sha256": "8fee56372c887883dccc59371c279c68d34a490b787bbb037f029890f7a201ea"
             },
             "skills": [
-                "./skills/block-break"
+                "./"
             ]
         },
         {
             "name": "ralph-boost",
             "description": "Ralph Boost — Autonomous dev loop engine with built-in convergence guarantee. Prevents infinite spinning. Zero-dep.",
             "version": "1.0.0",
-            "source": "./",
+            "source": "./skills/ralph-boost",
             "author": {
                 "name": "Juneq Cheung",
                 "url": "https://github.com/juserai"
             },
             "integrity": {
-                "skill-md-sha256": "74db0e27a4dcaa80d1862130aa1cac438f09d3b64722204d2bfbfb3882ddd050"
+                "skill-md-sha256": "206410521eb8e9fd741f3b1de8bb669069bad81d924cb8ec4fccac24a2d77156"
             },
             "skills": [
-                "./skills/ralph-boost"
+                "./"
             ]
         },
         {
             "name": "skill-lint",
             "description": "Skill Lint — Validate Claude Code skill plugins. Structural (bash) + semantic (AI) checks. Works on any plugin project. Zero-dep.",
             "version": "1.0.0",
-            "source": "./",
+            "source": "./skills/skill-lint",
             "author": {
                 "name": "Juneq Cheung",
                 "url": "https://github.com/juserai"
             },
             "integrity": {
-                "skill-md-sha256": "5a21d518753f4f9766c71eccbae7c6686080edcc1656a5c5b076a70a46f754ea"
+                "skill-md-sha256": "b50706c8933b2f84b7bc8c880ba07ddf1e4cd3b03622d79b6d638842ece0df1c"
             },
             "skills": [
-                "./skills/skill-lint"
+                "./"
             ]
         },
         {
             "name": "council-fuse",
             "description": "Council Fuse — Multi-perspective deliberation engine. 3 agents debate independently, Chairman synthesizes the best answer. Zero-dep.",
             "version": "1.0.0",
-            "source": "./",
+            "source": "./skills/council-fuse",
             "author": {
                 "name": "Juneq Cheung",
                 "url": "https://github.com/juserai"
             },
             "integrity": {
-                "skill-md-sha256": "308f21e106f4e8091e9a812b6b38562687ad1e72410658f1b1cecaf2d64e6418"
+                "skill-md-sha256": "a12477597ad9e494f08172e636341cc3859e46a0ce400e5b31b157fd3869fc9e"
             },
             "skills": [
-                "./skills/council-fuse"
+                "./"
             ]
         },
         {
             "name": "news-fetch",
             "description": "News Fetch — Quick news at your fingertips. Take a mental break between coding sessions. 3-tier network fallback, Markdown output. Zero-dep.",
             "version": "1.0.0",
-            "source": "./",
+            "source": "./skills/news-fetch",
             "author": {
                 "name": "Juneq Cheung",
                 "url": "https://github.com/juserai"
             },
             "integrity": {
-                "skill-md-sha256": "3029d88bf4370d5024357f2adde265b2d44cf81923db14bd714773a7dea9425e"
+                "skill-md-sha256": "68c46a76e40e08a43a6127c0359ddcd4dd0379c9a10bda75dd256d48f322a453"
             },
             "skills": [
-                "./skills/news-fetch"
+                "./"
             ]
         },
         {
             "name": "tome-forge",
             "description": "Tome Forge — Personal knowledge base engine. LLM-compiled Markdown wiki based on Karpathy's pattern. No RAG needed. Zero-dep.",
             "version": "1.0.0",
-            "source": "./",
+            "source": "./skills/tome-forge",
             "author": {
                 "name": "Juneq Cheung",
                 "url": "https://github.com/juserai"
             },
             "integrity": {
-                "skill-md-sha256": "4b4a2d1b3e3ce12b707e960f71eeed9a2059d8c51349af21d0a48d5e2e769e76"
+                "skill-md-sha256": "2fbf25b374e4968f70bcfc8efc994a685b9b294f6cb2a4b962da004393681d75"
             },
             "skills": [
-                "./skills/tome-forge"
+                "./"
             ]
         },
         {
             "name": "insight-fuse",
-            "description": "Insight Fuse — Systematic multi-source research engine. 5-stage progressive pipeline with multi-perspective analysis. Zero-dep.",
-            "version": "1.0.0",
-            "source": "./",
+            "description": "Insight Fuse v3 — Systematic multi-source research engine. 7-stage pipeline with skeleton.yaml data contract, 6 research-type presets, 6-dim quality rubric, and 5 output formats. Zero-dep.",
+            "version": "3.0.0",
+            "source": "./skills/insight-fuse",
             "author": {
                 "name": "Juneq Cheung",
                 "url": "https://github.com/juserai"
             },
             "integrity": {
-                "skill-md-sha256": "48a10ac5fc22bf0292651c6e86913f5cec4ac50d9a8c78eaf441f829a7340fc8"
+                "skill-md-sha256": "3554e4957b7b65e6e64055aa9c04c0f4bb110b5d12d7d50c861a632908a7a67e"
             },
             "skills": [
-                "./skills/insight-fuse"
+                "./"
             ]
         },
         {
             "name": "claim-ground",
             "description": "Claim Ground — Epistemic constraint engine. Forces runtime-context-first reasoning with inline evidence citation when answering factual questions about current state or when user challenges a prior assertion. Zero-dep.",
             "version": "1.0.0",
-            "source": "./",
+            "source": "./skills/claim-ground",
             "author": {
                 "name": "Juneq Cheung",
                 "url": "https://github.com/juserai"
             },
             "integrity": {
-                "skill-md-sha256": "2de0aab3d0aba7c3722355a000c7daf5afda753858b27733cc591855fd448818"
+                "skill-md-sha256": "812066e3d6107167ed4ca74bcb8c3d674916484f16b96a893251a99c5707b1d1"
             },
             "skills": [
-                "./skills/claim-ground"
+                "./"
             ]
         }
     ]

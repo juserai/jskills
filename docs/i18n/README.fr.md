@@ -43,6 +43,8 @@ cp -r forge/platforms/openclaw/* ~/.openclaw/skills/
 
 ## Skills
 
+> Chaque skill supporte `/<skill> help` (également `--help`) pour afficher sa carte d'utilisation. Les skills à arguments obligatoires affichent aussi l'aide sans argument.
+
 ### Hammer
 
 | Skill | Ce qu'il fait | Essayez-le |
@@ -56,7 +58,7 @@ cp -r forge/platforms/openclaw/* ~/.openclaw/skills/
 | Skill | Ce qu'il fait | Essayez-le |
 |-------|--------------|------------|
 | **council-fuse** | Délibération multi-perspectives pour de meilleures réponses | `/council-fuse <question>` |
-| **insight-fuse** | Recherche systématique multi-sources avec rapports professionnels | `/insight-fuse <topic>` |
+| **insight-fuse** | Moteur de recherche en 7 étapes avec contrat skeleton.yaml & grille de qualité 6D | `/insight-fuse <topic>` |
 | **tome-forge** | Base de connaissances personnelle avec wiki compilée par LLM | `/tome-forge init` |
 
 ### Anvil
@@ -161,24 +163,26 @@ Inspiré par le [LLM Council de Karpathy](https://github.com/karpathy/llm-counci
 /council-fuse Redis vs PostgreSQL pour les files de tâches
 ```
 
-## Insight Fuse — Moteur de recherche multi-sources
+## Insight Fuse — Moteur de Recherche Multi-Sources Systématique (v3)
 
-Du sujet au rapport de recherche professionnel. `/insight-fuse` exécute un pipeline progressif en 5 étapes : scan → alignement → recherche → revue → analyse approfondie.
+Du sujet au rapport de recherche professionnel. `/insight-fuse` exécute un pipeline en 7 étapes avec `skeleton.yaml` comme contrat de données : brainstorm → scan → align → research → review → deep dive → QA.
 
-Analyse multi-perspectives intégrée (Généraliste/Critique/Spécialiste), modèles de rapports extensibles et profondeur configurable. Le frère de la série fuse de council-fuse — tandis que council-fuse délibère sur les informations connues, insight-fuse collecte et synthétise activement de nouvelles informations.
+Analyse multi-perspectives intégrée, 6 préréglages de type de recherche (overview / technology / market / academic / product / competitive), 5 formats de sortie (report / checklist / ADR / decision-tree / PoC), et une grille de qualité à 6 dimensions avec 14 vérifications bloquantes. Le frère de la série fuse de council-fuse — tandis que council-fuse délibère sur les informations connues, insight-fuse collecte et synthétise activement de nouvelles informations.
 
 | Mécanisme | Description |
 |-----------|-------------|
-| **Pipeline en 5 Étapes** | Scan → Alignement → Recherche → Revue → Analyse Approfondie |
-| **Profondeur Configurable** | quick (scan uniquement) / standard (recherche automatique) / deep (+ multi-perspectives) / full (+ points de contrôle humains) |
-| **3 Perspectives** | Généraliste (largeur) / Critique (vérification) / Spécialiste (précision) |
-| **Modèles de Rapports** | technology / market / competitive / personnalisé — ou structure auto-générée |
-| **Standards de Qualité** | Multi-sources obligatoire, intégrité des citations, vérification de la diversité des sources |
+| **Pipeline 7 étapes** | Brainstorm (squelette) → Scan → Align → Research → Review → Deep Dive → QA |
+| **Types de recherche** | overview / technology / market / academic / product / competitive — bundle préréglé (modèle + perspectives + checks spécifiques) |
+| **Profondeur configurable** | quick / standard / deep / full — quick saute Stage 2-5 ; full exécute les 7 étapes avec portes interactives |
+| **Skeleton.yaml** | Contrat de données à 7 champs (dimensions / taxonomies / out_of_scope / existing_consensus / known_dissensus / hypotheses / business_neutral) consommé par chaque stage |
+| **Grille de qualité** | Score 6-dim (falsifiabilité / densité de preuves / reproductibilité / diversité des sources / actionnabilité / transparence) + 14 vérifications bloquantes + note A/B/C/D |
+| **Multi-sortie** | report / checklist / ADR / decision-tree / PoC — `--outputs` sélectionne les combinaisons |
 
 ```text
-/insight-fuse AI Agent risques de sécurité
-/insight-fuse --depth quick --template technology WebAssembly
-/insight-fuse --depth deep --perspectives optimist,pessimist,pragmatist commercialisation de l'informatique quantique
+/insight-fuse "AI glasses"
+/insight-fuse "Kubernetes autoscaling" --type technology --outputs report,adr,poc
+/insight-fuse "Sparse MoE interpretability" --type academic --depth deep
+/insight-fuse "AI Native landscape" --type overview --depth full --audience "new entrants"
 ```
 
 ## Tome Forge — Moteur de base de connaissances personnelle
@@ -256,7 +260,8 @@ forge/
 │       ├── SKILL.md               # Définition du skill
 │       ├── references/            # Contenu détaillé (chargé à la demande)
 │       ├── scripts/               # Scripts auxiliaires
-│       └── agents/                # Définitions de sous-agents
+│       ├── agents/                # Définitions de sous-agents
+│       └── hooks/                 # Hooks Claude Code par skill (uniquement les skills propriétaires de hooks)
 ├── platforms/                     # Adaptations pour d'autres plateformes
 │   └── openclaw/
 │       └── <skill>/
@@ -264,14 +269,13 @@ forge/
 │           ├── references/        # Contenu spécifique à la plateforme
 │           └── scripts/           # Scripts spécifiques à la plateforme
 ├── .claude-plugin/                # Métadonnées du marketplace Claude Code
-├── hooks/                         # Hooks de la plateforme Claude Code
 ├── evals/                         # Scénarios d'évaluation multi-plateformes
 ├── docs/
-│   ├── guide/                     # Guides d'utilisation (anglais)
-│   ├── plans/                     # Documents de conception
+│   ├── user-guide/                # Guides d'utilisation (anglais)
+│   ├── design/                    # Documents de conception
 │   └── i18n/                      # Traductions (11 languages)
 │       ├── README.*.md            # README traduits
-│       └── guide/*-guide.*.md     # Guides traduits
+│       └── (translated guides moved to docs/user-guide/i18n/)
 └── plugin.json                    # Métadonnées de la collection
 ```
 
@@ -281,7 +285,7 @@ forge/
 2. `platforms/openclaw/<name>/SKILL.md` — Adaptation OpenClaw + references/scripts
 3. `evals/<name>/scenarios.md` + `run-trigger-test.sh` — Scénarios d'évaluation
 4. `.claude-plugin/marketplace.json` — Ajouter une entrée au tableau `plugins`
-5. Hooks si nécessaire dans `hooks/hooks.json`
+5. Hooks si nécessaire : créez `skills/<name>/hooks/hooks.json` + scripts ; le `source` dans marketplace.json doit pointer vers `./skills/<name>`
 
 Consultez [CLAUDE.md](../../CLAUDE.md) pour les directives complètes de développement.
 

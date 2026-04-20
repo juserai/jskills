@@ -1,6 +1,6 @@
 # Claim Ground — 已验证事实锚点（Anchors）
 
-`~/.forge/claim-ground-anchors.json` 保存**本会话以前已经通过 runtime 证据验证过**的事实锚点。`SessionStart` hook（`hooks/session-anchor.sh`）在新会话 / resume / clear 时把这些锚点作为 `<CLAIM_GROUND_ANCHORS>` 块注入到 context，避免跨会话 / 跨压缩再次把已验证的事实"忘掉重猜"。
+`~/.forge/claim-ground-anchors.json` 保存**本会话以前已经通过 runtime 证据验证过**的事实锚点。在 Claude Code 平台上，`SessionStart` hook 自动把锚点作为 `<CLAIM_GROUND_ANCHORS>` 块注入到 context；OpenClaw 平台没有等价的自动 hook 机制，anchor 注入需由 agent 在会话开始时主动读取 anchors.json 完成。两种方式都是为了避免跨会话 / 跨压缩再次把已验证的事实"忘掉重猜"。
 
 ## 为什么需要 anchors？
 
@@ -159,8 +159,8 @@ Skill 随后的回答可以直接引用这些 anchor 作为证据源，不必每
 
 ## 相关文件
 
-- `hooks/session-anchor.sh` — 读 anchors.json、注入 context
-- `hooks/session-restore.sh` — 同时运行，负责 Block Break 的压力状态
+- Claude Code 版：`skills/claim-ground/hooks/session-anchor.sh` — 读 anchors.json、注入 context（OpenClaw 平台需 agent 主动读取等价逻辑）
+- Claude Code 版：`skills/block-break/hooks/session-restore.sh` — 并行运行，负责 Block Break 的压力状态恢复
 - `skills/claim-ground/references/red-lines.md` — 被质疑时的重查规则适用于 anchors
 - `skills/block-break/` — 状态文件 schema pattern 的参考
 
