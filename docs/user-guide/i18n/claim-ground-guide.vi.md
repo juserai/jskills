@@ -1,6 +1,6 @@
 # Hướng dẫn sử dụng Claim Ground
 
-> Kỷ luật nhận thức trong 3 phút — neo mỗi tuyên bố "khoảnh khắc hiện tại" vào bằng chứng runtime
+> Kỷ luật nhận thức trong 3 phút — neo mỗi tuyên bố "khoảnh khắc hiện tại" vào bằng chứng runtime (v1.1: also anchors standards-body term definitions to authoritative evidence; adds /claim-ground verify manual mode)
 
 ---
 

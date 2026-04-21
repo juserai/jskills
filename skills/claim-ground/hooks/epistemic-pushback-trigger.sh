@@ -1,6 +1,37 @@
 #!/usr/bin/env bash
 # Claim Ground epistemic pushback trigger — detects user challenging a prior factual claim
 # Called by hooks.json on UserPromptSubmit
+#
+# v1.1: Self-invocation guard. When the user is manually invoking /claim-ground
+# (Manual Execution Mode 1: verify), the prompt content may contain pushback-regex
+# words as data (e.g. `/claim-ground verify "真的吗 / are you sure"`), which would
+# otherwise mis-fire CLAIM_GROUND_ACTIVATED. There is no prior assertion to re-verify
+# in that case — the user is initiating a verify request, not pushing back.
+#
+# UserPromptSubmit hooks receive a JSON payload on stdin: {"prompt": "...", ...}.
+# We read it, parse with jq (preferred) or python fallback, and exit silently if
+# the prompt starts with "/claim-ground".
+
+INPUT=$(cat)
+if [ -n "$INPUT" ]; then
+    if command -v jq >/dev/null 2>&1; then
+        PROMPT=$(printf '%s' "$INPUT" | jq -r '.prompt // ""' 2>/dev/null)
+    elif command -v python3 >/dev/null 2>&1; then
+        PROMPT=$(printf '%s' "$INPUT" | python3 -c "import json,sys; print(json.load(sys.stdin).get('prompt',''))" 2>/dev/null)
+    elif command -v python >/dev/null 2>&1; then
+        PROMPT=$(printf '%s' "$INPUT" | python -c "import json,sys; print(json.load(sys.stdin).get('prompt',''))" 2>/dev/null)
+    else
+        PROMPT=""
+    fi
+    # Strip leading whitespace, then check for /claim-ground or /claim-ground:claim-ground prefix
+    TRIMMED=$(printf '%s' "$PROMPT" | sed 's/^[[:space:]]*//')
+    case "$TRIMMED" in
+        /claim-ground*)
+            # Manual invocation — skip pushback emission to avoid semantic mismatch
+            exit 0
+            ;;
+    esac
+fi
 
 cat << 'EOF'
 <CLAIM_GROUND_ACTIVATED>

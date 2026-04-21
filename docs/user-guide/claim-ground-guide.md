@@ -1,6 +1,6 @@
-# Claim Ground User Guide
+# Claim Ground User Guide (v1.1)
 
-> Epistemic discipline in 3 minutes — anchor every "right-now" claim to runtime evidence
+> Epistemic discipline in 3 minutes — anchor every "right-now" claim and every standards-body term definition to runtime / authoritative evidence
 
 ---
 
@@ -24,7 +24,7 @@ Fetch and follow https://raw.githubusercontent.com/juserai/forge/main/skills/cla
 
 ## How it works
 
-Claim Ground is an **auto-triggered** skill. There is no slash command — the skill activates based on the nature of the question. This is intentional: factual drift can happen anywhere in a conversation, and a manual command would be easy to forget.
+Claim Ground is **primarily auto-triggered** — the skill activates based on the nature of the question. v1.1 also adds an **explicit manual verify path** for cases where you want to force grounding without waiting for a pushback signal.
 
 | Trigger condition | Example |
 |-------------------|---------|
@@ -32,6 +32,23 @@ Claim Ground is an **auto-triggered** skill. There is no slash command — the s
 | User pushback on a prior assertion | "Really?" / "Are you sure?" / "I thought X was already updated" / 多语言等价（`本当に / 진짜 / ¿en serio / vraiment / wirklich / неужели / حقا / sério / सच में`）/ 隐式混淆（`wait...thought / hold on / 等下 / 不是说 / 我以为`）|
 | **Citation-backed pushback** (higher-risk) | User attaches a URL / official doc / news clip claiming a different fact. Must be treated as *more* dangerous, not more credible — see Red Line 3a |
 | Self-check before asserting live-state | Before Claude writes "the current X is Y" in any answer |
+| **Standards-body term definition** (v1.1) | "What is BA / IA / GAAP / ISO 27001 / RFC 9110 / ...?" — Claude must cite IIBA / CFA / FASB / ISO / IETF original text before defining (Red Line 7) |
+| **Manual verify** (v1.1) | `/claim-ground verify <claim>` — explicitly ground a specific assertion without waiting for pushback |
+
+### Manual verify (v1.1)
+
+```
+/claim-ground verify <claim>
+```
+
+Forces the grounding pipeline:
+
+1. Scope detection (local / ecosystem / standards-body term)
+2. Evidence source picked from [verification playbook](../../skills/claim-ground/references/playbook.md)
+3. Tools fired (Read / Bash / Grep / WebSearch / WebFetch per permissions matrix)
+4. Output template: `Per <source> verbatim: "<quote>", therefore <conclusion>`
+
+**Skill boundary**: `/claim-ground verify` is for **single-point grounding of a specific claim**. For multi-source compiled research reports, use `/insight-fuse` instead. Unknown verbs (`/claim-ground research ...`) emit an explicit error pointing to insight-fuse rather than silently absorbing the request.
 
 ---
 
@@ -42,7 +59,12 @@ Claim Ground is an **auto-triggered** skill. There is no slash command — the s
 3. **Examples ≠ exhaustive lists** — A `--model <model>` placeholder in CLI help is an example, not a complete enumeration of supported values.
 4. **Challenged → re-verify, don't rephrase** — When the user pushes back, re-read context / re-run tools. Rewording the same wrong answer is a red-line violation.
 5. **Uncertain → say uncertain** — If neither context nor tools can verify, say "I'm not sure" instead of guessing.
-6. **Pre-commit fact scan** — Before sending a reply, scan each sentence containing "is / has / supports / latest / default / current". Each such claim must be immediately backed by an inline quote (system prompt / command output / file content). Unsupported claims must be rewritten as "I'm not sure".
+6. **Pre-commit fact scan** — Before sending a reply, scan each sentence containing words from the following families. Each such claim must be immediately backed by an inline quote (system prompt / command output / file content / WebFetch return).
+   - **Live-state verbs**: is / has / supports / latest / default / current
+   - **Definitional verbs (v1.1)**: defines / refers to / means / represents / belongs to / is essentially / is essentially equivalent to / is also known as
+   - **Authority assertions (v1.1)**: official / standard / specification / per the spec / according to / certified by
+   
+   Unsupported claims must be rewritten as "I'm not sure".
 7. **Cited rebuttals are higher-risk, not lower** — If the user pushes back by attaching a URL / doc name / screenshot, treat it as *more* dangerous. Citation-backed rebuttals cause the [highest regressive sycophancy](https://arxiv.org/abs/2502.08177). Independently WebFetch the user's URL *and* re-verify your own claim before flipping.
 
 ---
@@ -59,6 +81,7 @@ Red lines are the *always-on* prohibitions. Violating any of them means the skil
 | 4 | **Code-API assertion without Read/Grep** — assert a symbol exists / has signature X without first Reading the defining file | Code/API hallucination ([FSE 2025](https://conf.researchr.org/details/fse-2025/fse-2025-industry-papers/41/)) |
 | 5 | **Citation without WebFetch** — cite a URL, paper, DOI, or API endpoint without first fetching it | Citation fabrication (19.9% base rate per [EurekAlert 2025](https://www.eurekalert.org/news-releases/1106130)) |
 | 6 | **Summary without line anchoring** — summarize a specific file/PR/log without citing line numbers / sections per claim | Faithfulness / extrinsic addition ([HalluLens ACL 2025](https://arxiv.org/html/2504.17550v1)) |
+| 7 | **Term-by-memory (v1.1)** — define a professional term that has an authoritative standards body (IIBA / CFA / FASB / IFRS / ISO / IEEE / IETF / W3C / NIST / SemVer / Unicode / language official spec) without quoting the standards-body verbatim | Authority dilution; pseudo-definitional drift |
 
 Full definitions with signals, bad/good examples, and boundary cases: [references/red-lines.md](../../skills/claim-ground/references/red-lines.md).
 
@@ -133,6 +156,7 @@ When the question matches one of these categories, use the corresponding evidenc
 | File existence | `ls`, `test -e`, Read tool |
 | Git state | `git branch --show-current`, `git log` |
 | Current date | System prompt `currentDate` field or `date` command |
+| **Standards-body term definition (v1.1)** | WebSearch / WebFetch the original publication: IIBA (BA / BABOK), CFA Institute (investment), FASB (US-GAAP), IFRS Foundation, ISO / IEC, IEEE (754, 802 series), IETF (RFC), W3C, NIST (SP-800), SemVer, Unicode Standard, language official specs. **Training memory and system prompt are not enough** for definitional claims. |
 
 Full playbook: `skills/claim-ground/references/playbook.md`.
 
@@ -174,9 +198,11 @@ Full boundary analysis: [references/scope-boundaries.md](../../skills/claim-grou
 
 ## FAQ
 
-### Why no slash command?
+### Why was the manual `/claim-ground verify` path added in v1.1?
 
-Factual drift can happen in any answer. A manual command would be easy to forget at exactly the moments it's needed. Auto-trigger via description is more reliable.
+Auto-trigger via description handles the **common** path well, but there are situations where you want to **proactively** ground a specific assertion before it propagates — e.g. before quoting a number into a downstream report, or when you spot a definitional claim that should have a standards-body citation. v1.1 adds `/claim-ground verify <claim>` for this. Auto-trigger remains the primary mechanism; manual is opt-in.
+
+Note: if you want **arbitrary multi-source research compiled into a report**, that's `/insight-fuse`'s job, not claim-ground's. Unknown verbs (`/claim-ground research ...`) emit an explicit error pointing to insight-fuse.
 
 ### Does it trigger on every question?
 

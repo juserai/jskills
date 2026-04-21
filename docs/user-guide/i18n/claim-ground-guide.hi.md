@@ -1,6 +1,6 @@
-# Claim Ground उपयोगकर्ता गाइड
+# Claim Ground उपयोगकर्ता गाइड (v1.1)
 
-> 3 मिनट में epistemic अनुशासन — हर "अभी-अभी" दावे को runtime साक्ष्य से जोड़ें
+> 3 मिनट में epistemic अनुशासन — हर "अभी-अभी" दावे को runtime साक्ष्य से जोड़ें (v1.1: also anchors standards-body term definitions to authoritative evidence; adds /claim-ground verify manual mode)
 
 ---
 

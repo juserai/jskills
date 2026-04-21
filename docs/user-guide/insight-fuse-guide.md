@@ -1,8 +1,8 @@
-# Insight Fuse v3 Guide
+# Insight Fuse v3.1 Guide
 
-> Systematic multi-source research engine — **7-stage pipeline + skeleton.yaml data contract + 6 research-type presets + 6-dimensional quality rubric + 5 output formats**.
+> Systematic multi-source research engine — **7-stage pipeline + skeleton.yaml data contract + 6 research-type presets + 6-dimensional quality rubric + 17 blocking checks (incl. primary-source binding / verbatim snippet / numeric reconciliation, v3.1) + 5 output formats**.
 
-Insight Fuse v3 turns any topic into a publishable research report. The engine is scoped isolation (no CWD / IDE leakage), multi-perspective (3 anonymous agents scored on 4 dimensions), and reproducibility-first (every claim has a source, every inference is labeled, every `known_dissensus` gets a three-part template instead of collapsing into synthetic consensus).
+Insight Fuse v3.1 turns any topic into a publishable research report. The engine is scoped isolation (no CWD / IDE leakage), multi-perspective (3 anonymous agents scored on 4 dimensions), and reproducibility-first (every claim has a source, every inference is labeled, every `known_dissensus` gets a three-part template instead of collapsing into synthetic consensus).
 
 ## Quick start
 
@@ -44,7 +44,7 @@ Insight Fuse v3 turns any topic into a publishable research report. The engine i
 ```
 Stage 0 → Stage 1 → Stage 2 → Stage 3 → Stage 4 → Stage 5 → Stage 6
 Brainstorm Scan   Align   Research  Review   Deep     QA
-(skeleton)  (scan)  (full)  (parallel) (full)  (3-ways) (14 checks
+(skeleton)  (scan)  (full)  (parallel) (full)  (3-ways) (17 checks
                                                          + 6-dim
                                                          + outputs)
 ```
@@ -57,7 +57,7 @@ Brainstorm Scan   Align   Research  Review   Deep     QA
 | 3 | One Generalist agent per `hypothesis`, parallel, shared skeleton prefix cache | hypotheses, existing_consensus |
 | 4 | **Full only** — Focus Selection Protocol scores candidates by 4 quality signals | known_dissensus, hypotheses |
 | 5 | 3-perspective deep dive per focus; `known_dissensus` auto-triggers Disagreement Preservation Template | known_dissensus (critical) |
-| 6 | 14 blocking checks + 6-dim scoring + multi-output rendering | business_neutral |
+| 6 | 17 blocking checks + 6-dim scoring + multi-output rendering; triggers reconciliation-log template on numeric conflicts | business_neutral |
 
 ### Depth routing
 
@@ -129,9 +129,9 @@ Every later stage consumes specific fields — see `skills/insight-fuse/referenc
 
 Multi-output: `--outputs report,adr,checklist,decision-tree,poc` renders all five, each a separate file, cross-referenced by relative path.
 
-## Quality assurance: 14 checks + 6-dim scoring
+## Quality assurance: 17 checks + 6-dim scoring
 
-Stage 6 runs all 14 blocking checks. Any failure triggers rewrite, up to 2 rounds. After 3rd failure, report is emitted with a `QA-FAILED: <check-ids>` header.
+Stage 6 runs all 17 blocking checks. Any failure triggers rewrite, up to 2 rounds. After 3rd failure, report is emitted with a `QA-FAILED: <check-ids>` header. Advisory-mode failures are tagged `<id>-ADVISORY` but do not cap Grade.
 
 **Check highlights** (full list in `skills/insight-fuse/references/quality-standards.md`):
 - Check 7: environment isolation — no proper nouns inferred from CWD/IDE
@@ -140,6 +140,34 @@ Stage 6 runs all 14 blocking checks. Any failure triggers rewrite, up to 2 round
 - Check 12 (v3): framework preservation — each `known_dissensus` renders three-part template
 - Check 13 (v3): structure-ratio compliance — section word counts within ±30% of template
 - Check 14 (v3): FIR separation — every paragraph tagged `[F]` / `[I]` / `[R]`
+- Check 15 (v3.1): **primary-source binding** — every quantitative claim needs at least one L1 source whose host hits the research-type whitelist
+- Check 16 (v3.1): **verbatim evidence snippet** — every quantitative claim renders `> 原文："..." — Source, YYYY-MM-DD` inline below it (spot-check in 30 seconds instead of clicking through URLs)
+- Check 17 (v3.1): **numeric variance reconciliation** — cross-source conflicts > 5% trigger a `reconciliation-log.md` appendix with primary-source tiebreak
+
+## Source reliability (v3.1)
+
+Version 3.1 hardens the pipeline against the "URL real, number fake" hallucination mode by introducing three new blocking checks, tiered by `--type` × `--depth`. Full rationale in [docs/design/insight-fuse-design.md §11](../design/insight-fuse-design.md).
+
+**Tier enforcement** (blocking `block` vs advisory `adv`; C15 / C16 / C17 in order):
+
+| `--type` / `--depth` | quick | standard | deep | full |
+|---|---|---|---|---|
+| `overview` / `technology` / `product` / `competitive` | adv / adv / adv | **block** / adv / adv | **block** / **block** / **block** | **block** / **block** / **block** |
+| `market` / `academic` | **block** / **block** / **block** | **block** / **block** / **block** | **block** / **block** / **block** | **block** / **block** / **block** |
+
+**Primary/secondary inline syntax** (quantitative claims only):
+
+```markdown
+[F] Q1 2026 global AI megadeal funding hit $239B, 81% of all venture funding ([Crunchbase News](https://news.crunchbase.com/...){P})
+> 原文："AI startups raised a record $239 billion in Q1 2026, accounting for 81% of all venture funding." — Crunchbase News, 2026-04-03
+```
+
+- `{P}` = primary source (URL host must hit [primary-source-whitelist.yaml](../../skills/insight-fuse/references/primary-source-whitelist.yaml) for the active `--type`)
+- `{S→<primary-url>}` = secondary source tracing forward to a primary; a bare `{S}` without `→` triggers C15 fail
+
+**Whitelist** (see the yaml for full list): SEC / DOI / EUR-Lex / gov domains in `common.L1`; `market` adds Crunchbase / PitchBook / CB Insights / Dealroom; `technology` adds RFC / vendor docs; `academic` adds arXiv / Nature / Science / ACM / IEEE. Non-whitelisted domains are downgraded one tier with a `tier-uncertain` flag — not hard-rejected.
+
+**Reconciliation**: when two L1 sources disagree (e.g. Crunchbase $239B vs CB Insights $285.5B), the report auto-appends `## 附录 R-X — Reconciliation log` with a source-tier table, conservative tiebreak value, and methodological explanation of the gap. Template: [templates/reconciliation-log.md](../../skills/insight-fuse/templates/reconciliation-log.md).
 
 **6-dim scoring** — `total = Σ (dim × weight)` per research_type weighting table (academic emphasizes falsifiability + reproducibility; industry emphasizes actionability + source_diversity):
 
@@ -187,7 +215,9 @@ Both are `crucible` skills. Compose them: use insight-fuse to research, then cou
 
 - [SKILL.md](../../skills/insight-fuse/SKILL.md)
 - [skeleton schema](../../skills/insight-fuse/references/skeleton-schema.md)
-- [research-types](../../skills/insight-fuse/references/research-types.md)
+- [research-types](../../skills/insight-fuse/references/research-types.md) (incl. v3.1 source-reliability tier table)
 - [scoring rubric](../../skills/insight-fuse/references/scoring-rubric.md)
-- [quality standards (14 checks)](../../skills/insight-fuse/references/quality-standards.md)
+- [quality standards (17 checks)](../../skills/insight-fuse/references/quality-standards.md)
+- [primary-source whitelist](../../skills/insight-fuse/references/primary-source-whitelist.yaml) (v3.1)
+- [reconciliation-log template](../../skills/insight-fuse/templates/reconciliation-log.md) (v3.1)
 - [output formats](../../skills/insight-fuse/references/output-formats.md)

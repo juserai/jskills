@@ -31,6 +31,7 @@ test_prompt() {
         --dangerously-skip-permissions \
         --max-turns 2 \
         --output-format stream-json \
+        --verbose \
         > "$outfile" 2>&1 || true
 
     local triggered=false

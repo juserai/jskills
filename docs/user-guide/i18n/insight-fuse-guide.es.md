@@ -2,7 +2,7 @@
 
 > Motor de investigación multifuente sistemática — **pipeline de 7 etapas + contrato de datos skeleton.yaml + 6 presets de tipo de investigación + rúbrica de calidad ortogonal 6-dim + 5 formatos de salida**.
 
-Insight Fuse v3 convierte cualquier tema en un informe de investigación publicable. El motor es aislado en alcance (sin fugas CWD / IDE), multiperspectiva (3 agents anónimos puntuados en 4 dimensiones) y orientado a reproducibilidad (cada afirmación tiene fuente, cada inferencia tiene etiqueta, cada `known_dissensus` recibe una plantilla de tres partes en lugar de colapsar en consenso sintético).
+Insight Fuse v3.1 convierte cualquier tema en un informe de investigación publicable. El motor es aislado en alcance (sin fugas CWD / IDE), multiperspectiva (3 agents anónimos puntuados en 4 dimensiones) y orientado a reproducibilidad (cada afirmación tiene fuente, cada inferencia tiene etiqueta, cada `known_dissensus` recibe una plantilla de tres partes en lugar de colapsar en consenso sintético).
 
 ## Inicio rápido
 
@@ -36,7 +36,7 @@ Insight Fuse v3 convierte cualquier tema en un informe de investigación publica
 ```
 Stage 0 → Stage 1 → Stage 2 → Stage 3 → Stage 4 → Stage 5 → Stage 6
 Brainstorm Scan   Align   Research  Review   Deep     QA
-(skeleton)                                           (14 checks
+(skeleton)                                           (17 checks
                                                       + 6-dim
                                                       + outputs)
 ```
@@ -99,6 +99,18 @@ Full schema: `skills/insight-fuse/references/skeleton-schema.md`.
 | transparency | 0.15 | 0.15 |
 
 **Grade**: A ≥ 8.5 / B 7.0-8.4 / C 5.5-6.9 / D < 5.5.
+
+## Source reliability (v3.1)
+
+Three new blocking checks tier-gated by `--type` × `--depth`:
+
+- **Check 15** — primary-source binding: every quantitative claim (number / % / date / ranking) needs ≥1 L1 source whose host hits the [primary-source-whitelist.yaml](../../../skills/insight-fuse/references/primary-source-whitelist.yaml) for the active `--type`
+- **Check 16** — verbatim evidence: each quantitative claim renders `> 原文："..." — Source, YYYY-MM-DD` inline below it; human spot-check in 30 seconds instead of clicking through URLs
+- **Check 17** — numeric variance reconciliation: cross-source conflicts > 5% trigger a [reconciliation-log.md](../../../skills/insight-fuse/templates/reconciliation-log.md) appendix with primary-source tiebreak
+
+**Inline syntax for quantitative claims**: `[Name](url){P}` for primary, `[Name](url){S→primary-url}` for secondary tracing forward. A bare `{S}` without `→` triggers Check 15 fail.
+
+**Tier enforcement**: `market` / `academic` always blocking. Other types: advisory in `quick`, progressively blocking in `standard` / `deep` / `full`. Full matrix in [research-types.md](../../../skills/insight-fuse/references/research-types.md) §源可靠性分档.
 
 ## Apéndice consultivo (opt-in)
 

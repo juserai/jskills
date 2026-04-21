@@ -1,6 +1,6 @@
-# Claim Ground — 六条红线详解
+# Claim Ground — 七条红线详解（v1.1）
 
-六条红线任何一条被触犯，skill 即失效。这里列出每条红线的完整定义、识别信号、反例 / 正例。
+七条红线任何一条被触犯，skill 即失效。这里列出每条红线的完整定义、识别信号、反例 / 正例。
 
 **红线清单**：
 
@@ -10,6 +10,7 @@
 4. 代码 API 断言必须先读源
 5. 引用 URL / 文档必须先验证存在
 6. 摘要任务必须锚定到具体行号 / 段落
+7. **术语凭印象**（v1.1）— 给定专业术语 / 行业标准定义必须引用权威标准体原文
 
 ---
 
@@ -228,6 +229,52 @@
 - **模糊区**："tell me about this repo"——若 repo 是具体的 → 触发；若是通用介绍 → 不触发
 
 **关键**：摘要是 LLM 最容易"流畅加料"的场景，因为读者期望概括而不是逐字。**对抗这种期望**，强制逐条追溯到源。
+
+---
+
+## 红线 7：术语凭印象（v1.1）
+
+**定义**：被问"X 是什么 / 定义 X / X 指的是什么 / what is X / define X / explain X"，且 X 是有**权威标准体 / 规范文档**的专业术语时，凭训练记忆直接给定义、不引用标准体原文 = 违规。
+
+**识别信号**（你正在违规）：
+
+- 句形：`X 是 Y` / `X 的定义是...` / `X **指的是**...` / `X **本质上**是...` / `X equals Y` / `X **refers to**...`
+- X 落在以下领域之一时**特别警觉**：
+  - **商业 / 金融 / 会计**：BA / IA / GAAP / IFRS / ROIC / WACC / EBITDA → IIBA / CFA Institute / FASB / IFRS Foundation
+  - **技术规范**：HTTP / HTTPS / TLS / RFC 编号 / SemVer / OAuth / OIDC / Unicode → IETF (RFC) / W3C / IANA / Unicode Consortium
+  - **学科标准**：ISO 9001 / ISO 27001 / IEC / IEEE 754 / NIST SP-800 → ISO / IEC / IEEE / NIST
+  - **学术方法**：p-value / Type I error / Bayes factor → 同行评议教科书 / 经典论文
+  - **法律 / 合规**：GDPR Art. X / HIPAA / SOC2 / PCI-DSS → 立法原文 / 监管机构发布
+  - **语言 / 排版规范**：LaTeX / TeX / Markdown CommonMark / JSON RFC 8259 / YAML 1.2 → 各 spec 文档
+
+**反例（触犯红线 7）**：
+
+> 用户：商业分析（BA）和投资分析（IA）有什么区别？
+> 错误回答：商业分析 **是**研究公司业务模式、流程、决策的方法，常用 SWOT / Porter 五力等框架。投资分析 **是**评估投资标的的金融分析。
+>
+> 问题：BA 的权威定义在 IIBA《BABOK Guide》第 3 版第 1 章，不是 SWOT/Porter；IA 的权威定义在 CFA Institute《Investments》。两个都凭训练记忆凑了"听起来对"的描述，未引用标准体。
+
+**正例（合规）**：
+
+> [WebSearch "IIBA BABOK definition of business analysis"]
+> [WebFetch https://www.iiba.org/career-resources/a-business-analysis-professionals-foundation-for-success/what-is-business-analysis/]
+> 据 IIBA 官网原文："Business analysis is the practice of enabling change in an enterprise by defining needs and recommending solutions that deliver value to stakeholders."
+>
+> [WebSearch "CFA Institute definition investment analysis"]
+> [WebFetch ...] 据 CFA Institute Curriculum 原文："Investment analysis is the process of evaluating an investment for its profitability and risk..."
+>
+> 综合：BA 关注组织内变革使能，IA 关注投资标的的可投性评估，两者并非同一专业体系下的近义词。
+
+**触发边界**：
+
+- **触发**：术语属于上面 6 大领域之一、问题形如"是什么 / 定义 / 区别"
+- **不触发**：
+  - 通识词（"什么是水 / what is gravity"）—— 物理常识
+  - 私有术语 / 项目内黑话（"我们项目里的 widget 是什么意思"）—— 没有权威标准体
+  - 编程语言里的常见关键字 / 概念（"什么是 Promise / what is async"）—— 已被官方 spec 完全定义且广泛复用，但**仍建议**贴一句官方 spec 引用以零成本守护红线
+- **模糊区**：跨领域复合术语（"AI agent 是什么"）—— 无单一权威标准体；此时应明示"业内多种定义并存"+ 列 ≥2 个有出处的定义（Anthropic / OpenAI / IBM 等）
+
+**为什么单立一条**：R1 的"无源断言"理论上能盖此场景，但 R1 反例几乎全是 live-state（模型版本、CLI 版本、env），模型容易给"术语定义"打豁免（"训练里就有、应该 OK"）。R7 把这个豁免堵死。
 
 ---
 

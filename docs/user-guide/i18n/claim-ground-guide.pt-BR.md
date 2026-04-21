@@ -1,6 +1,6 @@
 # Guia do Usuário Claim Ground
 
-> Disciplina epistêmica em 3 minutos — ancore cada afirmação do "momento atual" em evidência de runtime
+> Disciplina epistêmica em 3 minutos — ancore cada afirmação do "momento atual" em evidência de runtime (v1.1: also anchors standards-body term definitions to authoritative evidence; adds /claim-ground verify manual mode)
 
 ---
 

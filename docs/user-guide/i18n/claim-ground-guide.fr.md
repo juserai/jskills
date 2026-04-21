@@ -1,6 +1,6 @@
 # Guide Utilisateur Claim Ground
 
-> Discipline épistémique en 3 minutes — ancrer chaque affirmation du "moment présent" à une preuve d'exécution
+> Discipline épistémique en 3 minutes — ancrer chaque affirmation du "moment présent" à une preuve d'exécution (v1.1: also anchors standards-body term definitions to authoritative evidence; adds /claim-ground verify manual mode)
 
 ---
 

@@ -1,8 +1,9 @@
-# insight-fuse 设计文档（v3）
+# insight-fuse 设计文档（v3.1）
 
-> 版本：v3.0
-> 日期：2026-04-20
-> 上一版：v2（5 阶段流水线）位于 git 历史 `adbb208` 及之前提交
+> 版本：v3.1（v3 源可靠性增量）
+> 日期：2026-04-21
+> 上一版：v3.0（2026-04-20；7 阶段流水线 + 14 check）
+> 上上版：v2（5 阶段流水线）位于 git 历史 `adbb208` 及之前提交
 
 ## 一、分类决策（按 CLAUDE.md §分类决策规程）
 
@@ -185,6 +186,73 @@ business_neutral: true
 - **新 stance**：在 `references/perspectives.md` §二 Stance Registry 追加；无需新 agent 文件
 - **新 perspective**（真正的新角色，如 academic-reviewer）：才值得新建 `agents/insight-<name>.md`
 
+## 十一、v3 → v3.1 增量：源可靠性（2026-04-21）
+
+### 11.1 触发事件
+
+2026-04-20 AI Native 合并报告 §6.1 数据错误：声明 "Q1 2026 VC $300B / AI $242B / 65% 被 4 家基础模型公司吸收（含 Waymo）"，真实数据是 $239B / 81% / Waymo 非基础模型。根因是二手博客（TheBranx）被当一手引用，且整个流水线无主/次源区分。完整事件见 `~/.claude/plans/indexed-strolling-finch.md`。
+
+### 11.2 四层根因
+
+| 层 | 症结 | v3 现状 | v3.1 补丁 |
+|---|---|---|---|
+| L1 信息入口 | Stage 1 返回跨源糊合摘要，不标 primary URL + verbatim | 只按 dimension 拆，不筛 tier | §4.1 Weak-citation protocol：量化声明需非聚合页 + verbatim + 白名单 |
+| L2 引用标注 | 正文插入只挂单一 URL，无主/次源区分 | `[Name](url)` 单一形式 | §3.3 升级语法：`{P}` / `{S→primary-url}` |
+| L3 QA 拦截 | 14 check 无"一手源必要性"条目 | C1-C14 | 新增 C15（主源绑定）+ C16（verbatim）+ C17（数字调和） |
+| L4 扩散治理 | 合并/wiki 各自复制数字，修订手工逐层 | 无机制 | v3.1 未包含；P2/P3 工作（claims.yaml sidecar / fact-nodes 图）留给后续 |
+
+### 11.3 设计决策
+
+#### (a) 分类：保持 crucible
+
+Check 15-17 看起来像"验证"，但其 OUTPUT 仍是**报告产出**（带新字段的报告），不是对报告的 pass/fail 判定外置。Stage 6 QA 仍是内部质控循环，与 v3 分类决策一致。不重新归 anvil。
+
+#### (b) 契约进源 vs override
+
+走"选项 A"：C15/C16/C17 契约定义 + 白名单 schema + reconciliation 模板全进 `skills/insight-fuse/references/` 与 `templates/`。**不开 `~/.forge/insight-fuse/overrides/` 通道**——本次目标是优化插件本身，所有 forge 用户直接受益；用户本地的可覆盖空间暂未开放，留给未来版本（若出现"按行业定制白名单"的强烈需求）。
+
+#### (c) 分档执行（#18 横切）
+
+三条新 check 全部 blocking 会让 `quick` 模式失去"快速探索"价值、也让 overview 类通用调研过度拘束。采用 `--type × --depth` 矩阵（详见 [references/research-types.md](../../skills/insight-fuse/references/research-types.md) §源可靠性分档）：
+
+- `market` / `academic` 一律 blocking——钱流数字与学术声明口径刚性
+- `quick` 对非 market/academic advisory——探索不被刚性阻塞
+- `standard` C15 起步 blocking——最廉价的一道闸
+- `deep` / `full` 全刚性——深度预算匹配高质量阈值
+
+#### (d) 白名单不是封闭名单
+
+未命中白名单的域名**不立即拒**，降一级 + 标 `tier-uncertain`。防止封闭白名单冻结新一手源（如新兴数据提供商）。完整规则见 [references/primary-source-whitelist.yaml](../../skills/insight-fuse/references/primary-source-whitelist.yaml)。
+
+#### (e) 为什么 verbatim 比 URL 可达重要
+
+AI 幻觉最隐蔽的失效模式：URL 真实存在但内容不支持声明（content_support='inferred' 的陷阱）。人工 spot-check 一份报告若只能点 URL 逐条验证，成本过高；而紧邻声明的 `> 原文："..."` 块让验证成本降到 30 秒 per 声明。
+
+### 11.4 落地范围（2026-04-21）
+
+- skill 源：6 个文件（4 改 + 2 新）
+- platforms/openclaw：7 个文件同步（含 SKILL.md）
+- marketplace.json：SHA-256 重算 + version 3.0.0 → 3.1.0 + description 更新
+- evals：scenarios.md 新增 5 场景（#13-#17）
+- user-guide + 11 i18n：下一批
+- 设计文档：本章
+
+### 11.5 未落地项（P2/P3 留给未来）
+
+- `tools/triangulate.py` 跨源三角验证自动化
+- `claims.yaml` sidecar + `[#claim-id]` 语法
+- `expires_at` + 到期复查自动化
+- 二手源黑名单 `secondary-source-blacklist.yaml`（TheBranx 种子）
+- Fact-provenance 图 `fact-nodes/<id>.yaml`（全库 single-source-of-truth）
+
+任何一项激活前需在本文档追加 11.6 / 11.7... 子节，保留设计轨迹。
+
+### 11.6 验证路径
+
+- `bash skills/skill-lint/scripts/skill-lint.sh .` → 0 error 0 warning（SHA / platform-parity / i18n-structure / cross-skill-category 4 防线）
+- `bash evals/insight-fuse/run-trigger-test.sh` → 13/13 passed
+- negative test（scenarios #13-#17）需在真实调研中触发验证——首个 market / academic 调研即是第一个真实 case
+
 ---
 
 ## 参考
@@ -192,3 +260,4 @@ business_neutral: true
 - v3 实施计划：[/home/juserch/.claude/plans/skill-skill-optimized-honey.md](/home/juserch/.claude/plans/skill-skill-optimized-honey.md)
 - v3 重构方案：[/home/juserch/iuser/bin/X/docs/insight-fuse/insight-fuse-v3-refactor-plan.md](/home/juserch/iuser/bin/X/docs/insight-fuse/insight-fuse-v3-refactor-plan.md)
 - 分析文档汇总：`/home/juserch/iuser/bin/X/docs/insight-fuse/`（6 份，165KB）
+- v3.1 源可靠性 policy 原件：[~/.claude/plans/indexed-strolling-finch.md](~/.claude/plans/indexed-strolling-finch.md)

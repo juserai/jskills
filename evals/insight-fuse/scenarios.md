@@ -190,3 +190,82 @@
 - 因果关键词"导致" + 无替代解释 → Check 11 fail
 
 **Validates**: 超时降级 + L5 封顶 + 伪三角 + 因果纪律
+
+---
+
+## Scenario 13: C15 primary-source binding fail（v3.1）
+
+**Input**: `/insight-fuse "Q1 2026 全球 AI 融资" --type market --depth standard`
+
+**Pre-condition**: 模拟 Stage 3 Generalist 返回的 INSIGHT_RESPONSE 中 EVIDENCE_CHAIN 含量化声明 "$300B"，其 support[] 只有 `thebranx.com`（L5，非白名单）。
+
+**Expected**:
+- Stage 6 Check 15 fail（market + standard 为 blocking）
+- 重写 round 1：main agent 触发 WebFetch 尝试找到一手源（Crunchbase News / CB Insights / SEC）
+- 成功：support[] 增加 L1 源 + URL 命中 `news.crunchbase.com`（white list market L1）→ C15 pass
+- 失败场景：重写后仍无 L1 → 第 2 轮降级为定性 "AI 领域资金规模显著" → C15 pass（因不再是量化声明）
+- Grade 评分：primary_source_ratio 子项低时 evidence_density 降级
+
+**Validates**: Check 15 blocking；白名单匹配；降级路径
+
+---
+
+## Scenario 14: C16 verbatim evidence fail（v3.1）
+
+**Input**: 手工构造一份含量化声明 "Ray-Ban Meta 2024 销量 > 100 万副" 但 SOURCES_USED 缺 `quote:` 字段的 Stage 3 响应
+
+**Expected**:
+- Stage 6 Check 16 fail（deep/full 为 blocking；standard 为 advisory 但扣分）
+- 重写 round 1：main agent 对该 source URL 跑 WebFetch，从返回 HTML 中提取含 "100 万" 或 "1 million" 的句子
+- 成功：quote 回填到 SOURCES_USED + 正文该段下紧邻 `> 原文："..." — Meta 10-Q, 2024-11-XX` → C16 pass
+- 失败（URL 不可达）：content_support 改 `placeholder` + 登记 GAPS_IDENTIFIED + 量化声明降级或整段删除
+
+**Validates**: Check 16；WebFetch 回填；placeholder 降级路径
+
+---
+
+## Scenario 15: C17 numeric variance reconciliation（v3.1）
+
+**Input**: `/insight-fuse "Q1 2026 全球 VC 总额" --type market --depth deep`
+
+**Pre-condition**: Stage 3 收集到两条 L1 冲突：Crunchbase News "$239B" vs CB Insights "$285.5B"（差异 ≈ 19%）。
+
+**Expected**:
+- Stage 6 检测 support[] 数字差异 > 5% → Check 17 触发
+- 自动套 [templates/reconciliation-log.md](../../skills/insight-fuse/templates/reconciliation-log.md) 生成 "附录 R-1"
+- Tiebreak：按较保守值 $239B 采用（Crunchbase 排除 M&A）
+- 正文该段 `{P}` 引 Crunchbase News，CB Insights 以 `{S→crunchbase-news-url}` 作口径佐证
+- 附录含 3 列（URL / Tier / 原文数字 / 检索日期 / 口径） + "采用值" 明示 + "差异说明" 段
+
+**Validates**: Check 17；Reconciliation log 模板；一手 tiebreak；多 L1 不同口径处理
+
+---
+
+## Scenario 16: C15-C17 分档 advisory（v3.1）
+
+**Input**: `/insight-fuse "xR 硬件概览" --type overview --depth quick`
+
+**Pre-condition**: 同 Scenario 13 的弱引用场景（L5 为主）。
+
+**Expected**:
+- overview + quick 对 C15/C16/C17 全 advisory
+- Stage 6 检测到 C15 fail，但**不封顶 Grade**；在 header 标 `C15-ADVISORY`
+- evidence_density 维度得分扣分（primary_source_ratio 低）
+- Grade 照算，可能落 C 但不强制 D
+
+**Validates**: 分档策略；advisory 不封顶；quick 模式不被刚性源要求阻塞
+
+---
+
+## Scenario 17: market/academic 一律 blocking（v3.1）
+
+**Input**:
+- `/insight-fuse "Sparse MoE 可解释性" --type academic --depth quick`
+- `/insight-fuse "向量数据库市场 2026" --type market --depth quick`
+
+**Expected**:
+- 两个调用即使 `--depth quick`，C15 / C16 / C17 仍 blocking（覆盖 quick 的默认 advisory）
+- academic：所有量化声明 support 必含 arxiv.org / doi.org / 期刊域名；否则 C15 fail
+- market：所有金额 / 百分比 support 必含 news.crunchbase.com / pitchbook.com / cbinsights.com / sec.gov 之一；否则 C15 fail
+
+**Validates**: 分档表"market/academic 行覆盖 quick 列" 的硬约束

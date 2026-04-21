@@ -104,15 +104,15 @@
         },
         {
             "name": "insight-fuse",
-            "description": "Insight Fuse v3 — Systematic multi-source research engine. 7-stage pipeline with skeleton.yaml data contract, 6 research-type presets, 6-dim quality rubric, and 5 output formats. Zero-dep.",
-            "version": "3.0.0",
+            "description": "Insight Fuse v3.1 — Systematic multi-source research engine. 7-stage pipeline with skeleton.yaml data contract, 6 research-type presets, 6-dim quality rubric + 17 blocking checks (incl. primary-source binding / verbatim snippet / numeric reconciliation), and 5 output formats. Zero-dep.",
+            "version": "3.1.0",
             "source": "./skills/insight-fuse",
             "author": {
                 "name": "Juneq Cheung",
                 "url": "https://github.com/juserai"
             },
             "integrity": {
-                "skill-md-sha256": "3554e4957b7b65e6e64055aa9c04c0f4bb110b5d12d7d50c861a632908a7a67e"
+                "skill-md-sha256": "d26c12ed2460a2346ff67be2376ee6ed8cb57a1113cc8c1577359f7f7979f1b0"
             },
             "skills": [
                 "./"
@@ -120,15 +120,15 @@
         },
         {
             "name": "claim-ground",
-            "description": "Claim Ground — Epistemic constraint engine. Forces runtime-context-first reasoning with inline evidence citation when answering factual questions about current state or when user challenges a prior assertion. Zero-dep.",
-            "version": "1.0.0",
+            "description": "Claim Ground v1.1 — Epistemic constraint engine. Forces runtime-context-first reasoning with inline evidence citation when answering factual questions about current state, when user challenges a prior assertion, or when defining professional terms (must cite authoritative standards body — IIBA / CFA / ISO / RFC / W3C / NIST etc.). Adds /claim-ground verify <claim> manual grounding mode. Zero-dep.",
+            "version": "1.1.0",
             "source": "./skills/claim-ground",
             "author": {
                 "name": "Juneq Cheung",
                 "url": "https://github.com/juserai"
             },
             "integrity": {
-                "skill-md-sha256": "812066e3d6107167ed4ca74bcb8c3d674916484f16b96a893251a99c5707b1d1"
+                "skill-md-sha256": "b15c22f14863b03a1efdafdf05fe0dc02c0d97d569ab4742bc568417c7762d50"
             },
             "skills": [
                 "./"

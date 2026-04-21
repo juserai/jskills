@@ -1,0 +1,150 @@
+# Primary Source Whitelist — v3.1
+#
+# Check 15 使用。量化声明（数字 / 百分比 / 日期 / 排名）的 support[] 必须
+# 至少 1 条 URL 的 host 命中以下白名单的 common.L1 或 type_specific.<type>.L1。
+# 未命中 → 降一级并标 tier-uncertain；全 L2-L5 → Check 15 fail（按分档执行）。
+#
+# 维护原则：
+# 1. 非封闭名单：未收录 ≠ 恶意，未收录域名降级处理而非拒绝
+# 2. 来源侧优先：给出 host 而非具体 path
+# 3. 黑名单（secondary-blacklist.yaml）负责已知二手聚合域名——本文件只列白
+# 4. 新增条目需在 docs/design/insight-fuse-design.md 记录理由 + 添加日期
+
+schema_version: 1
+
+# 跨 type 通用的 L1 源（任何 research-type 均可引）
+common:
+  L1:
+    domains:
+      # 官方文档 / 立法 / 司法
+      - sec.gov                          # 美国证监会文件披露
+      - edgar.sec.gov
+      - eur-lex.europa.eu                # 欧盟法律
+      - europarl.europa.eu               # 欧洲议会
+      - federalregister.gov              # 美国联邦公报
+      - www.supremecourt.gov
+      - www.fcc.gov
+      - www.gov.uk                       # 英国政府
+      - www.gov.cn                       # 中国政府官网
+      - www.congress.gov
+      # 学术期刊 DOI 解析器
+      - doi.org
+      - dx.doi.org
+      # 权威统计机构
+      - www.bls.gov                      # 美国劳工统计局
+      - www.census.gov
+      - ec.europa.eu                     # Eurostat
+      - stats.gov.cn                     # 中国国家统计局
+      - data.oecd.org
+
+# research-type 特化的 L1 白名单（叠加在 common 之上）
+type_specific:
+  market:
+    L1:
+      domains:
+        # 私募 / VC 数据提供方（一手披露）
+        - news.crunchbase.com
+        - www.crunchbase.com
+        - pitchbook.com
+        - www.pitchbook.com
+        - www.cbinsights.com
+        - dealroom.co
+        # 行业分析（Tier-1 咨询自家原报告页，非博客转载）
+        - www.gartner.com
+        - www.idc.com
+        - www.forrester.com
+        # 交易所 + 投资者关系
+        - www.sec.gov
+        - www.nasdaq.com/press-release
+        - ir.*.com                       # 通配：上市公司 IR 子域
+      notes:
+        - "M&A 口径与股权口径常不同；冲突时需 C17 reconcile"
+        - "券商研报需二次验证口径，不默认 L1"
+
+  technology:
+    L1:
+      domains:
+        # 官方文档 + 规范
+        - docs.python.org
+        - docs.rs
+        - developer.mozilla.org
+        - kubernetes.io/docs
+        - www.rfc-editor.org
+        - datatracker.ietf.org
+        - www.w3.org/TR
+        - spec.openapis.org
+        # 主流厂商官方 docs
+        - docs.aws.amazon.com
+        - cloud.google.com/docs
+        - learn.microsoft.com
+        - developers.googleblog.com
+        - engineering.fb.com
+        - netflixtechblog.com
+        - github.blog
+        # 代码仓 + 发行说明
+        - github.com                     # 仅限 /*/releases 与 /*/blob 中的 README/CHANGELOG
+        - pypi.org
+        - crates.io
+        - www.npmjs.com
+      notes:
+        - "GitHub 通用域要求 URL path 指向 releases/CHANGELOG/README；issue/PR 的数字声明不计 L1"
+
+  academic:
+    L1:
+      domains:
+        # Preprint
+        - arxiv.org
+        - biorxiv.org
+        - medrxiv.org
+        # 期刊 / 数据库
+        - www.nature.com
+        - www.science.org
+        - www.cell.com
+        - www.pnas.org
+        - dl.acm.org
+        - ieeexplore.ieee.org
+        - link.springer.com
+        - www.sciencedirect.com
+        - journals.plos.org
+        - proceedings.neurips.cc
+        - openreview.net
+      notes:
+        - "L5 news/opinion 在 academic 权重归零（见 research-protocol.md §3.4）"
+        - "preprint 必标 arXiv ID 或 DOI；未经同行评审需在 [I] 标注"
+
+  competitive:
+    L1:
+      domains:
+        # 对标公司官网 + 投资者关系（一手）
+        - ir.*.com
+        - *.com/investors                # 投资者关系页通配
+        # 财报披露
+        - www.sec.gov
+        # 分析师原报告（与 market 重叠）
+        - www.gartner.com
+        - www.idc.com
+        - www.forrester.com
+      notes:
+        - "竞品官网 marketing 页面不算 L1；要求 10-K / 10-Q / 招股书 / 官方产品 docs"
+
+  overview:
+    L1:
+      domains: []
+      notes:
+        - "overview 默认用 common L1；按子 domain 可临时叠加 market/technology/academic 白名单"
+
+  product:
+    L1:
+      domains:
+        # 用户研究 / PM 数据（原始来源）
+        - www.pewresearch.org
+        - www.statista.com/statistics
+        - www.nngroup.com
+      notes:
+        - "用户 quote / journey map 来源只要可追溯即可；数字声明仍按 market 口径要求"
+
+# 未来扩展：黑名单（v3.1 暂不落，P2 再做）
+# blacklist:
+#   L5_secondary:
+#     domains:
+#       - thebranx.com

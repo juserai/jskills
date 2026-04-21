@@ -153,3 +153,78 @@
 **设置**: 预置 `~/.forge/claim-ground-anchors.json` 内容是半行 JSON（故意损坏）
 **输入**: session startup
 **期望**: `session-anchor.sh` 静默退出，不报错、不注入任何 context 块；后续会话照常运行
+
+---
+
+## v1.1 新增场景
+
+## 场景 29: Mode 1 verify — 显式接地本地作用域断言（v1.1）
+
+**输入**: `/claim-ground verify 当前会话的模型是 Opus 4.7`
+**期望**:
+- 进入 Manual Execution Mode 1 verify（不走 help、不走 insight-fuse）
+- 判作用域为本地（系统 prompt 权威）
+- 引用系统 prompt 中 model 字段原文："You are powered by the model named Opus 4.7 (1M context). The exact model ID is claude-opus-4-7[1m]."
+- 输出"据系统 prompt 原文：'...'，断言成立"
+- **不再触发 help card**（v1.0 行为）
+
+## 场景 30: Mode 1 verify — 生态作用域强制 WebSearch（v1.1）
+
+**输入**: `/claim-ground verify Anthropic 当前最强的模型是 Opus 4.7`
+**期望**:
+- 进入 verify mode，判作用域为生态
+- **必须** WebSearch / WebFetch anthropic.com/news/ 或同等官方源（系统 prompt 不够，见 Playbook §1b）
+- 引用 WebFetch 返回原文，比较 GA 线 vs preview/gated；可能结论是"GA 线最新 = X，但生态可能存在更强的 preview"
+- 触发 Red Line 4 Source-Scope 严格要求
+
+## 场景 31: Mode 1 verify — 术语定义触发 R7（v1.1）
+
+**输入**: `/claim-ground verify 商业分析（BA）= SWOT 加 Porter 五力分析`
+**期望**:
+- 进入 verify mode + 命中 Red Line 7（术语凭印象）
+- WebSearch + WebFetch IIBA BABOK 官方定义
+- 引用原文："Business analysis is the practice of enabling change in an enterprise..."
+- 结论：原断言不准；BA 的权威定义在 IIBA BABOK，与 SWOT/Porter 不是同一层概念
+- **不允许**直接回答"是的，BA 大致就是 SWOT/Porter"
+
+## 场景 32: 未识别 token — 不静默兜底（v1.1）
+
+**输入**: `/claim-ground research AI agent 行业全景`
+**期望**:
+- 第一 token "research" 不在白名单 {verify, anchor, help}
+- 输出明确错误：`Claim Ground: unrecognized verb 'research'. Available verbs: verify | help. For arbitrary multi-source research, use /insight-fuse instead.`
+- **不**进入 verify 模式兜底，**不**触发 insight-fuse 级别的多源调研
+- 保护 skill 边界，避免 scope creep
+
+## 场景 33: Hook self-invocation guard — 自调用不误触（v1.1）
+
+**设置**: 用户手动 `/claim-ground verify "真的吗 你确定 are you sure"`（参数里塞了 pushback regex 全部关键词）
+**期望**:
+- `epistemic-pushback-trigger.sh` 读 stdin JSON 检测 prompt 以 `/claim-ground` 开头 → 静默退出（不 emit `<CLAIM_GROUND_ACTIVATED>`）
+- 后续走 Manual Execution Mode 1 verify 路径（接地用户提到的 claim "真的吗 你确定 are you sure"——即便这个 claim 本身是奇怪的）
+- 没有"既无既往断言又硬塞 CLAIM_GROUND_ACTIVATED"的语义错位
+
+## 场景 34: Hook guard 不影响真实 pushback（v1.1 回归）
+
+**设置**: 用户在自然对话里反驳："真的吗？你之前说 Opus 4.6 是最新但我看官方已经发了 4.7"
+**期望**:
+- prompt **不**以 `/claim-ground` 开头 → guard 不触发
+- 保留 v1.0 行为：`epistemic-pushback-trigger.sh` 正常 emit `<CLAIM_GROUND_ACTIVATED>`
+- skill 加载 → re-verify → 引用系统 prompt 原文修正
+
+## 场景 35: Rule 7 扩展词族扫描 — 定义性动词（v1.1）
+
+**输入**: 让 Agent 回答 "GDPR Article 6 的合法性基础**指的是**什么"
+**期望**:
+- Rule 7 扩展词族命中 "**指的是**"（定义性动词）
+- 触发 R7（GDPR 属于"法律 / 合规"标准体）
+- 必须 WebFetch eur-lex.europa.eu 原文 GDPR Art. 6
+- 引用条文原文，不凭训练记忆改写
+
+## 场景 36: Rule 7 扩展词族扫描 — 权威断言（v1.1）
+
+**输入**: Agent 回答里出现 "**根据** Anthropic 官方文档，Claude 的上下文窗口是 200K tokens"
+**期望**:
+- Rule 7 扩展词族命中 "**根据** ... 官方"
+- 必须 WebFetch docs.anthropic.com 验证；不能凭训练记忆贴 200K
+- 若是 1M context 窗口的模型，必须改写后重新引用

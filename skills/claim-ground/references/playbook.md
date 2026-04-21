@@ -202,6 +202,61 @@
 
 > 直接写 `axios.defaults.adapter = myAdapter` 但没 Read 过 `axios/lib/defaults/index.js` 确认 `adapter` 字段真存在于 `defaults` 对象上。
 
+## 9.5 专业术语 / 行业标准定义（v1.1，红线 7）
+
+被问"X 是什么 / 定义 X / X 与 Y 的区别"，且 X 是有**权威标准体 / 规范文档**的术语时，**不允许凭训练记忆给定义**——必须 WebSearch / WebFetch 标准体原文。详细识别信号与反例见 [red-lines.md §红线 7](red-lines.md#红线-7术语凭印象v11)。
+
+### 标准体映射表
+
+| 术语领域 | 权威源 | WebSearch 关键词 / WebFetch 入口 |
+|---|---|---|
+| **商业分析（BA）/ 流程 / 需求工程** | IIBA（International Institute of Business Analysis）— BABOK Guide | `IIBA BABOK definition of business analysis` / `https://www.iiba.org/career-resources/...` |
+| **投资分析 / 金融** | CFA Institute Curriculum；FASB / IFRS Foundation | `CFA Institute curriculum investment analysis` / `https://www.cfainstitute.org/...` |
+| **会计准则** | FASB Codification (US-GAAP) / IFRS Foundation | `FASB ASC 606 revenue recognition` / `https://www.fasb.org/...` / `https://www.ifrs.org/...` |
+| **网络协议 / Web 标准** | IETF (RFC) / W3C / IANA | `RFC 9110 HTTP semantics` / `https://www.rfc-editor.org/rfc/rfcXXXX` / `https://www.w3.org/TR/...` |
+| **编码 / 字符集** | Unicode Consortium / Unicode Standard | `Unicode Standard 15.0 chapter X` / `https://www.unicode.org/standard/standard.html` |
+| **版本号规范** | Semantic Versioning (semver.org) | `semantic versioning 2.0.0 specification` / `https://semver.org/` |
+| **管理体系 / 信息安全** | ISO / IEC（27001、9001、IEC 62443 等）| `ISO/IEC 27001:2022 definition of information security` / 通过 ISO 官网 / 或 NIST 等价文档 |
+| **工程标准 / 浮点 / 网络硬件** | IEEE（754、802 系列）| `IEEE 754 floating-point definition` / `https://standards.ieee.org/...` |
+| **科研方法学 / 统计** | 同行评议教科书 / 经典论文 / 期刊（Nature / NEJM / JAMA / arXiv） | `arXiv survey of <topic>` / `DOI:10....` |
+| **法律 / 隐私 / 合规** | 立法原文 / 监管机构发布（EUR-Lex / federalregister.gov / 各国官方）| `GDPR Article 6 lawfulness of processing` / `https://eur-lex.europa.eu/...` |
+| **排版 / 文档语言** | LaTeX/TeX 项目 / CommonMark spec / JSON RFC 8259 / YAML 1.2 spec | `CommonMark spec 0.30` / `https://spec.commonmark.org/0.30/` |
+| **数据库 / 查询语言** | ANSI SQL 标准（ISO/IEC 9075）/ 各 DB 官方 docs | `ISO/IEC 9075-2 SQL language definition` |
+
+### 标准回答模板
+
+```
+[WebSearch "<标准体 + 术语 + definition>"]
+[WebFetch <标准体 URL>]
+据 <标准体> 原文："<verbatim 定义>"。
+[若需对比另一术语：]
+[WebSearch / WebFetch 另一术语]
+据 <标准体 2> 原文："<verbatim>"。
+综合：<两术语区别 / 关系陈述，避免凭印象拼接>
+```
+
+### 反例 vs 正例
+
+**❌ 反例**：
+
+> 用户：商业分析和投资分析有什么区别？
+> 错误：商业分析是研究公司业务模式的方法（SWOT / Porter），投资分析是评估投资标的的金融分析。
+> 问题：未引用 IIBA BABOK，未引用 CFA Institute；两个定义都是凭训练记忆"听起来对"地拼出来的。
+
+**✅ 正例**：
+
+> [WebFetch https://www.iiba.org/career-resources/...] 据 IIBA 官网："Business analysis is the practice of enabling change in an enterprise by defining needs and recommending solutions that deliver value to stakeholders."
+> [WebFetch https://www.cfainstitute.org/...] 据 CFA Institute Curriculum："Investment analysis is the process of evaluating an investment for its profitability and risk..."
+> 综合：BA 关注组织内变革使能，IA 关注投资标的可投性评估，并非同一体系下的近义词。
+
+### 边界
+
+- **触发**：术语命中上表领域 + 问句形如"是什么 / 定义 / 区别 / what is / define / explain"
+- **不触发**：通识词（"什么是水"）、私有术语（"我们项目里 widget 是什么意思"）、纯训练知识范畴的常识
+- **模糊区**：跨领域复合术语（"AI agent 是什么"）—— 无单一权威标准体；列 ≥ 2 个有出处的并存定义（Anthropic / OpenAI / IBM 等），明示"业内多种定义并存"
+
+---
+
 ## 10. 外部 URL / 论文 / DOI / API 端点
 
 **首要证据源**：
