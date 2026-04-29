@@ -60,6 +60,27 @@
 - 修改规范版的 description / metadata.permissions 时 MUST 同步平台版
   （详见 `skill-lifecycle` spec 场景 B）
 
+### Per-skill stricter policy
+
+某 skill 的 `evals/<skill>/run-trigger-test.sh` MAY enforce **byte-identical**
+mirror 作为该 skill 自身的更严策略（比本 spec 默认的"语义一致"更严），
+理由 MUST 在 `docs/design/<category>/<skill>-design.md` 论证。
+
+当前案例：
+
+- `insight-fuse`：research 输出对内容漂移敏感（描述字段几个 token 不同
+  可能影响 model 对场景的理解，进而改变 stage 编排）。trigger test 用
+  `diff -rq skills/insight-fuse platforms/openclaw/insight-fuse`
+  enforce byte-identical 作为 behavior fingerprint 保护。
+
+非 byte-identical 策略的 skill 仍以本 spec 默认的"语义一致"为基线。
+该机制的职责分离：
+
+- **本 spec（platform-parity）**：定义所有 skill × 所有 platform 的
+  存在性 + 语义一致底线
+- **per-skill trigger test**：可以 enforce 比 spec 默认更严的策略，
+  但不能放松 spec 底线
+
 ### Hook 在平台版的处理
 
 - Claude Code 的 hook（`skills/<name>/hooks/`）是 Claude Code 平台特定

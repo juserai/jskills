@@ -259,5 +259,5 @@
 ## 归档行为
 
 - `--no-save` → 输出到控制台，不归档
-- tome-forge 已装 → 按 tome-forge 的 `report-archival-protocol.md` 归档，单条目；frontmatter 由协议生成，并在 outputs: [...] 字段中记录本次合并所含段落
+- tome-forge 已装 → 按 tome-forge 的 `report-archival-protocol.md` 归档为单条目；frontmatter 由协议生成，并在 `outputs: [report, adr, ...]` 字段中记录本次合并所含段落
 - tome-forge 未装 → 仅控制台，输出一行 `[note] tome-forge not installed; output printed to console only`
