@@ -6,10 +6,10 @@ metadata:
   category: crucible
   permissions:
     network: false
-    filesystem: none
+    filesystem: read-write
     execution: none
-    tools: [Agent]
-argument-hint: "[question or task]"
+    tools: [Agent, Read, Write, Glob, Edit]
+argument-hint: "[question or task] [--no-save]"
 ---
 
 # Council Fuse — 多视角议会蒸馏引擎
@@ -153,14 +153,27 @@ Read the file at `skills/council-fuse/references/council-protocol.md` to underst
 - 替代三元组建议：乐观者/悲观者/务实者、架构师/实现者/测试者、用户代言人/开发者/安全专家
 - 修改 `model:` 字段可调整成本：全用 haiku 省成本，全用 opus 最深度
 
-## KB 归档（可选）
+### Stage 4 — KB 归档（必须，除非 --no-save）
 
-审议输出后，尝试归档到本地 tome-forge 知识库：
+Stage 3 输出 `## Council Fuse — Deliberation` 之后、Attribution 之前，**必须**执行归档。这是工作流的一部分，不是事后想起来的可选项。
 
-1. 读取 tome-forge 的归档协议文件 `skills/tome-forge/` 下的 `report-archival-protocol.md` — 文件不存在（tome-forge 未安装）则跳过本节
-2. 按协议执行 KB Discovery 并保存报告
-3. 元数据：`consensus_pattern`、各成员 `confidence` 均值、原始问题作为 `topic`
-4. 静默执行，成功输出一行日志，跳过则无输出
+1. 读取 tome-forge 的归档协议文件 `skills/tome-forge/references/report-archival-protocol.md`
+   - 文件存在 → 进入步骤 2
+   - 文件不存在 → 输出 `Archive: skipped (tome-forge not installed)` 并跳过 Stage 4
+2. 按协议执行 KB Discovery：
+   - 命中 → 进入步骤 3
+   - 未命中（CWD 既不在 KB 内、`~/.tome-forge/.tome-forge.json` 也不存在）→ 输出 `Archive: skipped (KB discovery failed)` 并跳过
+3. 写报告文件，frontmatter 元数据：
+   - `consensus_pattern`：Stage 2 的共识模式
+   - `confidence`：3 议员 confidence 算术均值
+   - `topic`：用户原始问题
+   - `perspectives: [generalist, critic, specialist]`
+4. **必须输出可见日志行**（这一行须出现在用户可见的最终响应里，不能藏在 tool result 里）：
+   - 成功：`Archived to KB: {absolute_filepath}`
+   - 用户传 `--no-save`：`Archive: skipped (--no-save flag)`
+   - 其他跳过场景：见步骤 1/2
+
+`--no-save` 开关：用户在调用时附加（例：`/council-fuse 单体 vs 微服务 --no-save`）则整个 Stage 4 跳过并输出 skip 行。
 
 ## 详细参考
 

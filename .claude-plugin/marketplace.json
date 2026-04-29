@@ -57,14 +57,14 @@
         {
             "name": "council-fuse",
             "description": "Council Fuse — Multi-perspective deliberation engine. 3 agents debate independently, Chairman synthesizes the best answer. Zero-dep.",
-            "version": "1.0.0",
+            "version": "1.1.0",
             "source": "./skills/council-fuse",
             "author": {
                 "name": "Juneq Cheung",
                 "url": "https://github.com/juserai"
             },
             "integrity": {
-                "skill-md-sha256": "a12477597ad9e494f08172e636341cc3859e46a0ce400e5b31b157fd3869fc9e"
+                "skill-md-sha256": "a6ad3ec56060b6147c846b28eb917e35eaaf38d65b3738805fb0b728a93b5c3f"
             },
             "skills": [
                 "./"
@@ -73,14 +73,14 @@
         {
             "name": "news-fetch",
             "description": "News Fetch — Quick news at your fingertips. Take a mental break between coding sessions. 3-tier network fallback, Markdown output. Zero-dep.",
-            "version": "1.0.0",
+            "version": "1.1.0",
             "source": "./skills/news-fetch",
             "author": {
                 "name": "Juneq Cheung",
                 "url": "https://github.com/juserai"
             },
             "integrity": {
-                "skill-md-sha256": "68c46a76e40e08a43a6127c0359ddcd4dd0379c9a10bda75dd256d48f322a453"
+                "skill-md-sha256": "7b5a05822b67c733e15e2b24157660e1fca9bc9fc175df98cf13a5b176820f48"
             },
             "skills": [
                 "./"
@@ -89,7 +89,7 @@
         {
             "name": "tome-forge",
             "description": "Tome Forge — Personal knowledge base engine. LLM-compiled Markdown wiki based on Karpathy's pattern. No RAG needed. Zero-dep.",
-            "version": "1.0.0",
+            "version": "1.1.0",
             "source": "./skills/tome-forge",
             "author": {
                 "name": "Juneq Cheung",

@@ -1,6 +1,6 @@
 # Report Archival Protocol
 
-Shared protocol for archiving skill outputs to the tome-forge knowledge base. This file is read by other skills (insight-fuse, council-fuse, news-fetch) at runtime. If this file does not exist, those skills silently skip archival.
+Shared protocol for archiving skill outputs to the tome-forge knowledge base. This file is read by other skills (insight-fuse, council-fuse, news-fetch) at runtime. If this file does not exist, those skills MUST print `Archive: skipped (tome-forge not installed)` and continue — silent failure is not allowed.
 
 ## KB Discovery
 
@@ -33,8 +33,12 @@ Self-contained KB detection logic (does not depend on tome-forge SKILL.md being 
 6. Append to {kb_root}/logs/{YYYY-MM}.md:
    - First version: "- [{date} {HH:MM}] **archive**: {skill_name} report → {filepath}"
    - Subsequent: "- [{date} {HH:MM}] **archive**: {skill_name} report → {filepath} (v{N}, topic: {topic-slug})"
-7. Output: "Archived to KB: {filepath}" or "Archived to KB: {filepath} (v{N} of {topic})"
+7. **Print visible output line** (in main response, not tool-result-only):
+   - Success: `Archived to KB: {absolute_filepath}` (or with version: `Archived to KB: {absolute_filepath} (v{N} of {topic})`)
+   - Skipped: `Archive: skipped ({reason})` where reason ∈ {`tome-forge not installed`, `KB discovery failed`, `--no-save flag`, `protocol read failed`}
 ```
+
+> **Rationale**: callers (council-fuse / news-fetch / insight-fuse) and end users have no other way to verify archival happened. Silent success/failure was the bug this protocol section fixes — every archival attempt MUST emit either a `Archived to KB:` line or a `Archive: skipped (...)` line in the main user-visible response.
 
 ### Version Lineage (同主题多版本)
 

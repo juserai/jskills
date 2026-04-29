@@ -6,9 +6,10 @@ metadata:
   category: quench
   permissions:
     network: true
-    filesystem: none
+    filesystem: read-write
     execution: none
-    tools: [WebSearch, WebFetch]
+    tools: [WebSearch, WebFetch, Read, Write, Glob, Edit]
+argument-hint: "[topic] [time-range] [--no-save]"
 ---
 
 # News Fetch — 新闻获取工具
@@ -105,3 +106,26 @@ Attempted:
 
 Suggestion: Check your network connection, or try again later.
 ```
+
+### 4. KB 归档（必须，除非 --no-save）
+
+新闻清单输出后、结束之前，**必须**执行归档。这是工作流的一部分，不是事后想起来的可选项。
+
+1. 读取 tome-forge 的归档协议文件 `platforms/openclaw/tome-forge/references/report-archival-protocol.md`
+   - 文件存在 → 进入步骤 2
+   - 文件不存在 → 输出 `Archive: skipped (tome-forge not installed)` 并跳过本节
+2. 按协议执行 KB Discovery：
+   - 命中 → 进入步骤 3
+   - 未命中（CWD 既不在 KB 内、`~/.tome-forge/.tome-forge.json` 也不存在）→ 输出 `Archive: skipped (KB discovery failed)` 并跳过
+3. 写新闻清单文件，frontmatter 元数据：
+   - `topic`：用户原始查询主题
+   - `time_range`：参数指定时间窗口（today / week / month / 自定义日期范围）
+   - `item_count`：本次清单条目数
+   - `fetch_tier`：实际生效的网络层级（L1 WebSearch / L2 WebFetch / L3 curl）
+4. **增量更新**：同主题同日期的新闻追加合并（同一天多次获取取并集去重），不同日期各自独立文件
+5. **必须输出可见日志行**（这一行须出现在用户可见的最终响应里，不能藏在 tool result 里）：
+   - 成功：`Archived to KB: {absolute_filepath}`
+   - 用户传 `--no-save`：`Archive: skipped (--no-save flag)`
+   - 其他跳过场景：见步骤 1/2
+
+`--no-save` 开关：用户在调用时附加（例：`/news-fetch ai today --no-save`）则整个步骤跳过并输出 skip 行。

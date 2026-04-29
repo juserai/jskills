@@ -195,7 +195,11 @@ sys.exit(1)
     fi
 
     # --- S07: References link check ---
-    ref_mentions=$(grep -oE 'references/[a-zA-Z0-9_-]+\.md' "$skill_md" 2>/dev/null || true)
+    # Match `references/X.md` only when NOT preceded by `/` — i.e., relative reference
+    # like `references/foo.md`, NOT cross-skill absolute path like
+    # `skills/tome-forge/references/X.md`.
+    ref_mentions=$(grep -oE '(^|[^/])references/[a-zA-Z0-9_-]+\.md' "$skill_md" 2>/dev/null \
+        | sed -E 's/^[^r]//' || true)
     if [ -n "$ref_mentions" ]; then
         while IFS= read -r ref_path; do
             full_path="$SKILLS_DIR/$skill_name/$ref_path"
