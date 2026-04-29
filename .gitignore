@@ -2,7 +2,7 @@
 .forge/
 
 # Claude Code local settings
-.claude/settings.local.json
+.claude/
 
 # OS
 .DS_Store
