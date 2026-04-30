@@ -1,6 +1,6 @@
 # Output Formats — 单一合并报告的 5 段可选段落规范
 
-`--sections <list>` 参数选择合并报告中要包含的段落。Stage 6 按依赖顺序将各段落拼接为**单一 markdown 文件**输出（默认控制台；若装 tome-forge 则归档到 KB）。report 段落作为文档根 H1，其余段落以 H2 续编号拼接（详见下方"段落合并规则"）。
+`--sections <list>` 参数选择合并报告中要包含的段落。Stage 6 按依赖顺序将各段落拼接为**单一 markdown 文件**渲染至用户响应（始终可见）；持久化到 KB 由 Stage 7 — KB 归档负责（必须，除非 `--no-save`）。report 段落作为文档根 H1，其余段落以 H2 续编号拼接（详见下方"段落合并规则"）。
 
 ## 总览
 
@@ -254,10 +254,15 @@
 
 ### 统一文件命名
 
-合并文件命名：`{kb_root}/raw/reports/insight-fuse/{YYYY-MM-DD}-{topic-slug}.md`（与 tome-forge KB 的 Save Algorithm 一致）。控制台输出时不涉及文件命名。
+合并文件命名：`{kb_root}/raw/reports/insight-fuse/{YYYY-MM-DD}-{topic-slug}.md`（与 tome-forge KB 的 Save Algorithm 一致）。仅渲染至响应、不归档时不涉及文件命名。
 
 ## 归档行为
 
-- `--no-save` → 输出到控制台，不归档
-- tome-forge 已装 → 按 tome-forge 的 `report-archival-protocol.md` 归档为单条目；frontmatter 由协议生成，并在 `outputs: [report, adr, ...]` 字段中记录本次合并所含段落
-- tome-forge 未装 → 仅控制台，输出一行 `[note] tome-forge not installed; output printed to console only`
+报告主体始终渲染至用户响应（Stage 6 step 5）。是否归档由 Stage 7 决定（详见 [SKILL.md](../SKILL.md) Stage 7）：
+
+- 默认 + tome-forge 已装 + KB Discovery 命中 → 按 tome-forge 的 `report-archival-protocol.md` 归档为单条目；frontmatter 由协议生成，并在 `outputs: [report, adr, ...]` 字段中记录本次合并所含段落；输出 `Archived to KB: {absolute_filepath}`
+- 用户传 `--no-save` → 不归档；输出 `Archive: skipped (--no-save flag)`
+- tome-forge 未装 → 不归档；输出 `Archive: skipped (tome-forge not installed)`
+- KB Discovery 未命中（CWD 既不在 KB 内、`~/.tome-forge/.tome-forge.json` 也不存在）→ 不归档；输出 `Archive: skipped (KB discovery failed)`
+
+无论上述哪一分支，归档日志行都**必须可见**——出现在用户最终响应里，不能藏在 tool result 里。

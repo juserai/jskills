@@ -65,6 +65,28 @@ argument-hint: "[question or task] [--no-save]"
 3. 保留批评者的有效反对意见
 4. 解决矛盾（不回避、不平均化）
 
+### Stage 4 — KB 归档（必须，除非 --no-save）
+
+Stage 3 输出 `## Council Fuse — Deliberation` 之后、Attribution 之前，**必须**执行归档。这是工作流的一部分，不是事后想起来的可选项。
+
+1. 读取 tome-forge 的归档协议文件 `platforms/openclaw/tome-forge/references/report-archival-protocol.md`
+   - 文件存在 → 进入步骤 2
+   - 文件不存在 → 输出 `Archive: skipped (tome-forge not installed)` 并跳过 Stage 4
+2. 按协议执行 KB Discovery：
+   - 命中 → 进入步骤 3
+   - 未命中（CWD 既不在 KB 内、`~/.tome-forge/.tome-forge.json` 也不存在）→ 输出 `Archive: skipped (KB discovery failed)` 并跳过
+3. 写报告文件，frontmatter 元数据：
+   - `consensus_pattern`：Stage 2 的共识模式
+   - `confidence`：3 议员 confidence 算术均值
+   - `topic`：用户原始问题
+   - `perspectives: [generalist, critic, specialist]`
+4. **必须输出可见日志行**（这一行须出现在用户可见的最终响应里，不能藏在 tool result 里）：
+   - 成功：`Archived to KB: {absolute_filepath}`
+   - 用户传 `--no-save`：`Archive: skipped (--no-save flag)`
+   - 其他跳过场景：见步骤 1/2
+
+`--no-save` 开关：用户在调用时附加（例：`/council-fuse 单体 vs 微服务 --no-save`）则整个 Stage 4 跳过并输出 skip 行。
+
 ### 输出格式
 
 ```markdown
@@ -110,28 +132,6 @@ argument-hint: "[question or task] [--no-save]"
 
 - 结构化输出格式：`references/council-protocol.md`
 - Chairman 综合算法：`references/synthesis-methodology.md`
-
-### Stage 4 — KB 归档（必须，除非 --no-save）
-
-Stage 3 输出 `## Council Fuse — Deliberation` 之后、Attribution 之前，**必须**执行归档。这是工作流的一部分，不是事后想起来的可选项。
-
-1. 读取 tome-forge 的归档协议文件 `platforms/openclaw/tome-forge/references/report-archival-protocol.md`
-   - 文件存在 → 进入步骤 2
-   - 文件不存在 → 输出 `Archive: skipped (tome-forge not installed)` 并跳过 Stage 4
-2. 按协议执行 KB Discovery：
-   - 命中 → 进入步骤 3
-   - 未命中（CWD 既不在 KB 内、`~/.tome-forge/.tome-forge.json` 也不存在）→ 输出 `Archive: skipped (KB discovery failed)` 并跳过
-3. 写报告文件，frontmatter 元数据：
-   - `consensus_pattern`：Stage 2 的共识模式
-   - `confidence`：3 议员 confidence 算术均值
-   - `topic`：用户原始问题
-   - `perspectives: [generalist, critic, specialist]`
-4. **必须输出可见日志行**（这一行须出现在用户可见的最终响应里，不能藏在 tool result 里）：
-   - 成功：`Archived to KB: {absolute_filepath}`
-   - 用户传 `--no-save`：`Archive: skipped (--no-save flag)`
-   - 其他跳过场景：见步骤 1/2
-
-`--no-save` 开关：用户在调用时附加（例：`/council-fuse 单体 vs 微服务 --no-save`）则整个 Stage 4 跳过并输出 skip 行。
 
 ## Attribution
 
