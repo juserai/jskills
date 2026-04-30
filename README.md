@@ -167,7 +167,7 @@ Inspired by [Karpathy's LLM Council](https://github.com/karpathy/llm-council) �
 
 From topic to professional research report. `/insight-fuse` runs a 7-stage pipeline with `skeleton.yaml` as the data contract: brainstorm → scan → align → research → review → deep dive → QA.
 
-Built-in multi-perspective analysis, 6 research-type presets (overview/technology/market/academic/product/competitive), unified merged report (5-section composition: report/checklist/ADR/decision-tree/PoC), and a 6-dimensional quality rubric with 14 blocking checks. The fuse-series sibling to council-fuse — while council-fuse deliberates on known information, insight-fuse actively gathers and synthesizes new information.
+Built-in multi-perspective analysis, 6 research-type presets (overview/technology/market/academic/product/competitive), 5 output sections (report/checklist/ADR/decision-tree/PoC) — multi-file by default, `--merge` to bundle into one markdown — and a 6-dimensional quality rubric with 14 blocking checks. The fuse-series sibling to council-fuse — while council-fuse deliberates on known information, insight-fuse actively gathers and synthesizes new information.
 
 | Mechanism | Description |
 |-----------|-------------|
@@ -176,11 +176,12 @@ Built-in multi-perspective analysis, 6 research-type presets (overview/technolog
 | **Configurable Depth** | quick / standard / deep / full — quick skips Stage 2-5; full runs all 7 stages with interactive gates |
 | **Skeleton.yaml** | 7-field data contract (dimensions / taxonomies / out_of_scope / existing_consensus / known_dissensus / hypotheses / business_neutral) consumed by every stage |
 | **Quality Rubric** | 6-dim scoring (falsifiability / evidence density / reproducibility / source diversity / actionability / transparency) + 14 blocking checks + A/B/C/D grade |
-| **Multi-Section** | report, checklist, ADR, decision-tree, PoC — `--sections` selects which sections to include in the merged document |
+| **Multi-Section** | report, checklist, ADR, decision-tree, PoC — `--sections` selects sections; default renders each as its own `.md` file, `--merge` bundles them into one |
 
 ```text
 /insight-fuse "AI glasses"
 /insight-fuse "Kubernetes autoscaling" --type technology --sections report,adr,poc
+/insight-fuse "Kubernetes autoscaling" --type technology --sections report,adr,poc --merge
 /insight-fuse "Sparse MoE interpretability" --type academic --depth deep
 /insight-fuse "AI Native landscape" --type overview --depth full --audience "new entrants"
 ```

@@ -154,7 +154,7 @@ Check 15-17（Primary-source binding / Verbatim snippet / Numeric reconciliation
 
 - **显式 `--template X`** 覆盖预设 template
 - **显式 `--perspectives a,b,c`** 覆盖预设 perspectives（fallback 机制仍生效）
-- **显式 `--sections a,b`** 覆盖预设 outputs
+- **显式 `--sections a,b`** 覆盖预设 sections
 - 未显式指定的字段全部继承预设
 - 未指定 `--type` → 默认 `overview`
 

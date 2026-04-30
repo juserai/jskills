@@ -1,8 +1,8 @@
-# Insight Fuse v3.1 Guide
+# Insight Fuse v3.3 Guide
 
-> Systematic multi-source research engine — **7-stage pipeline + skeleton.yaml data contract + 6 research-type presets + 6-dimensional quality rubric + 17 blocking checks (incl. primary-source binding / verbatim snippet / numeric reconciliation, v3.1) + 5 output formats**.
+> Systematic multi-source research engine — **8-stage pipeline (Stage 7 KB archival mandatory + observable, opt-out via `--no-save`) + skeleton.yaml data contract + 6 research-type presets + 6-dimensional quality rubric + 17 blocking checks (incl. primary-source binding / verbatim snippet / numeric reconciliation, v3.1) + 5 output formats with multi-file default and `--merge` opt-in single-file**.
 
-Insight Fuse v3.1 turns any topic into a publishable research report. The engine is scoped isolation (no CWD / IDE leakage), multi-perspective (3 anonymous agents scored on 4 dimensions), and reproducibility-first (every claim has a source, every inference is labeled, every `known_dissensus` gets a three-part template instead of collapsing into synthetic consensus).
+Insight Fuse v3.3 turns any topic into a publishable research report. The engine is scoped isolation (no CWD / IDE leakage), multi-perspective (3 anonymous agents scored on 4 dimensions), and reproducibility-first (every claim has a source, every inference is labeled, every `known_dissensus` gets a three-part template instead of collapsing into synthetic consensus).
 
 ## Quick start
 
@@ -10,8 +10,11 @@ Insight Fuse v3.1 turns any topic into a publishable research report. The engine
 # Overview research (default type, standard depth) — produces report + checklist
 /insight-fuse "AI glasses"
 
-# Technology selection with ADR + PoC outputs
+# Technology selection with ADR + PoC outputs (default: 3 separate .md files)
 /insight-fuse "Kubernetes autoscaling options" --type technology --sections report,adr,poc
+
+# Same selection but bundled into one merged markdown
+/insight-fuse "Kubernetes autoscaling options" --type technology --sections report,adr,poc --merge
 
 # Full pipeline with interactive brainstorming + focus selection
 /insight-fuse "AI Native: panorama, discrimination framework, trajectory" --type overview --depth full
@@ -127,7 +130,9 @@ Every later stage consumes specific fields — see `skills/insight-fuse/referenc
 | `decision-tree` | `templates/decision-tree.md` | Developers (fast selection) |
 | `poc` | `templates/poc.md` | Validation engineers |
 
-Multi-section: `--sections report,adr,checklist,decision-tree,poc` renders all five as sections within a single merged document, cross-referenced by internal anchors.
+**Default: multi-file output.** `--sections report,adr,checklist,decision-tree,poc` renders all five as separate `.md` files in a single directory; only `report.md` carries frontmatter and acts as the canonical KB entry, the rest are sibling files.
+
+**Opt-in single file: `--merge`.** Add `--merge` to concatenate selected sections into one markdown using H1-demotion + continuation numbering (report stays as the document's only H1; other sections' H1 → H2 numbered `§N+1`, `§N+2`…). Internal links between sections are rewritten to anchor references inside the merged file.
 
 ## Quality assurance: 17 checks + 6-dim scoring
 

@@ -176,11 +176,12 @@ cp -r forge/platforms/openclaw/* ~/.openclaw/skills/
 | **Настраиваемая глубина** | quick / standard / deep / full — quick пропускает Stage 2-5; full проходит все 7 этапов с интерактивными шлюзами |
 | **Skeleton.yaml** | Контракт данных из 7 полей (dimensions / taxonomies / out_of_scope / existing_consensus / known_dissensus / hypotheses / business_neutral), потребляемый каждым stage |
 | **Шкала качества** | 6-мерная оценка (фальсифицируемость / плотность доказательств / воспроизводимость / разнообразие источников / действенность / прозрачность) + 14 блокирующих проверок + оценка A/B/C/D |
-| **Мульти-секция** | report / checklist / ADR / decision-tree / PoC — `--sections` выбирает секции в объединённом документе |
+| **Мульти-секция** | report / checklist / ADR / decision-tree / PoC — `--sections` выбирает секции; по умолчанию каждая выводится в собственный `.md`-файл, `--merge` объединяет их в один |
 
 ```text
 /insight-fuse "AI glasses"
 /insight-fuse "Kubernetes autoscaling" --type technology --sections report,adr,poc
+/insight-fuse "Kubernetes autoscaling" --type technology --sections report,adr,poc --merge
 /insight-fuse "Sparse MoE interpretability" --type academic --depth deep
 /insight-fuse "AI Native landscape" --type overview --depth full --audience "new entrants"
 ```

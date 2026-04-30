@@ -176,11 +176,12 @@ Yerleşik çok perspektifli analiz, 6 araştırma türü ön ayarı (overview / 
 | **Yapılandırılabilir derinlik** | quick / standard / deep / full — quick Stage 2-5'i atlar; full 7 aşamayı etkileşimli kapılarla çalıştırır |
 | **Skeleton.yaml** | Her stage tarafından tüketilen 7 alanlı veri sözleşmesi (dimensions / taxonomies / out_of_scope / existing_consensus / known_dissensus / hypotheses / business_neutral) |
 | **Kalite rubriği** | 6 boyutlu puan (yanlışlanabilirlik / kanıt yoğunluğu / tekrarlanabilirlik / kaynak çeşitliliği / eyleme geçirilebilirlik / şeffaflık) + 14 engelleyici kontrol + A/B/C/D notu |
-| **Çoklu bölüm** | report / checklist / ADR / decision-tree / PoC — `--sections` birleştirilmiş belgede bölümleri seçer |
+| **Çoklu bölüm** | report / checklist / ADR / decision-tree / PoC — `--sections` bölümleri seçer; varsayılan olarak her biri kendi `.md` dosyası olarak üretilir, `--merge` hepsini tek dosyada birleştirir |
 
 ```text
 /insight-fuse "AI glasses"
 /insight-fuse "Kubernetes autoscaling" --type technology --sections report,adr,poc
+/insight-fuse "Kubernetes autoscaling" --type technology --sections report,adr,poc --merge
 /insight-fuse "Sparse MoE interpretability" --type academic --depth deep
 /insight-fuse "AI Native landscape" --type overview --depth full --audience "new entrants"
 ```

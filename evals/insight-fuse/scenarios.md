@@ -1,6 +1,6 @@
 # insight-fuse v3 Trigger Scenarios
 
-测试 insight-fuse v3 的触发、参数路由、7 阶段流水线、14 check 执行、6 维评分、合并报告多段落渲染。
+测试 insight-fuse v3 的触发、参数路由、8 阶段流水线、14 check 执行、6 维评分、多文件 / `--merge` 段落渲染。
 
 ## Scenario 1: Brainstorm-only (Stage 0 solo)
 
@@ -58,11 +58,12 @@
 - Template: technology.md，含 FIR 标记 + 比例声明（10/30/35/15/10）
 - Specialist 强制 ≥1 comparison matrix（无则 GAPS_IDENTIFIED 显式说明）
 - 特有 check：学习/迁移/维护成本 + 锁定风险识别
-- 单份合并文档含 3 个段落：report + adr + poc
+- 在 `<slug>-<date>/` 目录下落 3 个独立 markdown：`report.md`（携 frontmatter）+ `adr.md` + `poc.md`
 - ADR 含 3 条证据每条带 URL
 - PoC 假设对齐 skeleton.hypotheses + 量化成功标准
+- 归档日志：单行 `Archived to KB: {abs_path_to_report.md}`
 
-**Validates**: technology 预设 + multi-section merged output + specialist 强制数据表
+**Validates**: technology 预设 + 默认多文件输出 + specialist 强制数据表
 
 ---
 
@@ -128,17 +129,32 @@
 
 ---
 
-## Scenario 9: multi-output generation
+## Scenario 9: multi-section default (multi-file output)
 
 **Input**: `/insight-fuse "k8s 向量化 autoscaling" --type technology --sections report,adr,decision-tree,checklist,poc`
 
 **Expected**:
-- Stage 6 依次渲染 5 个段落到单份合并文档
-- 段落间内部锚点互引
-- 单份文件，命名 `<slug>-<date>.md`，含全部 5 段落
-- ADR 引用 report §X；decision-tree 引用 report；poc 引用 skeleton.hypotheses
+- Stage 6 渲染 5 个独立 markdown 文件到 `<slug>-<date>/` 目录
+- 仅 `report.md` 携带 frontmatter（含 `outputs: [report, adr, decision-tree, checklist, poc]` 列兄弟文件）
+- 其他 4 个文件无 frontmatter，相对链接互引（不改写为锚点）
+- 归档日志：单行 `Archived to KB: {abs_path_to_report.md}`
 
-**Validates**: 全部 5 种段落合并输出 + 段落间交叉引用
+**Validates**: 默认多文件模式 + 5 段全产出 + frontmatter 仅落 report.md
+
+---
+
+## Scenario 9b: --merge opt-in (single-file output)
+
+**Input**: `/insight-fuse "k8s 向量化 autoscaling" --type technology --sections report,adr,decision-tree,checklist,poc --merge`
+
+**Expected**:
+- Stage 6 按依赖顺序拼接为**单份**合并 markdown，命名 `<slug>-<date>.md`
+- H1 降级生效：合并文件唯一 H1 来自 report 段；非 report 段原 H1 → H2 续编号 `§N+1`、`§N+2`…，段内 H2→H3、H3→H4 级联
+- 模板中相对链接（如 "基于：<report.md link>"）改写为段内锚点 `(见上文 §X)`
+- frontmatter 落在合并文件头（含 `outputs: [report, adr, decision-tree, checklist, poc]`）
+- 归档日志：单行 `Archived to KB: {abs_path_to_merged.md}`
+
+**Validates**: `--merge` 合并行为 + H1 降级算法 + 段间引用改写
 
 ---
 

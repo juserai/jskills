@@ -176,11 +176,12 @@ Análise multiperspectiva integrada, 6 presets de tipo de pesquisa (overview / t
 | **Profundidade configurável** | quick / standard / deep / full — quick pula Stage 2-5; full executa todos os 7 estágios com portas interativas |
 | **Skeleton.yaml** | Contrato de dados de 7 campos (dimensions / taxonomies / out_of_scope / existing_consensus / known_dissensus / hypotheses / business_neutral) consumido por cada stage |
 | **Rubrica de qualidade** | Pontuação 6-dim (falseabilidade / densidade de evidência / reprodutibilidade / diversidade de fontes / acionabilidade / transparência) + 14 checks bloqueantes + grau A/B/C/D |
-| **Multi-seção** | report / checklist / ADR / decision-tree / PoC — `--sections` seleciona seções no documento mesclado |
+| **Multi-seção** | report / checklist / ADR / decision-tree / PoC — `--sections` seleciona seções; por padrão cada uma é gerada como seu próprio arquivo `.md`, `--merge` as agrupa em um único |
 
 ```text
 /insight-fuse "AI glasses"
 /insight-fuse "Kubernetes autoscaling" --type technology --sections report,adr,poc
+/insight-fuse "Kubernetes autoscaling" --type technology --sections report,adr,poc --merge
 /insight-fuse "Sparse MoE interpretability" --type academic --depth deep
 /insight-fuse "AI Native landscape" --type overview --depth full --audience "new entrants"
 ```

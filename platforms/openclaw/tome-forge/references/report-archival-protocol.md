@@ -94,7 +94,7 @@ perspectives:
   - generalist
   - critic
   - specialist
-outputs:                           # sections included in merged report (v3.1+)
+outputs:                           # sections produced this run (v3.1+)
   - report
   - adr
   - checklist
@@ -125,7 +125,7 @@ fetch_tier: L1 | L2 | L3
 | depth | no | enum | insight-fuse | Research depth level |
 | template | no | string | insight-fuse | Template used, or "auto" |
 | perspectives | no | list | insight-fuse, council-fuse | Perspective names used |
-| outputs | no | list | insight-fuse | Sections included in merged report, e.g. `[report, adr, checklist]`. Present when source is insight-fuse v3.1+ |
+| outputs | no | list | insight-fuse | Sections produced by this run, e.g. `[report, adr, checklist]`. Multi-file mode (default): lists sibling files in the same directory. `--merge` mode: lists sections concatenated into the single file. Present when source is insight-fuse v3.1+ |
 | consensus_pattern | no | enum | council-fuse | Agreement pattern from scoring |
 | confidence | no | int | council-fuse | Average confidence across members |
 | time_range | no | string | news-fetch | Time range queried |

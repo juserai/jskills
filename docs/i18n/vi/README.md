@@ -176,11 +176,12 @@ Phân tích đa góc nhìn tích hợp sẵn, 6 preset loại nghiên cứu (ove
 | **Độ sâu cấu hình được** | quick / standard / deep / full — quick bỏ qua Stage 2-5; full chạy toàn bộ 7 giai đoạn với cổng tương tác |
 | **Skeleton.yaml** | Hợp đồng dữ liệu 7 trường (dimensions / taxonomies / out_of_scope / existing_consensus / known_dissensus / hypotheses / business_neutral) được mỗi stage tiêu thụ |
 | **Thước đo chất lượng** | Điểm 6 chiều (khả năng phản chứng / mật độ bằng chứng / khả năng tái lập / đa dạng nguồn / khả năng hành động / minh bạch) + 14 kiểm tra chặn + hạng A/B/C/D |
-| **Đa phần** | report / checklist / ADR / decision-tree / PoC — `--sections` chọn các phần trong tài liệu hợp nhất |
+| **Đa phần** | report / checklist / ADR / decision-tree / PoC — `--sections` chọn các phần; mặc định mỗi phần được render thành tệp `.md` riêng, `--merge` gộp tất cả thành một |
 
 ```text
 /insight-fuse "AI glasses"
 /insight-fuse "Kubernetes autoscaling" --type technology --sections report,adr,poc
+/insight-fuse "Kubernetes autoscaling" --type technology --sections report,adr,poc --merge
 /insight-fuse "Sparse MoE interpretability" --type academic --depth deep
 /insight-fuse "AI Native landscape" --type overview --depth full --audience "new entrants"
 ```

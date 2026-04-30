@@ -156,11 +156,12 @@ block-break 와 직교적으로 협업: 둘 다 활성화되면 block-break 는 
 | **구성 가능한 깊이** | quick / standard / deep / full — quick은 Stage 2-5 생략; full은 7단계 전부 + 인터랙티브 gate |
 | **Skeleton.yaml** | 7필드 데이터 계약(dimensions / taxonomies / out_of_scope / existing_consensus / known_dissensus / hypotheses / business_neutral)을 각 stage가 소비 |
 | **품질 루브릭** | 6차원 점수(반증 가능성 / 증거 밀도 / 재현성 / 소스 다양성 / 실행 가능성 / 투명성) + 14개 blocking check + A/B/C/D 등급 |
-| **멀티 섹션** | report / checklist / ADR / decision-tree / PoC — `--sections`으로 병합 문서에 포함할 섹션 선택 |
+| **멀티 섹션** | report / checklist / ADR / decision-tree / PoC — `--sections`으로 섹션 선택. 기본은 각 섹션을 별도의 `.md` 파일로 생성, `--merge`로 하나로 묶음 |
 
 ```text
 /insight-fuse "AI glasses"
 /insight-fuse "Kubernetes autoscaling" --type technology --sections report,adr,poc
+/insight-fuse "Kubernetes autoscaling" --type technology --sections report,adr,poc --merge
 /insight-fuse "Sparse MoE interpretability" --type academic --depth deep
 /insight-fuse "AI Native landscape" --type overview --depth full --audience "new entrants"
 ```

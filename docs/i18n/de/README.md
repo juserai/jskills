@@ -176,11 +176,12 @@ Eingebaute Multi-Perspektiven-Analyse, 6 Recherche-Typ-Presets (overview / techn
 | **Konfigurierbare Tiefe** | quick / standard / deep / full — quick überspringt Stage 2-5; full durchläuft alle 7 Stages mit interaktiven Gates |
 | **Skeleton.yaml** | 7-Feld-Datenvertrag (dimensions / taxonomies / out_of_scope / existing_consensus / known_dissensus / hypotheses / business_neutral) wird von jeder Stage konsumiert |
 | **Qualitätsrubrik** | 6-dim Bewertung (Falsifizierbarkeit / Beweisdichte / Reproduzierbarkeit / Quellenvielfalt / Handlungsfähigkeit / Transparenz) + 14 blockierende Checks + A/B/C/D-Note |
-| **Multi-Section** | report / checklist / ADR / decision-tree / PoC — `--sections` wählt Abschnitte im zusammengeführten Dokument |
+| **Multi-Section** | report / checklist / ADR / decision-tree / PoC — `--sections` wählt Abschnitte aus; standardmäßig wird jeder als eigene `.md`-Datei gerendert, `--merge` bündelt sie in eine Datei |
 
 ```text
 /insight-fuse "AI glasses"
 /insight-fuse "Kubernetes autoscaling" --type technology --sections report,adr,poc
+/insight-fuse "Kubernetes autoscaling" --type technology --sections report,adr,poc --merge
 /insight-fuse "Sparse MoE interpretability" --type academic --depth deep
 /insight-fuse "AI Native landscape" --type overview --depth full --audience "new entrants"
 ```
