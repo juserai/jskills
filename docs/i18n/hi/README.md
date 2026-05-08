@@ -1,9 +1,9 @@
 # Forge
 
-> और मेहनत करो, फिर ब्रेक लो। Claude Code के साथ बेहतर कोडिंग रिदम के लिए 8 skills।
+> और मेहनत करो, फिर ब्रेक लो। Claude Code के साथ बेहतर कोडिंग रिदम के लिए 9 skills।
 
 [![MIT License](https://img.shields.io/badge/license-MIT-green.svg)](../../../LICENSE)
-[![Skills](https://img.shields.io/badge/skills-8-blue.svg)]()
+[![Skills](https://img.shields.io/badge/skills-9-blue.svg)]()
 [![Zero Dependencies](https://img.shields.io/badge/dependencies-0-brightgreen.svg)]()
 [![Claude Code](https://img.shields.io/badge/platform-Claude%20Code-purple.svg)]()
 [![OpenClaw](https://img.shields.io/badge/platform-OpenClaw-orange.svg)]()
@@ -59,6 +59,7 @@ cp -r forge/platforms/openclaw/* ~/.openclaw/skills/
 |-------|-------------|---------|
 | **council-fuse** | बेहतर जवाबों के लिए बहु-दृष्टिकोण विचार-विमर्श | `/council-fuse <question>` |
 | **insight-fuse** | 7-चरण अनुसंधान इंजन, skeleton.yaml डेटा अनुबंध + 6-आयामी गुणवत्ता मानक | `/insight-fuse <topic>` |
+| **peer-fuse** | md / pdf / docx / pptx (10 formats) के लिए सामान्य peer-reviewer — 8-dim rubric + 18-flag taxonomy + 3-perspective panel | `/peer-fuse <path>` |
 | **tome-forge** | LLM-संकलित wiki के साथ व्यक्तिगत ज्ञान आधार | `/tome-forge init` |
 
 ### Anvil

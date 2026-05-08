@@ -3,7 +3,7 @@
 > Работай усерднее, потом сделай перерыв. 8 skill'ов для правильного ритма разработки с Claude Code.
 
 [![MIT License](https://img.shields.io/badge/license-MIT-green.svg)](../../../LICENSE)
-[![Skills](https://img.shields.io/badge/skills-8-blue.svg)]()
+[![Skills](https://img.shields.io/badge/skills-9-blue.svg)]()
 [![Zero Dependencies](https://img.shields.io/badge/dependencies-0-brightgreen.svg)]()
 [![Claude Code](https://img.shields.io/badge/platform-Claude%20Code-purple.svg)]()
 [![OpenClaw](https://img.shields.io/badge/platform-OpenClaw-orange.svg)]()
@@ -59,6 +59,7 @@ cp -r forge/platforms/openclaw/* ~/.openclaw/skills/
 |-------|-----------|----------|
 | **council-fuse** | Мультиперспективное обсуждение для лучших ответов | `/council-fuse <question>` |
 | **insight-fuse** | 7-этапный движок исследования с контрактом skeleton.yaml и 6-мерной шкалой качества | `/insight-fuse <topic>` |
+| **peer-fuse** | Универсальный peer-reviewer для md / pdf / docx / pptx (10 форматов) — 8-мерная rubric + 18-flag taxonomy + панель из 3 перспектив | `/peer-fuse <path>` |
 | **tome-forge** | Персональная база знаний с wiki, компилируемой LLM | `/tome-forge init` |
 
 ### Anvil

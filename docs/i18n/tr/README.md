@@ -3,7 +3,7 @@
 > Daha çok çalış, sonra bir mola ver. Claude Code ile daha iyi bir kodlama ritmi için 8 skill.
 
 [![MIT License](https://img.shields.io/badge/license-MIT-green.svg)](../../../LICENSE)
-[![Skills](https://img.shields.io/badge/skills-8-blue.svg)]()
+[![Skills](https://img.shields.io/badge/skills-9-blue.svg)]()
 [![Zero Dependencies](https://img.shields.io/badge/dependencies-0-brightgreen.svg)]()
 [![Claude Code](https://img.shields.io/badge/platform-Claude%20Code-purple.svg)]()
 [![OpenClaw](https://img.shields.io/badge/platform-OpenClaw-orange.svg)]()
@@ -59,6 +59,7 @@ cp -r forge/platforms/openclaw/* ~/.openclaw/skills/
 |-------|----------|------|
 | **council-fuse** | Daha iyi yanıtlar için çok perspektifli müzakere | `/council-fuse <question>` |
 | **insight-fuse** | skeleton.yaml veri sözleşmeli 7 aşamalı araştırma motoru ve 6 boyutlu kalite rubriği | `/insight-fuse <topic>` |
+| **peer-fuse** | md / pdf / docx / pptx (10 format) için genel peer-reviewer — 8-boyutlu rubric + 18-flag taksonomi + 3-perspektif panel | `/peer-fuse <path>` |
 | **tome-forge** | LLM derlemeli wiki ile kişisel bilgi tabanı | `/tome-forge init` |
 
 ### Anvil

@@ -100,6 +100,36 @@ Detailed rationale for each entry lives under `openspec/changes/<id>/` (active o
 
 ---
 
+## peer-fuse
+
+### [0.1.0] — 2026-05-07
+
+- Initial release: generic peer-reviewer for research artifacts in 10 formats
+  (md / pdf / docx / pptx / doc / ppt / odt / odp / txt / html / rtf) via
+  Stage 0.5 format adapter (Tier 1 native / Tier 2 pandoc / Tier 3 libreoffice).
+- 8-stage pipeline (Stage 0 scope → 0.5 format adapter + type auto-classify →
+  1 structural audit → 2 evidence audit → 3 logic audit → 3.5 § Document Reading
+  freeze → 4 3-perspective panel → 5 8-dim weighted scoring → 5.5 § Holistic
+  Assessment → 6 diff suggestions → 7 KB archival).
+- 6 research-type presets (overview / technology / market / academic / product /
+  competitive) with `--type=auto` default — heuristic classifier mirrors
+  insight-fuse research-types vocabulary.
+- 8-dim rubric (accuracy / comprehensiveness / depth / novelty / actionability /
+  readability / objectivity / falsifiability) weighted by research_type.
+- 18-flag taxonomy (F-EVD / F-STAT / F-LOGIC / F-SCOPE / F-COST / F-METHOD /
+  F-DISAGREE / F-CONSTRUCT / F-CITE / F-CONF / F-DELTA categories).
+- 3-perspective panel (review-methodologist / review-adversarial /
+  review-practitioner) dispatched in parallel — pattern adapted from council-fuse
+  Stage 1.
+- § Document Reading review-isolation hard constraint (architectural input
+  boundary + write-once freeze + forbidden-word lint, all three layers).
+- Sibling of insight-fuse and council-fuse (crucible category); coexists with
+  insight-fuse Stage 6.5 internal-source reviewer (peer-fuse is cross-skill
+  external reviewer).
+- Reference: [openspec/changes/add-peer-fuse-skill](openspec/changes/add-peer-fuse-skill/proposal.md)
+
+---
+
 ## ralph-boost
 
 ### [1.0.0]

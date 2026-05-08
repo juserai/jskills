@@ -133,6 +133,22 @@
             "skills": [
                 "./"
             ]
+        },
+        {
+            "name": "peer-fuse",
+            "description": "Peer-Fuse v0.1.0 — Generic peer-reviewer for research artifacts in md / pdf / docx / pptx / doc / ppt / odt / odp / txt / html. 8-dim rubric weighted by 6 research types (auto-classified) + 18-flag taxonomy + 3-perspective panel. Stage 7 KB archival mandatory + observable, opt-out via --no-save. Zero-dep.",
+            "version": "0.1.0",
+            "source": "./skills/peer-fuse",
+            "author": {
+                "name": "Juneq Cheung",
+                "url": "https://github.com/juserai"
+            },
+            "integrity": {
+                "skill-md-sha256": "a9d066cb629008cdaca5965e22a050bedcc3e265eb3480ddf6a6665d2e68c547"
+            },
+            "skills": [
+                "./"
+            ]
         }
     ]
 }

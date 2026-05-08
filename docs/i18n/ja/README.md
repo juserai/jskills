@@ -3,7 +3,7 @@
 > 全力で取り組み、ひと休みする。Claude Code との開発リズムを整える 8 つの skill。
 
 [![MIT License](https://img.shields.io/badge/license-MIT-green.svg)](../../../LICENSE)
-[![Skills](https://img.shields.io/badge/skills-8-blue.svg)]()
+[![Skills](https://img.shields.io/badge/skills-9-blue.svg)]()
 [![Zero Dependencies](https://img.shields.io/badge/dependencies-0-brightgreen.svg)]()
 [![Claude Code](https://img.shields.io/badge/platform-Claude%20Code-purple.svg)]()
 [![OpenClaw](https://img.shields.io/badge/platform-OpenClaw-orange.svg)]()
@@ -39,6 +39,7 @@ cp -r forge/platforms/openclaw/* ~/.openclaw/skills/
 |-------|------|------------|
 | **council-fuse** | 多角的な議論で、より良い回答を導く | `/council-fuse <question>` |
 | **insight-fuse** | 7段階調査エンジン、skeleton.yaml データ契約 + 6次元品質ルーブリック | `/insight-fuse <topic>` |
+| **peer-fuse** | 汎用ピアレビューエンジン。md / pdf / docx / pptx 等 10 フォーマット対応 — 8 次元 rubric + 18-flag 分類 + 3 視点パネル | `/peer-fuse <path>` |
 | **tome-forge** | LLMで編纂するパーソナルナレッジベース | `/tome-forge init` |
 
 ### Anvil

@@ -3,7 +3,7 @@
 > Làm việc chăm chỉ hơn, rồi nghỉ ngơi một chút. 8 skill giúp bạn có nhịp code tốt hơn với Claude Code.
 
 [![MIT License](https://img.shields.io/badge/license-MIT-green.svg)](../../../LICENSE)
-[![Skills](https://img.shields.io/badge/skills-8-blue.svg)]()
+[![Skills](https://img.shields.io/badge/skills-9-blue.svg)]()
 [![Zero Dependencies](https://img.shields.io/badge/dependencies-0-brightgreen.svg)]()
 [![Claude Code](https://img.shields.io/badge/platform-Claude%20Code-purple.svg)]()
 [![OpenClaw](https://img.shields.io/badge/platform-OpenClaw-orange.svg)]()
@@ -59,6 +59,7 @@ cp -r forge/platforms/openclaw/* ~/.openclaw/skills/
 |-------|-----------|----------|
 | **council-fuse** | Thảo luận đa góc nhìn để có câu trả lời tốt hơn | `/council-fuse <question>` |
 | **insight-fuse** | Engine nghiên cứu 7 giai đoạn với hợp đồng dữ liệu skeleton.yaml & thước đo chất lượng 6 chiều | `/insight-fuse <topic>` |
+| **peer-fuse** | Peer-reviewer chung cho md / pdf / docx / pptx (10 định dạng) — rubric 8-chiều + taxonomy 18-flag + panel 3 góc nhìn | `/peer-fuse <path>` |
 | **tome-forge** | Cơ sở tri thức cá nhân với wiki biên soạn bởi LLM | `/tome-forge init` |
 
 ### Anvil

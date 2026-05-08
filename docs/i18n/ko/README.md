@@ -3,7 +3,7 @@
 > 더 열심히, 그리고 잠깐 쉬어가기. Claude Code와 함께하는 더 나은 코딩 리듬을 위한 8가지 skill.
 
 [![MIT License](https://img.shields.io/badge/license-MIT-green.svg)](../../../LICENSE)
-[![Skills](https://img.shields.io/badge/skills-8-blue.svg)]()
+[![Skills](https://img.shields.io/badge/skills-9-blue.svg)]()
 [![Zero Dependencies](https://img.shields.io/badge/dependencies-0-brightgreen.svg)]()
 [![Claude Code](https://img.shields.io/badge/platform-Claude%20Code-purple.svg)]()
 [![OpenClaw](https://img.shields.io/badge/platform-OpenClaw-orange.svg)]()
@@ -39,6 +39,7 @@ cp -r forge/platforms/openclaw/* ~/.openclaw/skills/
 |-------|------|-------------|
 | **council-fuse** | 다관점 심의로 더 나은 답변 도출 | `/council-fuse <question>` |
 | **insight-fuse** | 7단계 조사 엔진, skeleton.yaml 데이터 계약 + 6차원 품질 루브릭 | `/insight-fuse <topic>` |
+| **peer-fuse** | 범용 동료 검토 엔진. md / pdf / docx / pptx 등 10가지 형식 지원 — 8차원 rubric + 18-flag 분류 + 3관점 패널 | `/peer-fuse <path>` |
 | **tome-forge** | LLM으로 편찬하는 개인 지식 베이스 | `/tome-forge init` |
 
 ### Anvil

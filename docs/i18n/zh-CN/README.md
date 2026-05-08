@@ -1,9 +1,9 @@
 # Forge
 
-> 张弛有度。8 个 skill，让你和 AI 的编码节奏更好。
+> 张弛有度。9 个 skill，让你和 AI 的编码节奏更好。
 
 [![MIT License](https://img.shields.io/badge/license-MIT-green.svg)](../../../LICENSE)
-[![Skills](https://img.shields.io/badge/skills-8-blue.svg)]()
+[![Skills](https://img.shields.io/badge/skills-9-blue.svg)]()
 [![Zero Dependencies](https://img.shields.io/badge/dependencies-0-brightgreen.svg)]()
 [![Claude Code](https://img.shields.io/badge/platform-Claude%20Code-purple.svg)]()
 [![OpenClaw](https://img.shields.io/badge/platform-OpenClaw-orange.svg)]()
@@ -39,6 +39,7 @@ cp -r forge/platforms/openclaw/* ~/.openclaw/skills/
 |-------|------|--------|
 | **council-fuse** | 多视角议会蒸馏，获得更好的答案 | `/council-fuse <question>` |
 | **insight-fuse** | 7 阶段调研引擎，skeleton.yaml 数据契约 + 6 维质量尺 | `/insight-fuse <topic>` |
+| **peer-fuse** | 通用调研工件 peer-review 引擎，支持 md / pdf / docx / pptx 等 10 种格式 — 8 维 rubric + 18-flag taxonomy + 3 视角 panel | `/peer-fuse <path>` |
 | **tome-forge** | 个人知识库，LLM 编纂的 wiki | `/tome-forge init` |
 
 ### Anvil

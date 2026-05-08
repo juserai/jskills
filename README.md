@@ -1,9 +1,9 @@
 # Forge
 
-> Forge stronger AI agents. 8 skills for a better coding rhythm with Claude Code.
+> Forge stronger AI agents. 9 skills for a better coding rhythm with Claude Code.
 
 [![MIT License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![Skills](https://img.shields.io/badge/skills-8-blue.svg)]()
+[![Skills](https://img.shields.io/badge/skills-9-blue.svg)]()
 [![Zero Dependencies](https://img.shields.io/badge/dependencies-0-brightgreen.svg)]()
 [![Claude Code](https://img.shields.io/badge/platform-Claude%20Code-purple.svg)]()
 [![OpenClaw](https://img.shields.io/badge/platform-OpenClaw-orange.svg)]()
@@ -66,6 +66,7 @@ openclaw hooks enable claim-ground-epistemic-pushback
 |-------|-------------|--------|
 | **council-fuse** | Multi-perspective deliberation for better answers | `/council-fuse <question>` |
 | **insight-fuse** | 7-stage research engine with skeleton.yaml contract & 6-dim quality rubric | `/insight-fuse <topic>` |
+| **peer-fuse** | Generic peer-reviewer for md / pdf / docx / pptx (10 formats) — 8-dim rubric + 18-flag taxonomy + 3-perspective panel | `/peer-fuse <path>` |
 | **tome-forge** | Personal knowledge base with LLM-compiled wiki | `/tome-forge init` |
 
 ### Anvil
@@ -192,6 +193,28 @@ Built-in multi-perspective analysis, 6 research-type presets (overview/technolog
 /insight-fuse "Sparse MoE interpretability" --type academic --depth deep
 /insight-fuse "AI Native landscape" --type overview --depth full --audience "new entrants"
 ```
+
+## Peer Fuse — Generic Cross-Skill Peer-Reviewer
+
+Cross-skill external review engine. Takes any research artifact in 10 formats — `md / pdf / docx / pptx / doc / ppt / odt / odp / txt / html` — and produces a peer-review markdown report with an A+/A−/.../D grade, a tiered list of quality flags, a multi-perspective panel synthesis, and patch-style diff suggestions. Coexists with insight-fuse Stage 6.5 reviewer (which is IF-internal same-source review) — peer-fuse is the cross-skill external complement.
+
+| Feature | Description |
+|---------|-------------|
+| **3-Tier Format Adapter** | Tier 1 native (md / pdf / txt) / Tier 2 pandoc (docx / html / rtf / odt) / Tier 3 libreoffice (doc / ppt / pptx / odp) — fail-soft with install hint when tools missing |
+| **Auto Type Classification** | `--type=auto` default; classifies into 6 forge research types (overview / technology / market / academic / product / competitive) via heuristics over canonical_view |
+| **8-Dimensional Rubric** | accuracy / comprehensiveness / depth / novelty / actionability / readability / objectivity / falsifiability — weighted by research_type |
+| **18-Flag Taxonomy** | F-EVD / F-STAT / F-LOGIC / F-SCOPE / F-COST / F-METHOD / F-DISAGREE / F-CONSTRUCT / F-CITE / F-CONF / F-DELTA categories |
+| **3-Perspective Panel** | review-methodologist / review-adversarial / review-practitioner dispatched in parallel; pattern adapted from council-fuse Stage 1 |
+| **§ Document Reading Freeze** | Stage 3.5 produces descriptive narrative; review-isolated via architectural input boundary + write-once hash freeze + forbidden-word lint (3-layer hard constraint) |
+
+```text
+/peer-fuse <path>                              # Auto-detect type, default depth, archive
+/peer-fuse papers/transformer.pdf              # PDF auto-classifies as academic
+/peer-fuse decks/q4-roadmap.pptx --type product
+/peer-fuse handbook.docx --depth quick --no-save
+```
+
+> Fills the cross-skill external-review gap that insight-fuse Stage 6.5 (same-source) cannot cover. Built as a zero-dependency skill (system tools `pandoc` / `libreoffice` only required for non-md/pdf inputs).
 
 ## Tome Forge — Personal Knowledge Base Engine
 

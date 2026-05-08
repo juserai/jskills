@@ -1,9 +1,9 @@
 # Forge
 
-> Trabaja más duro, luego tómate un descanso. 8 skills para un mejor ritmo de programación con Claude Code.
+> Trabaja más duro, luego tómate un descanso. 9 skills para un mejor ritmo de programación con Claude Code.
 
 [![MIT License](https://img.shields.io/badge/license-MIT-green.svg)](../../../LICENSE)
-[![Skills](https://img.shields.io/badge/skills-8-blue.svg)]()
+[![Skills](https://img.shields.io/badge/skills-9-blue.svg)]()
 [![Zero Dependencies](https://img.shields.io/badge/dependencies-0-brightgreen.svg)]()
 [![Claude Code](https://img.shields.io/badge/platform-Claude%20Code-purple.svg)]()
 [![OpenClaw](https://img.shields.io/badge/platform-OpenClaw-orange.svg)]()
@@ -59,6 +59,7 @@ cp -r forge/platforms/openclaw/* ~/.openclaw/skills/
 |-------|----------|----------|
 | **council-fuse** | Deliberación multiperspectiva para mejores respuestas | `/council-fuse <question>` |
 | **insight-fuse** | Motor de investigación de 7 etapas con contrato skeleton.yaml y rúbrica de calidad de 6 dimensiones | `/insight-fuse <topic>` |
+| **peer-fuse** | Revisor por pares genérico para md / pdf / docx / pptx (10 formatos) — rúbrica de 8 dim + taxonomía de 18 flags + panel de 3 perspectivas | `/peer-fuse <path>` |
 | **tome-forge** | Base de conocimiento personal con wiki compilada por LLM | `/tome-forge init` |
 
 ### Anvil

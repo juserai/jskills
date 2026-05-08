@@ -3,7 +3,7 @@
 > Härter arbeiten, dann Pause machen. 8 Skills für einen besseren Entwicklungsrhythmus mit Claude Code.
 
 [![MIT License](https://img.shields.io/badge/license-MIT-green.svg)](../../../LICENSE)
-[![Skills](https://img.shields.io/badge/skills-8-blue.svg)]()
+[![Skills](https://img.shields.io/badge/skills-9-blue.svg)]()
 [![Zero Dependencies](https://img.shields.io/badge/dependencies-0-brightgreen.svg)]()
 [![Claude Code](https://img.shields.io/badge/platform-Claude%20Code-purple.svg)]()
 [![OpenClaw](https://img.shields.io/badge/platform-OpenClaw-orange.svg)]()
@@ -59,6 +59,7 @@ cp -r forge/platforms/openclaw/* ~/.openclaw/skills/
 |-------|-------------|--------------|
 | **council-fuse** | Multi-Perspektiven-Beratung für bessere Antworten | `/council-fuse <question>` |
 | **insight-fuse** | 7-Stufen-Recherche-Engine mit skeleton.yaml-Datenvertrag & 6-dim Qualitätsrubrik | `/insight-fuse <topic>` |
+| **peer-fuse** | Generischer Peer-Reviewer für md / pdf / docx / pptx (10 Formate) — 8-dim Rubrik + 18-flag Taxonomie + 3-Perspektiven-Panel | `/peer-fuse <path>` |
 | **tome-forge** | Persönliche Wissensbasis mit LLM-kompiliertem Wiki | `/tome-forge init` |
 
 ### Anvil
