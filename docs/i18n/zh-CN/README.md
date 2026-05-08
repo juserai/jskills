@@ -8,7 +8,9 @@
 [![Claude Code](https://img.shields.io/badge/platform-Claude%20Code-purple.svg)]()
 [![OpenClaw](https://img.shields.io/badge/platform-OpenClaw-orange.svg)]()
 
-[English](../../../README.md) | [日本語](../ja/README.md) | [한국어](../ko/README.md) | [Español](../es/README.md) | [Português](../pt-BR/README.md) | [Français](../fr/README.md) | [Deutsch](../de/README.md) | [Русский](../ru/README.md) | [हिन्दी](../hi/README.md) | [Türkçe](../tr/README.md) | [Tiếng Việt](../vi/README.md)
+[English](../../../README.md)
+
+> **i18n 收缩**（2026-05-08）：原 11 语言 i18n surface 已收敛到 zh-CN 单语言；其余 10 语言归档于 [docs/i18n-archived/](../../../docs/i18n-archived/)。
 
 ## 安装
 

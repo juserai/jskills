@@ -16,7 +16,8 @@ skills/<skill>/                                  # Claude Code 规范版
 platforms/<platform>/<skill>/                    # 其他平台适配（同构）
 evals/<skill>/                                   # 跨平台 eval 场景 + 触发测试
 docs/user-guide/<skill>-guide.md                 # 英文用户手册
-docs/i18n/<lang>/<file>                          # 多语言（README + skill guide）
+docs/i18n/<lang>/<file>                          # 多语言（README + skill guide；当前仅 zh-CN）
+docs/i18n-archived/<lang>/<file>                 # 归档语言（10 种），恢复需走专项 RFC
 docs/design/<category>/<skill>-design.md         # 按 4 分类组织的设计文档
 docs/design/cross/<topic>-design.md              # 横向设计文档
 docs/dev-guide/                                  # 跨切面开发文档（如安全指南）

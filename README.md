@@ -8,7 +8,9 @@
 [![Claude Code](https://img.shields.io/badge/platform-Claude%20Code-purple.svg)]()
 [![OpenClaw](https://img.shields.io/badge/platform-OpenClaw-orange.svg)]()
 
-[中文](docs/i18n/zh-CN/README.md) | [日本語](docs/i18n/ja/README.md) | [한국어](docs/i18n/ko/README.md) | [Español](docs/i18n/es/README.md) | [Português](docs/i18n/pt-BR/README.md) | [Français](docs/i18n/fr/README.md) | [Deutsch](docs/i18n/de/README.md) | [Русский](docs/i18n/ru/README.md) | [हिन्दी](docs/i18n/hi/README.md) | [Türkçe](docs/i18n/tr/README.md) | [Tiếng Việt](docs/i18n/vi/README.md)
+[中文](docs/i18n/zh-CN/README.md)
+
+> **i18n 收缩**（2026-05-08）：原 11 语言 i18n surface 已收敛到 zh-CN 单语言；其余 10 语言归档于 [docs/i18n-archived/](docs/i18n-archived/)，恢复需走专项 RFC（见 [openspec/changes/reduce-i18n-to-zh-cn-only/](openspec/changes/reduce-i18n-to-zh-cn-only/proposal.md)）。
 
 ### Quick Demo
 
@@ -305,7 +307,8 @@ forge/
 │   ├── user-guide/                # Per-skill usage guides (English)
 │   ├── dev-guide/                 # Cross-cutting developer docs
 │   ├── design/                    # Per-category design docs (hammer/crucible/anvil/quench/cross)
-│   └── i18n/                      # Translations (11 languages, single-track)
+│   ├── i18n/                      # Translations (zh-CN only since 2026-05-08)
+│   └── i18n-archived/             # 10 languages archived; restore via dedicated RFC
 │       └── <lang>/
 │           ├── README.md          # Translated README
 │           └── <skill>-guide.md   # Translated skill guide

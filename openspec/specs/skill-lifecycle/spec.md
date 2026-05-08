@@ -27,15 +27,15 @@ grep -rn "<skill-name>" . --include="*.md" --include="*.json" --include="*.sh" \
 - [ ] `platforms/<platform>/<name>/` 与 references 镜像（每个现有平台都要有）
 - [ ] `evals/<name>/scenarios.md`（≥ 5 场景）+ `run-trigger-test.sh`（可执行）
 - [ ] `docs/user-guide/<name>-guide.md`
-- [ ] `docs/i18n/<lang>/<name>-guide.md` × 11 语言（详见 `i18n-layout` spec）
+- [ ] `docs/i18n/<lang>/<name>-guide.md` × 1 语言（zh-CN，2026-05-08 起；详见 `i18n-layout` spec § 当前支持语言）
 - [ ] `docs/design/<category>/<name>-design.md`（含分类决策三元组，详见
       `category-decision` spec；`<category>` ∈ {hammer, crucible, anvil, quench, cross}）
 - [ ] `.claude-plugin/marketplace.json`：新增 plugin 条目 + 正确的
       `integrity.skill-md-sha256`
 - [ ] `README.md`：Skills 表格（对应分类章节）+ 详情段落
       （位置按 Hammer→Crucible→Anvil→Quench）
-- [ ] `docs/i18n/<lang>/README.md` × 11：同上 + skills badge（`skills-N-blue.svg`）
-      + 首段 "N skills" 计数全部 +1
+- [ ] `docs/i18n/<lang>/README.md` × 1（zh-CN）：同上 + skills badge（`skills-N-blue.svg`）
+      + 首段 "N skills" 计数 +1
 - [ ] `skills/<name>/hooks/` 与 `skills/<name>/hooks/hooks.json`（仅当该 skill
       需要 hook；marketplace.json 中对应 plugin 的 `source` 必须指向
       `./skills/<name>`）
@@ -47,7 +47,7 @@ grep -rn "<skill-name>" . --include="*.md" --include="*.json" --include="*.sh" \
 - [ ] 若 `description` 被改：MUST 同步 `marketplace.json.plugins[].description`
       + `platforms/<platform>/<name>/SKILL.md`
       + `docs/user-guide/<name>-guide.md` 首段
-      + 11 份 i18n guide 首段
+      + 1 份 i18n guide 首段（zh-CN）
 - [ ] 若 `metadata.permissions` 变动：MUST 同步平台适配版
 - [ ] 若 references 结构变动：MUST 检查 SKILL.md 内的引用 + 检查 platforms 镜像
 - [ ] **决策版本位**（MAJOR / MINOR / PATCH / 不 bump），并在 PR description
@@ -81,11 +81,10 @@ grep -rn "<skill-name>" . --include="*.md" --include="*.json" --include="*.sh" \
       详见 `category-decision` spec）
 - [ ] `README.md` Skills 表格：把行从旧章节移到新章节；详情段落按新分类
       调整顺序（Hammer→Crucible→Anvil→Quench）
-- [ ] `docs/i18n/<lang>/README.md` × 11：两处同步（表格 + 详情段落位置）
+- [ ] `docs/i18n/<lang>/README.md` × 1（zh-CN）：两处同步（表格 + 详情段落位置）
 - [ ] `docs/user-guide/<name>-guide.md` 的"Interaction with other forge skills"
       段——所有跨 skill 分类声明（如 "Same category"、"sibling of X"）
-- [ ] `docs/i18n/<lang>/<name>-guide.md` × 11——同上，每份 i18n guide
-      都要核对跨 skill 分类声明
+- [ ] `docs/i18n/<lang>/<name>-guide.md` × 1（zh-CN）——同上，核对跨 skill 分类声明
 - [ ] 全文 grep 该 skill 名，确认零遗留旧分类描述（如
       "anvil sibling of skill-lint"）
 - [ ] 多语言关键词扫描（见下方"自检关键动作"）
@@ -95,10 +94,11 @@ grep -rn "<skill-name>" . --include="*.md" --include="*.json" --include="*.sh" \
 **删除**：
 
 - [ ] 删除 `skills/<name>/`、`platforms/*/<name>`、`evals/<name>/`、
-      `docs/user-guide/<name>-guide.md`、`docs/i18n/<lang>/<name>-guide.md` × 11、
+      `docs/user-guide/<name>-guide.md`、`docs/i18n/zh-CN/<name>-guide.md`、
+      `docs/i18n-archived/*/<name>-guide.md`（如有，归档语言中也要清掉对应文件）、
       `docs/design/<category>/<name>-design.md`
 - [ ] 从 `.claude-plugin/marketplace.json` 的 `plugins` 数组移除条目
-- [ ] 从 `README.md` + 11 份 `docs/i18n/<lang>/README.md` 移除：Skills 表格行、
+- [ ] 从 `README.md` + 1 份 `docs/i18n/zh-CN/README.md` 移除：Skills 表格行、
       详情段落、skills badge 计数 -1、首段 "N skills" 计数 -1
 - [ ] 若该 skill 有专属 hook，删除整个 `skills/<name>/hooks/` 目录
 - [ ] 全文 `grep -rn "<name>"` 确认零残留引用
