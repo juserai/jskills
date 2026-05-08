@@ -2,6 +2,7 @@
 name: block-break
 description: "Block Break — Behavioral constraint engine. When stuck, forces exhaustive problem-solving with L0-L4 pressure escalation."
 license: MIT
+argument-hint: "[L0|L1|L2|L3|L4] [task description...]"
 metadata:
   category: hammer
   permissions:
@@ -21,10 +22,12 @@ metadata:
 仅当第一参数为 `help` / `--help` 时输出以下 help card 并停止执行（parsing 规则详见 [CLAUDE.md § Help 模式约定](../../CLAUDE.md)）：
 
 ```
-Block Break v1.0.0 — Behavioral constraint engine (L0-L4 pressure escalation)
+Block Break v1.0.1 — Behavioral constraint engine (L0-L4 pressure escalation)
 
 Usage:
-  (no args)                      Run the behavioral constraints (default — see rest of SKILL.md)
+  /block-break                   Activate at L0 (default trust level — see rest of SKILL.md)
+  /block-break L0|L1|L2|L3|L4    Activate at a specific pressure level
+  /block-break <task>            Activate and immediately start a task
   /block-break help              Show this help
 
 How it normally activates:
@@ -35,6 +38,11 @@ How it normally activates:
 What it enforces:
   - Three red lines: closure (verify before claiming done), fact-driven (tool-verify before attribution), exhaust-all (run 5-step methodology before giving up)
   - L0 → L4 pressure levels persist across session compaction
+
+Examples:
+  /block-break                   Activate fresh at L0
+  /block-break L2                Skip ahead to interrogation level
+  /block-break fix the auth bug  Activate and start the task
 
 Guide: docs/user-guide/block-break-guide.md
 ```

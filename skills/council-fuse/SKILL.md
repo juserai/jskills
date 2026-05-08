@@ -21,16 +21,18 @@ argument-hint: "[question or task] [--no-save]"
 当第一参数为 `help` / `--help`，**或无参数**时，输出以下 help card 并停止执行（parsing 规则详见 [CLAUDE.md § Help 模式约定](../../CLAUDE.md)）：
 
 ```
-Council Fuse v1.1.0 — Multi-perspective deliberation engine (3 agents + Chairman synthesis)
+Council Fuse v1.1.1 — Multi-perspective deliberation engine (3 agents + Chairman synthesis)
 
 Usage:
-  /council-fuse <question or task>   Deliberate the question, return synthesized answer
-  /council-fuse help                 Show this help
+  /council-fuse <question or task>          Deliberate, synthesize, archive to KB
+  /council-fuse <question> --no-save        Deliberate but skip Stage 4 KB archive
+  /council-fuse help                        Show this help
 
 Examples:
   /council-fuse 单体应用 vs 微服务怎么选
   /council-fuse What's the best approach to implement rate limiting?
   /council-fuse Review this architecture decision: using Redis as primary datastore
+  /council-fuse "Should we use Redis or Postgres?" --no-save
 
 Guide: docs/user-guide/council-fuse-guide.md
 ```

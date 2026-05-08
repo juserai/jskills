@@ -20,7 +20,7 @@
     "verify-changelog-entry": true,
     "verify-docs-version-drift": "warn",
     "verify-archived-spec-merge": "warn",
-    "verify-help-card-flag-coverage": "warn",
+    "verify-help-card-flag-coverage": "error",
     "require-help-section": "warn",
     "user-guide-dir": "docs/user-guide",
     "design-dir": "docs/design",

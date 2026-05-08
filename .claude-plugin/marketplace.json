@@ -9,14 +9,14 @@
         {
             "name": "block-break",
             "description": "Block Break — Behavioral constraint engine. Forces Claude to exhaust all approaches before giving up. L0-L4 pressure escalation. Zero-dep.",
-            "version": "1.0.0",
+            "version": "1.0.1",
             "source": "./skills/block-break",
             "author": {
                 "name": "Juneq Cheung",
                 "url": "https://github.com/juserai"
             },
             "integrity": {
-                "skill-md-sha256": "262628ee9e265ccc226f08be1042ea9ad605fe16dcf2dee69fc3e09dd8f70979"
+                "skill-md-sha256": "8bcca5fea8037de6671806b785971129fd7337435fe3c9bd5b533155af5e3dd3"
             },
             "skills": [
                 "./"
@@ -41,14 +41,14 @@
         {
             "name": "skill-lint",
             "description": "Skill Lint — Validate Claude Code skill plugins. Structural (bash) + semantic (AI) checks. Works on any plugin project. Zero-dep.",
-            "version": "1.1.0",
+            "version": "1.1.1",
             "source": "./skills/skill-lint",
             "author": {
                 "name": "Juneq Cheung",
                 "url": "https://github.com/juserai"
             },
             "integrity": {
-                "skill-md-sha256": "5003b1421bf6ea84660ed4c543ef81222b5144a9674e55077e9b67d0544464ef"
+                "skill-md-sha256": "c15e5bcfdd615935a2630b67f6365e68582eb48554134056f9bbb13b805030db"
             },
             "skills": [
                 "./"
@@ -57,14 +57,14 @@
         {
             "name": "council-fuse",
             "description": "Council Fuse — Multi-perspective deliberation engine. 3 agents debate independently, Chairman synthesizes the best answer. Zero-dep.",
-            "version": "1.1.0",
+            "version": "1.1.1",
             "source": "./skills/council-fuse",
             "author": {
                 "name": "Juneq Cheung",
                 "url": "https://github.com/juserai"
             },
             "integrity": {
-                "skill-md-sha256": "fb00e32476847ae600bc350bdc59665589bcf2e2b47a31301ac0dc5ae4066112"
+                "skill-md-sha256": "09036fbab688fa265b2dadfcaf4d2daf5d43b39c33f18e74045535eed232f4e2"
             },
             "skills": [
                 "./"
@@ -73,14 +73,14 @@
         {
             "name": "news-fetch",
             "description": "News Fetch — Quick news at your fingertips. Take a mental break between coding sessions. 3-tier network fallback, Markdown output. Zero-dep.",
-            "version": "1.1.0",
+            "version": "1.1.1",
             "source": "./skills/news-fetch",
             "author": {
                 "name": "Juneq Cheung",
                 "url": "https://github.com/juserai"
             },
             "integrity": {
-                "skill-md-sha256": "d14f0b3a671373aa2fddbd5d438647c886bb65e0fa090fc49f7e96daf20cca57"
+                "skill-md-sha256": "4f22c045cc1163a49fd6e2d83fc78e893b98fb99d703fadcfe56975de761fb43"
             },
             "skills": [
                 "./"
@@ -105,14 +105,14 @@
         {
             "name": "insight-fuse",
             "description": "Insight Fuse v3.4 — Systematic multi-source research engine. 8-stage pipeline + Stage 6.5 reviewer pass (Stage 7 KB archival mandatory + observable, opt-out via --no-save) with skeleton.yaml data contract, 6 research-type presets, 6-dim quality rubric, 19 blocking checks (incl. v3.4 LOAD_BEARING + calibration discipline), and 5-section multi-file output (--merge for single-file). Zero-dep.",
-            "version": "3.4.0",
+            "version": "3.4.1",
             "source": "./skills/insight-fuse",
             "author": {
                 "name": "Juneq Cheung",
                 "url": "https://github.com/juserai"
             },
             "integrity": {
-                "skill-md-sha256": "bf366e04ea7a0c5cdc83d4016f8b402ca51d614121e8e0e944a67ae757a96ba7"
+                "skill-md-sha256": "305d6d7a6b317bb9353618b4bf360cc1fdba307e0d5f6e256acf7c8afc7ac512"
             },
             "skills": [
                 "./"
@@ -121,14 +121,14 @@
         {
             "name": "claim-ground",
             "description": "Claim Ground v1.2 — Epistemic constraint engine. 15 Red Lines + 5 hook surfaces (UserPromptSubmit / PreToolUse / PostToolUse / SessionStart). Detects ambiguity (path/pronoun/quantity/preference), destructive actions, scope creep, env-var assumptions, ecosystem-scope questions, hard constraints. Dual-platform: Claude Code (bash) + OpenClaw (TS handler). Shared anchors.json state. Zero-dep.",
-            "version": "1.2.0",
+            "version": "1.2.1",
             "source": "./skills/claim-ground",
             "author": {
                 "name": "Juneq Cheung",
                 "url": "https://github.com/juserai"
             },
             "integrity": {
-                "skill-md-sha256": "4f241b056294aa3ce72cba1ae6b9169d959e1586cd7be247950716c19d2c2b21"
+                "skill-md-sha256": "1485e669e1c352e765338b8a01798704bab94918fa451cad2174987bd4c39f59"
             },
             "skills": [
                 "./"

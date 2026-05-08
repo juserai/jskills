@@ -21,11 +21,12 @@ argument-hint: "[topic] [time-range] [--no-save]"
 当第一参数为 `help` / `--help`，**或无参数**时，输出以下 help card 并停止执行：
 
 ```
-News Fetch v1.1.0 — Quick news between coding sessions (3-tier network fallback)
+News Fetch v1.1.1 — Quick news between coding sessions (3-tier network fallback)
 
 Usage:
-  /news-fetch <topic> [time-range]   Fetch news for the topic in the range
-  /news-fetch help                   Show this help
+  /news-fetch <topic> [time-range]              Fetch news, archive to KB
+  /news-fetch <topic> [time-range] --no-save    Fetch news, skip KB archive
+  /news-fetch help                              Show this help
 
 Time range: today | week (default) | month | YYYY-MM-DD~YYYY-MM-DD
 
@@ -33,6 +34,7 @@ Examples:
   /news-fetch AI
   /news-fetch "rust 语言" week
   /news-fetch "climate change" 2026-04-01~2026-04-15
+  /news-fetch AI today --no-save
 
 Guide: docs/user-guide/news-fetch-guide.md
 ```

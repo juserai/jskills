@@ -2,6 +2,7 @@
 name: skill-lint
 description: "Skill Lint — Validate Claude Code skill plugins. Structural + semantic checks for any plugin project."
 license: MIT
+argument-hint: "[path]"
 metadata:
   category: anvil
   permissions:
@@ -21,7 +22,7 @@ metadata:
 仅当第一参数为 `help` / `--help` 时输出以下 help card 并停止执行：
 
 ```
-Skill Lint v1.1.0 — Validate Claude Code skill plugins (structural + semantic)
+Skill Lint v1.1.1 — Validate Claude Code skill plugins (structural + semantic)
 
 Usage:
   /skill-lint                    Lint the current working directory (default)

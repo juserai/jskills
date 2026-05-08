@@ -2,6 +2,7 @@
 name: claim-ground
 description: "Claim Ground v1.2 — Epistemic constraint engine. Use when answering factual questions about current/live state, when defining professional terms with authoritative standards bodies (Red Line 7), when the user challenges a prior factual assertion (pushback regex), OR proactively when input contains ambiguity (path/pronoun/quantity/preference/missing-param), destructive actions (rm -rf / reset --hard / push --force), scope creep (Edit/Write unmentioned files), env-var assumptions, ecosystem-scope questions ('latest/strongest model'), or hard constraints ('don't / never'). Forces runtime-context-first reasoning + dispatches across UserPromptSubmit / PreToolUse / PostToolUse / SessionStart hooks. Detects under-specified deploy/path commands and verification gaps across Claude Code and openclaw."
 license: MIT
+argument-hint: "[verify <claim>]"
 metadata:
   category: hammer
   permissions:
@@ -20,7 +21,7 @@ metadata:
 当第一参数为 `help` / `--help`，**或无参数**时，输出以下 help card 并停止执行（parsing 规则详见 [CLAUDE.md § Help 模式约定](../../CLAUDE.md)）。Hook 自动触发（UserPromptSubmit + PostToolUse + SessionStart）不受此路径影响。手动执行路径见下方 §Manual Execution。
 
 ```
-Claim Ground v1.2.0 — Epistemic constraint engine (runtime evidence before assertions)
+Claim Ground v1.2.1 — Epistemic constraint engine (runtime evidence before assertions)
 
 Usage:
   /claim-ground                       Show this help

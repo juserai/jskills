@@ -12,12 +12,25 @@ Detailed rationale for each entry lives under `openspec/changes/<id>/` (active o
 
 ## block-break
 
+### [1.0.1] — 2026-05-08
+
+#### Changed
+- Help card now documents `/block-break L0|L1|L2|L3|L4` (specific pressure level) and `/block-break <task>` (activate + start task) entry forms. Previously only `(no args)` and `help` were listed; the level/task forms were documented in README only.
+- Added frontmatter `argument-hint: "[L0|L1|L2|L3|L4] [task description...]"` (was missing).
+- Reference: [openspec/changes/fix-help-card-flag-coverage](openspec/changes/fix-help-card-flag-coverage/proposal.md)
+
 ### [1.0.0] — 2026-04-15
 - Initial release. Three red lines (closure / fact-driven / exhaust-all) + L0–L4 pressure escalation + 5-step methodology.
 
 ---
 
 ## claim-ground
+
+### [1.2.1] — 2026-05-08
+
+#### Changed
+- Added frontmatter `argument-hint: "[verify <claim>]"` (was missing). Surfaces the manual `/claim-ground verify <claim>` invocation form in IDE inline hints; auto-trigger paths unchanged.
+- Reference: [openspec/changes/fix-help-card-flag-coverage](openspec/changes/fix-help-card-flag-coverage/proposal.md)
 
 ### [1.2.0] — 2026-05-06
 
@@ -40,6 +53,12 @@ Detailed rationale for each entry lives under `openspec/changes/<id>/` (active o
 
 ## council-fuse
 
+### [1.1.1] — 2026-05-08
+
+#### Changed
+- Help card now lists `--no-save` flag (was missing — flag was documented in `argument-hint` but invisible in `/council-fuse help` output). Fixes S34 help-card-flag-coverage warning.
+- Reference: [openspec/changes/fix-help-card-flag-coverage](openspec/changes/fix-help-card-flag-coverage/proposal.md)
+
 ### [1.1.0] — 2026-04-22
 
 #### Added
@@ -54,6 +73,12 @@ Detailed rationale for each entry lives under `openspec/changes/<id>/` (active o
 ---
 
 ## insight-fuse
+
+### [3.4.1] — 2026-05-08
+
+#### Changed
+- Help card now enumerates all 11 `argument-hint` flags (previously only 4 were listed under "Key flags"; 7 high-frequency flags including `--no-save`, `--audience`, `--focus`, `--skeleton`, `--perspectives`, `--strategy`, `--no-advisory` were invisible to users running `/insight-fuse help`). Fixes S34 help-card-flag-coverage warning.
+- Reference: [openspec/changes/fix-help-card-flag-coverage](openspec/changes/fix-help-card-flag-coverage/proposal.md)
 
 ### [3.4.0] — 2026-05-07
 
@@ -86,6 +111,12 @@ Detailed rationale for each entry lives under `openspec/changes/<id>/` (active o
 ---
 
 ## news-fetch
+
+### [1.1.1] — 2026-05-08
+
+#### Changed
+- Help card now lists `--no-save` flag (was missing — flag was in `argument-hint` but invisible in `/news-fetch help` output). Fixes S34 help-card-flag-coverage warning.
+- Reference: [openspec/changes/fix-help-card-flag-coverage](openspec/changes/fix-help-card-flag-coverage/proposal.md)
 
 ### [1.1.0] — 2026-04-22
 
@@ -138,6 +169,12 @@ Detailed rationale for each entry lives under `openspec/changes/<id>/` (active o
 ---
 
 ## skill-lint
+
+### [1.1.1] — 2026-05-08
+
+#### Changed
+- Added frontmatter `argument-hint: "[path]"` (was missing). Surfaces the optional path argument in IDE inline hints; runtime behavior unchanged.
+- `.skill-lint.json` `verify-help-card-flag-coverage` promoted from `warn` to `error` after [openspec/changes/fix-help-card-flag-coverage](openspec/changes/fix-help-card-flag-coverage/proposal.md) cleared all skills.
 
 ### [1.1.0] — 2026-05-08
 

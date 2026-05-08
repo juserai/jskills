@@ -22,25 +22,33 @@ argument-hint: "[topic] [--type overview|technology|market|academic|product|comp
 当第一参数为 `help` / `--help`，**或无参数**时，输出以下 help card 并停止执行（parsing 规则详见 [CLAUDE.md § Help 模式约定](../../CLAUDE.md)）：
 
 ```
-Insight Fuse v3.4.0 — Systematic multi-source research engine (8-stage pipeline)
+Insight Fuse v3.4.1 — Systematic multi-source research engine (8-stage pipeline)
 
 Usage:
-  /insight-fuse <topic> [--type ...] [--depth ...] [...other flags]   Run research
-  /insight-fuse help                                                   Show this help
+  /insight-fuse <topic> [flags]      Run research
+  /insight-fuse help                 Show this help
 
 Key flags:
-  --type     overview | technology | market | academic | product | competitive
-  --depth    quick | standard | deep | full
-  --sections report,checklist,adr,decision-tree,poc  (each section → own file by default)
-  --merge    concatenate selected sections into a single markdown (opt-in)
+  --type        overview | technology | market | academic | product | competitive
+  --depth       quick | standard | deep | full
+  --skeleton    path | auto | skip                Stage 0 brainstorm: import / auto / skip
+  --perspectives p1,p2,p3                         Custom panel; 2-5 agents
+  --sections    report,checklist,adr,decision-tree,poc  (each section → own file by default)
+  --merge       concatenate selected sections into a single markdown (opt-in)
+  --focus       q                                 Stage 5 anchor (deep mode requires)
+  --audience    role[,role...]                    Trigger advisory appendix targeting
+  --strategy    conservative | balanced | aggressive   Advisory style (with --audience)
+  --no-advisory                                   Disable advisory appendix even with --audience
+  --no-save                                       Skip Stage 7 KB archive (console only)
 
 Examples:
   /insight-fuse Kubernetes operators --type technology --depth standard
   /insight-fuse "RAG vs fine-tuning" --type academic --depth deep
   /insight-fuse "pricing in LLM coding tools" --type market --sections report,checklist
   /insight-fuse "k8s autoscaling" --type technology --sections report,adr --merge
+  /insight-fuse "AI glasses" --audience "new entrants,investors" --strategy aggressive
+  /insight-fuse "quick scan" --depth quick --no-save
 
-Full flag reference: see frontmatter argument-hint.
 Guide: docs/user-guide/insight-fuse-guide.md
 ```
 
