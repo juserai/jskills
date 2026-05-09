@@ -1,8 +1,8 @@
-# Output Formats — 5 段可选段落规范（多文件默认 / `--merge` 合并）
+# Output Formats — 5 段可选段落规范（默认扁平多文件 / `--merge` 单文件合并）
 
 `--sections <list>` 参数选择本次输出涉及的段落。Stage 6 有两种渲染模式：
 
-- **默认（无 `--merge`）**：每个 section 独立渲染为一个 markdown 文件，落同一目录；`report.md` 作为本次调研的规范 KB 条目（携带 frontmatter），其余段落作为兄弟文件无 frontmatter
+- **默认（无 `--merge`）**：每个 section 独立渲染为一个 markdown 文件，**扁平落 `raw/reports/insight-fuse/` 父目录**（与 `--merge` 同目录层级，匹配 tome-forge 的 `*-{topic-slug}*.md` glob 约定）；`{date}-{topic-slug}.md` 作为 report 段，是本次调研的规范 KB 条目（携带 frontmatter），其余段落以 `{date}-{topic-slug}-{section}.md` 命名兄弟文件，无 frontmatter
 - **`--merge`**：按依赖顺序将所有段落拼接为**单一 markdown 文件**，report 段作为文档唯一 H1，其余段以 H2 续编号拼接（详见下方"段落合并规则"）
 
 两种模式下渲染至用户响应均**始终可见**；持久化到 KB 由 Stage 7 — KB 归档负责（必须，除非 `--no-save`）。
@@ -45,7 +45,7 @@
 
 注解为 advisory（不 block on `quick`），仅 C18 触发且 source 不可替代时填入；可替代时返工补 alternative source。详见 [quality-standards.md §1.10](quality-standards.md)。
 
-**段落标识**：`report`（多文件模式 → `report.md` 是规范 KB 条目；`--merge` 模式 → 文档唯一 H1 来源）
+**段落标识**：`report`（多文件模式 → `{date}-{topic-slug}.md`（无 section 后缀）是规范 KB 条目；`--merge` 模式 → 文档唯一 H1 来源）
 
 ## 二、checklist — 可执行 checklist
 
@@ -253,7 +253,7 @@
 4. `decision-tree` —— 从 report 的方案对比 + 推荐段抽取
 5. `poc` —— 从 skeleton.hypotheses + report 的待验证清单抽取
 
-多文件模式下，每段渲染为独立 `.md` 文件（用 `--sections` 值作文件名）。`--merge` 模式下，按上述顺序拼接为单一文件。
+多文件模式下，每段渲染为独立 `.md` 文件（`report` 段使用 `{date}-{topic-slug}.md`、其他段使用 `{date}-{topic-slug}-{section}.md`，全部扁平落入 `raw/reports/insight-fuse/`）。`--merge` 模式下，按上述顺序拼接为单一文件 `{date}-{topic-slug}.md`。
 
 ## `--merge` 段落拼接规则（仅 `--merge` 时适用）
 
@@ -270,19 +270,19 @@
 
 ### 段间引用改写
 
-模板中的相对路径链接（如 `基于：<report.md link>`）在合并时改写为段内锚点引用 `(见上文 §X)`，确保单文件内导航有效。多文件模式下相对链接保持原样（兄弟文件之间相对路径直接可达）。
+模板中的相对路径链接（如 `基于：<report.md link>`）在合并时改写为段内锚点引用 `(见上文 §X)`，确保单文件内导航有效。多文件模式下兄弟文件位于同一目录层级，使用 `{date}-{topic-slug}.md` 作为指向规范条目的相对链接（不再是 `report.md`），确保链接对扁平命名有效。
 
 ## 文件命名
 
-**默认（多文件）**——目录形式，N 个段落落同一目录：
+**默认（多文件）**——扁平命名，N 个段落落 `raw/reports/insight-fuse/` 父目录，section 后缀区分：
 
 ```
-{kb_root}/raw/reports/insight-fuse/{YYYY-MM-DD}-{topic-slug}/
-  report.md         ← 规范 KB 条目（携 frontmatter）
-  checklist.md      ← 兄弟文件
-  adr.md            ← 兄弟文件
-  decision-tree.md  ← 兄弟文件
-  poc.md            ← 兄弟文件
+{kb_root}/raw/reports/insight-fuse/
+  {YYYY-MM-DD}-{topic-slug}.md                  ← report 段，规范 KB 条目（携 frontmatter；不带 section 后缀）
+  {YYYY-MM-DD}-{topic-slug}-checklist.md        ← 兄弟文件，无 frontmatter
+  {YYYY-MM-DD}-{topic-slug}-adr.md              ← 兄弟文件
+  {YYYY-MM-DD}-{topic-slug}-decision-tree.md    ← 兄弟文件
+  {YYYY-MM-DD}-{topic-slug}-poc.md              ← 兄弟文件
 ```
 
 **`--merge`**——单文件形式：
@@ -291,16 +291,16 @@
 {kb_root}/raw/reports/insight-fuse/{YYYY-MM-DD}-{topic-slug}.md
 ```
 
-两种命名都与 tome-forge KB 的 Save Algorithm 一致。仅渲染至响应、不归档时不涉及文件命名。
+两种命名都与 tome-forge KB 的 `*-{topic-slug}*.md` glob 约定一致：`--merge` 与 multi-file 的 report 段共享同一文件名（互斥不会冲突——同一调研只会落其一）。仅渲染至响应、不归档时不涉及文件命名。
 
 ## 归档行为
 
 报告主体始终渲染至用户响应（Stage 6 step 5）。是否归档由 Stage 7 决定（详见 [SKILL.md](../SKILL.md) Stage 7）：
 
 - 默认 + tome-forge 已装 + KB Discovery 命中 → 按 tome-forge 的 `report-archival-protocol.md` 归档为单条目：
-  - **多文件模式**：在目录下落 N 个段落文件，**仅 `report.md` 携带 frontmatter** 作为规范 KB 条目；frontmatter 的 `outputs: [report, adr, ...]` 字段列本次产出的兄弟段落
+  - **多文件模式**：N 个段落文件**扁平落 `raw/reports/insight-fuse/`**，`{date}-{topic-slug}.md` 携带 frontmatter 作为规范 KB 条目；其余段落使用 `{date}-{topic-slug}-{section}.md` 命名（如 `-checklist.md` / `-adr.md` / `-decision-tree.md` / `-poc.md`）；frontmatter 的 `outputs: [report, adr, ...]` 字段列本次产出的兄弟段落
   - **`--merge` 模式**：合并文件本身是规范 KB 条目，frontmatter 写在文件头；`outputs: [report, adr, ...]` 字段列合并文件中包含的段落
-  - 两种模式都输出**单行** `Archived to KB: {absolute_filepath}`（多文件 → `report.md` 路径；`--merge` → 合并文件路径）
+  - 两种模式都输出**单行** `Archived to KB: {absolute_filepath}`（多文件 → `{date}-{topic-slug}.md` 绝对路径；`--merge` → 合并文件绝对路径）
 - 用户传 `--no-save` → 不归档；输出 `Archive: skipped (--no-save flag)`
 - tome-forge 未装 → 不归档；输出 `Archive: skipped (tome-forge not installed)`
 - KB Discovery 未命中（CWD 既不在 KB 内、`~/.tome-forge/.tome-forge.json` 也不存在）→ 不归档；输出 `Archive: skipped (KB discovery failed)`

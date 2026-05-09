@@ -105,14 +105,14 @@
         {
             "name": "insight-fuse",
             "description": "Insight Fuse v3.4 — Systematic multi-source research engine. 8-stage pipeline + Stage 6.5 reviewer pass (Stage 7 KB archival mandatory + observable, opt-out via --no-save) with skeleton.yaml data contract, 6 research-type presets, 6-dim quality rubric, 19 blocking checks (incl. v3.4 LOAD_BEARING + calibration discipline), and 5-section multi-file output (--merge for single-file). Zero-dep.",
-            "version": "3.4.1",
+            "version": "3.4.2",
             "source": "./skills/insight-fuse",
             "author": {
                 "name": "Juneq Cheung",
                 "url": "https://github.com/juserai"
             },
             "integrity": {
-                "skill-md-sha256": "305d6d7a6b317bb9353618b4bf360cc1fdba307e0d5f6e256acf7c8afc7ac512"
+                "skill-md-sha256": "956caf2d2d16e08ff81362e54b6b8617560213fa31dae28980cafac253248313"
             },
             "skills": [
                 "./"

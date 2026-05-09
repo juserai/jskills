@@ -74,6 +74,12 @@ Detailed rationale for each entry lives under `openspec/changes/<id>/` (active o
 
 ## insight-fuse
 
+### [3.4.2] — 2026-05-09
+
+#### Fixed
+- Multi-file archive default flattened from `{date}-{topic-slug}/` subdirectory to `{date}-{topic-slug}-{section}.md` flat suffix (with `report` segment as bare `{date}-{topic-slug}.md`). The subdirectory layout broke tome-forge's `*-{topic-slug}*.md` glob lookup at `skills/tome-forge/references/report-archival-protocol.md:25-29` and was inconsistent with every prior insight-fuse archive in actual user KBs (24/24 flat). `--merge` behavior unchanged. Migration: KBs that hit v3.3-v3.4.1 can run a one-time `mv` loop to flatten any `{date}-{topic-slug}/` subdirectory; the v3.3-v3.4.1 subdirectory branch had no production users in the wild.
+- Stage 6 step 4 (multi-file rendering description) was pointing at the same subdirectory shape; now aligned with Stage 7 step 3 to flat-suffix naming.
+
 ### [3.4.1] — 2026-05-08
 
 #### Changed

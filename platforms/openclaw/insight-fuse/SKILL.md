@@ -22,7 +22,7 @@ argument-hint: "[topic] [--type overview|technology|market|academic|product|comp
 当第一参数为 `help` / `--help`，**或无参数**时，输出以下 help card 并停止执行（parsing 规则详见 [CLAUDE.md § Help 模式约定](../../CLAUDE.md)）：
 
 ```
-Insight Fuse v3.4.1 — Systematic multi-source research engine (8-stage pipeline)
+Insight Fuse v3.4.2 — Systematic multi-source research engine (8-stage pipeline)
 
 Usage:
   /insight-fuse <topic> [flags]      Run research
@@ -176,7 +176,7 @@ Synthesis prohibited.
 2. 算 6 维评分（见 [references/scoring-rubric.md](references/scoring-rubric.md)），按 `--type` 加权；evidence_density 含 `primary_source_ratio` 子项
 3. 若触发 Check 17 → 套 [templates/reconciliation-log.md](templates/reconciliation-log.md) 写入附录
 4. 按 `--sections` 渲染段落（详见 [references/output-formats.md](references/output-formats.md)）：
-   - **默认（无 `--merge`）**：每个段落独立渲染为一个 markdown 文件（`report.md` / `adr.md` / `checklist.md` / `decision-tree.md` / `poc.md`），落同一目录
+   - **默认（无 `--merge`）**：每个段落独立渲染为一个 markdown 文件（`report` 段使用 `{date}-{topic-slug}.md`，其他段使用 `{date}-{topic-slug}-{section}.md`），扁平落 `raw/reports/insight-fuse/` 父目录
    - **`--merge`**：按依赖顺序拼接（report → checklist → adr → decision-tree → poc）为单一 markdown，report 段 H1 作为文档唯一 H1，其余段 H1 降为 H2 并续编号 `§N+1`、`§N+2`…，段内 H2→H3、H3→H4 级联降一级
 5. 渲染至用户响应（始终可见，多文件模式按依赖顺序贴出每段全文） + forge attribution；持久化由 Stage 7 负责
 
@@ -218,7 +218,7 @@ Stage 6 渲染完成（含 Advisory Appendix 若有）后、最终 forge attribu
    - 命中 → 进入步骤 3
    - 未命中（CWD 既不在 KB 内、`~/.tome-forge/.tome-forge.json` 也不存在）→ 输出 `Archive: skipped (KB discovery failed)` 并跳过
 3. 写盘（命名规则见 [references/output-formats.md](references/output-formats.md) §文件命名）：
-   - **默认（多文件）**：在 `{kb_root}/raw/reports/insight-fuse/{YYYY-MM-DD}-{topic-slug}/` 目录下落 N 个段落文件，**仅 `report.md` 携带 frontmatter** 作为本次调研的规范 KB 条目；其余段落（`adr.md` / `checklist.md` / …）作为兄弟文件无 frontmatter
+   - **默认（多文件）**：N 个段落文件**扁平落 `{kb_root}/raw/reports/insight-fuse/`**，`{date}-{topic-slug}.md` 携带 frontmatter 作为本次调研的规范 KB 条目；其余段落使用 `{date}-{topic-slug}-{section}.md` 命名（`-checklist.md` / `-adr.md` / `-decision-tree.md` / `-poc.md`）作兄弟文件，无 frontmatter
    - **`--merge`**：单一合并 markdown 落在 `{kb_root}/raw/reports/insight-fuse/{YYYY-MM-DD}-{topic-slug}.md`，该文件本身即规范 KB 条目，frontmatter 写在文件头
    
    两种模式下规范 KB 条目的 frontmatter 元数据相同：
@@ -227,12 +227,12 @@ Stage 6 渲染完成（含 Advisory Appendix 若有）后、最终 forge attribu
    - `depth`：调研深度（quick / standard / deep / full）
    - `skeleton`：skeleton.yaml 路径或 `auto`
    - `perspectives`：实际启用的视角列表
-   - `outputs`：本次输出涉及的段落列表（如 `[report, adr, checklist]`）。多文件模式下指兄弟文件；`--merge` 模式下指合并文件内含段落
+   - `outputs`：本次输出涉及的段落列表（如 `[report, adr, checklist]`）。多文件模式下指扁平兄弟文件（`{date}-{topic-slug}-{section}.md`）；`--merge` 模式下指合并文件内含段落
    - `top_sources`：top 5 URL
    - `grade`：6 维评分综合等级
    - `blocking_checks_passed`：通过的 blocking check id 列表
 4. **必须输出可见日志行**（这一行须出现在用户可见的最终响应里，不能藏在 tool result 里）。无论多文件或 `--merge` 模式，日志均**单行**指向规范条目的绝对路径：
-   - 成功：`Archived to KB: {absolute_filepath_of_canonical_entry}`（多文件 → `report.md` 路径；merge → 合并文件路径）
+   - 成功：`Archived to KB: {absolute_filepath_of_canonical_entry}`（多文件 → `{date}-{topic-slug}.md` 绝对路径；merge → 合并文件绝对路径，二者实际等价——同一文件名）
    - 用户传 `--no-save`：`Archive: skipped (--no-save flag)`
    - 其他跳过场景：见步骤 1/2
 
